@@ -1,0 +1,32 @@
+import axios, { InternalAxiosRequestConfig } from "axios";
+
+export const axiosInstance = axios.create({
+	baseURL: "http://localhost:8085/api",
+	headers: {
+		common: {
+			Authorization:
+				"Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI5ZzNld1lTWExtSVFZemVrMGJpenl5OGhNVkUzb3NDYkNPY1BsVzZkeEJBIn0.eyJleHAiOjE3MDY5MTk0ODgsImlhdCI6MTcwNjQ4NzQ4OCwiYXV0aF90aW1lIjoxNzA2NDg3MjIyLCJqdGkiOiI2MTQxMWQwMC1hZjU2LTRkNWMtYjg4ZS0xMzAyOGQ3ZWZkNGUiLCJpc3MiOiJodHRwczovL2Rldi5sb2dpbi5tdC5nb3YuYnIvYXV0aC9yZWFsbXMvbXQtcmVhbG0iLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiMjQyYWE5YjEtY2FhZC00MWIzLTllNTItYzU2ZTFjZjY3NjQ5IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoicHJvamV0by10ZW1wbGF0ZS1pbnRlZ3JhY2FvIiwic2Vzc2lvbl9zdGF0ZSI6IjNmNWMxY2MzLTE3NmYtNDMyZS05OTljLTY1NTkzOGFhOTNmMCIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsibXQtbG9naW4iLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy1tdC1yZWFsbSJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoicHJvZmlsZSBlbWFpbCIsInNpZCI6IjNmNWMxY2MzLTE3NmYtNDMyZS05OTljLTY1NTkzOGFhOTNmMCIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwibmFtZSI6IlVTVUFSSU8gREUgVEVTVEUiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiI0NTc3MTc1NzAzOSIsImdpdmVuX25hbWUiOiJVU1VBUklPIiwiZGF0YU5hc2NpbWVudG8iOiIxMi8xMi8xOTgwIiwiZmFtaWx5X25hbWUiOiJERSBURVNURSIsIm5vbWVNYWUiOiJNQUUgRE8gVVNVQVJJTyBERSBURVNURSIsImVtYWlsIjoid3N0LTA5QGhvdG1haWwuY29tIn0.hI5RyCvpFbmyqmmdPWibw-MG9YsvkLZj864UGE000umGJfXGFFRB0hXolQRYf8m2crcMy6mpYSe96stx4AgTD4XoXZ6YZTO67_cHZA7iAlUW3vP6iD3mhx8Y6l7jGU_7dPFls0zVY3fKKUg8CO_VoNqtUlJ9LS9sunnYJPa8rJ3P1ETJWNIUtegcerCBsp_Xel-SnHxhLPmxdmFKE1HVrlRjqvF2yieuUic4gwhzctDy_DQp3_FENOtnpWb-W_H_4ZSzIzNuJRKRGJP6GhkbHMCmHfq9tAYvN2gd6Jb4Z8Ivq22gab5JfarZC2onqf2aSw4eyeP_pZ-PKmiQ63S27g",
+		},
+	},
+});
+
+// Interceptors
+axiosInstance.interceptors.request.use(
+	(config): InternalAxiosRequestConfig => {
+		return config;
+	},
+	(error): any => {
+		console.log(error);
+		return Promise.reject(error);
+	},
+);
+
+axiosInstance.interceptors.response.use(
+	async (response): Promise<any> => {
+		return response;
+	},
+	async (error): Promise<any> => {
+		console.log(error);
+		return Promise.reject(error);
+	},
+);
