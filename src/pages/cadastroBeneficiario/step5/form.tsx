@@ -1,7 +1,5 @@
-import AddIcon from "@mui/icons-material/Add";
 import { Button, Card, InputAdornment, TextField } from "@mui/material";
 
-import { IMonthsType } from "monthType";
 import { useState } from "react";
 import styles from "./styles.module.scss";
 
@@ -11,20 +9,20 @@ type step5Type = {
 };
 
 function step5({ setStep }: step5Type) {
-	const monthsData: IMonthsType = {
-		janeiro: { label: "Janeiro" },
-		fevereiro: { label: "Fevereiro" },
-		marco: { label: "Março" },
-		abril: { label: "Abril" },
-		maio: { label: "Maio" },
-		junho: { label: "Junho" },
-		julho: { label: "Julho" },
-		agosto: { label: "Agosto" },
-		setembro: { label: "Setembro" },
-		outubro: { label: "Outubro" },
-		novembro: { label: "Novembro" },
-		dezembro: { label: "Dezembro" },
-	};
+	const monthsData = [
+		{ codigo: "janeiro", label: "Janeiro" },
+		{ codigo: "fevereiro", label: "Fevereiro" },
+		{ codigo: "marco", label: "Março" },
+		{ codigo: "abril", label: "Abril" },
+		{ codigo: "maio", label: "Maio" },
+		{ codigo: "junho", label: "Junho" },
+		{ codigo: "julho", label: "Julho" },
+		{ codigo: "agosto", label: "Agosto" },
+		{ codigo: "setembro", label: "Setembro" },
+		{ codigo: "outubro", label: "Outubro" },
+		{ codigo: "novembro", label: "Novembro" },
+		{ codigo: "dezembro", label: "Dezembro" },
+	];
 	const [lines, setLines] = useState([{}, {}, {}, {}, {}, {}, {}, {}]);
 
 	return (
@@ -44,16 +42,16 @@ function step5({ setStep }: step5Type) {
 							<span>Empregos direto (homem)</span>
 							<span>Empregos direto (mulher)</span>
 						</div>
-						{Object.keys(monthsData).map((item: string) => {
+						{monthsData.map(({ codigo, label }) => {
 							return (
 								<>
 									<span
 										className={`${styles.col2} ${styles.monthTitle}`}
 									>
-										{/* {monthsData[item].label} */}
+										{label}
 									</span>
 									<TextField
-										id={`${item}-investimento-mensal`}
+										id={`${codigo}-investimento-mensal`}
 										variant="outlined"
 										required
 										error={false}
@@ -68,14 +66,14 @@ function step5({ setStep }: step5Type) {
 										className={`${styles.col3} ${styles.tableInput}`}
 									/>
 									<TextField
-										id={`${item}-empregos-direto-homem`}
+										id={`${codigo}-empregos-direto-homem`}
 										variant="outlined"
 										required
 										error={false}
 										className={`${styles.col3} ${styles.tableInput}`}
 									/>
 									<TextField
-										id={`${item}-empregos-direto-mulher`}
+										id={`${codigo}-empregos-direto-mulher`}
 										variant="outlined"
 										required
 										error={false}
@@ -171,17 +169,6 @@ function step5({ setStep }: step5Type) {
 								/>
 							</>
 						))}
-						<Button
-							type="button"
-							variant="contained"
-							className={styles.primaryButton}
-							onClick={() => {
-								setLines([...lines, {}]);
-							}}
-						>
-							<AddIcon />
-							Adicionar linhas e colunas
-						</Button>
 					</div>
 				</Card>
 
@@ -206,7 +193,7 @@ function step5({ setStep }: step5Type) {
 							window.scrollTo({ top: 0, behavior: "smooth" });
 						}}
 					>
-						Continuar
+						Salvar
 					</Button>
 				</div>
 			</div>

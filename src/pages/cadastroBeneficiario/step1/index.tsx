@@ -5,55 +5,77 @@ import Form from "./form";
 import { inputs } from "./inputs";
 
 export default function ({ setStep }: stepType) {
+	function validate(_values, setErrors) {
+		const errors: any = {};
+
+		if (!_values.nomeOuRazaoSocial) {
+			errors.nomeOuRazaoSocial = Messages.form.required;
+		}
+		if (_values.cnaes.length === 0) {
+			errors.cnaes = Messages.form.arrayRequired;
+		}
+		if (!_values.cpfOuCnpj) {
+			errors.cpfOuCnpj = Messages.form.required;
+		}
+		if (!_values.descricao) {
+			errors.descricao = Messages.form.required;
+		}
+		if (!_values.email) {
+			errors.email = Messages.form.required;
+		}
+		if (!_values.inscricaoEstadual) {
+			errors.inscricaoEstadual = Messages.form.required;
+		}
+		if (!_values.municipio) {
+			errors.municipio = Messages.form.required;
+		}
+		if (!_values.nomeAdministrador) {
+			errors.nomeAdministrador = Messages.form.required;
+		}
+		if (!_values.nomeFantasia) {
+			errors.nomeFantasia = Messages.form.required;
+		}
+		if (!_values.nomeOuRazaoSocial) {
+			errors.nomeOuRazaoSocial = Messages.form.required;
+		}
+		if (!_values.porte) {
+			errors.porte = Messages.form.required;
+		}
+		if (!_values.ramoAtividade) {
+			errors.ramoAtividade = Messages.form.required;
+		}
+		if (!_values.telefoneAdministrador) {
+			errors.telefoneAdministrador = Messages.form.required;
+		}
+		if (!_values.telefoneContabilidade) {
+			errors.telefoneContabilidade = Messages.form.required;
+		}
+		if (!_values.telefoneEmpresa) {
+			errors.telefoneEmpresa = Messages.form.required;
+		}
+		if (_values.telefones.length === 0 || !_values.telefones[0].titulo) {
+			errors.telefones = Messages.form.arrayRequired;
+		}
+		if (Object.keys(errors).length > 0) {
+			setErrors(errors);
+			return false;
+		}
+		return true;
+	}
 	return (
 		<Formik
 			initialValues={inputs}
 			validate={(_values) => {
-				const errors: any = {};
-				if (!_values.nomeOuRazaoSocial) {
-					errors.nomeOuRazaoSocial = Messages.form.required;
-				} else if (_values.cnaes.length === 0) {
-					errors.cnaes = Messages.form.arrayRequired;
-				} else if (!_values.cpfOuCnpj) {
-					errors.cpfOuCnpj = Messages.form.required;
-				} else if (!_values.descricao) {
-					errors.descricao = Messages.form.required;
-				} else if (!_values.email) {
-					errors.email = Messages.form.required;
-				} else if (!_values.inscricaoEstadual) {
-					errors.inscricaoEstadual = Messages.form.required;
-				} else if (!_values.municipio) {
-					errors.municipio = Messages.form.required;
-				} else if (!_values.nomeAdministrador) {
-					errors.nomeAdministrador = Messages.form.required;
-				} else if (!_values.nomeFantasia) {
-					errors.nomeFantasia = Messages.form.required;
-				} else if (!_values.nomeOuRazaoSocial) {
-					errors.nomeOuRazaoSocial = Messages.form.required;
-				} else if (!_values.porte) {
-					errors.porte = Messages.form.required;
-				} else if (!_values.ramoAtividade) {
-					errors.ramoAtividade = Messages.form.required;
-				} else if (!_values.telefoneAdministrador) {
-					errors.telefoneAdministrador = Messages.form.required;
-				} else if (!_values.telefoneContabilidade) {
-					errors.telefoneContabilidade = Messages.form.required;
-				} else if (!_values.telefoneEmpresa) {
-					errors.telefoneEmpresa = Messages.form.required;
-				} else if (
-					_values.telefones.length === 0 ||
-					!_values.telefones[0].titulo
-				) {
-					errors.telefones = Messages.form.arrayRequired;
-				}
-				return errors;
+				return {};
 			}}
-			onSubmit={(values, { setSubmitting }) => {
-				localStorage.setItem("step1", JSON.stringify(values));
-				setTimeout(() => {
-					setSubmitting(false);
-					setStep(2);
-				}, 400);
+			onSubmit={(values, { setSubmitting, setErrors }) => {
+				if (validate(values, setErrors)) {
+					localStorage.setItem("step1", JSON.stringify(values));
+					setTimeout(() => {
+						setSubmitting(false);
+						setStep(2);
+					}, 400);
+				}
 			}}
 		>
 			{(formik) => <Form setStep={setStep} formik={formik} />}

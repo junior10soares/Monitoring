@@ -1,5 +1,5 @@
 import AddIcon from "@mui/icons-material/Add";
-import { Button, Card, TextField } from "@mui/material";
+import { Button, Card, Select, TextField } from "@mui/material";
 import { useState } from "react";
 import styles from "./styles.module.scss";
 
@@ -36,13 +36,13 @@ function step4({ setStep }: step4Type) {
 						</div>
 						{Object.keys(lines).map((item) => (
 							<>
-								<TextField
+								<Select
 									id={`${item}-ncu`}
 									variant="outlined"
 									required
 									error={false}
 									className={`${styles.col3} ${styles.tableInput}`}
-								/>
+								></Select>
 								<TextField
 									id={`${item}-produto-incentivado`}
 									variant="outlined"

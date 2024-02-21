@@ -19,7 +19,7 @@ export const inputs = {
 		anoReferencia: null,
 		investimentoAcumulado: null,
 		investimentoMensal: {
-			janeiroValor: null,
+			janeiroValor: 212,
 			fevereiroValor: null,
 			marcoValor: null,
 			abrilValor: null,

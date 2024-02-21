@@ -1,17 +1,24 @@
 import AddIcon from "@mui/icons-material/Add";
-import CloseIcon from "@mui/icons-material/Close";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import {
+	Autocomplete,
 	Button,
 	Card,
+	Checkbox,
+	FormControl,
 	InputLabel,
 	MenuItem,
 	Select,
 	TextField,
 } from "@mui/material";
+
 import { ICnae } from "cnaeType";
 import { FormikProps } from "formik";
-import { useEffect, useState } from "react";
+import { Imunicipio } from "municipioType";
+import { useEffect, useMemo, useState } from "react";
 import CustomTextField from "../../../components/customTextField";
+import InputMask from "../../../components/inputMask";
 import { getAllCnaes } from "../../../services/cnaeService";
 import { getAllMunicipios } from "../../../services/municipioService";
 import { inputs } from "./inputs";
@@ -29,9 +36,9 @@ function step1({ formik }: step1Type) {
 	const [municipios, setMunicipios] = useState([]);
 
 	useEffect(() => {
-		const localCach = JSON.parse(localStorage.getItem("step1") ?? "");
-		if (localCach) {
-			formik.setValues(localCach);
+		const localItem = localStorage.getItem("step1");
+		if (localItem) {
+			formik.setValues(JSON.parse(localItem));
 		}
 	}, []);
 
@@ -44,8 +51,21 @@ function step1({ formik }: step1Type) {
 		}
 		fetch();
 	}, []);
+
+	const selectedCnaes = useMemo(() => {
+		const newList: ICnae[] = cnaesList.filter((v: ICnae) =>
+			formik.values.cnaes.includes(v.id),
+		);
+		return newList;
+	}, [cnaesList, formik.values.cnaes]);
+
 	return (
-		<form onSubmit={formik.handleSubmit}>
+		<form
+			onSubmit={(e) => {
+				e.preventDefault();
+				formik.handleSubmit(e);
+			}}
+		>
 			<div className={styles.container}>
 				<Card className={styles.card}>
 					<h1 className={styles.title}>Dados do beneficiário</h1>
@@ -59,7 +79,6 @@ function step1({ formik }: step1Type) {
 							formik={formik}
 							col={6}
 							value={formik.values.nomeOuRazaoSocial}
-							onChange={formik.handleChange}
 							required
 						/>
 						<CustomTextField
@@ -67,9 +86,9 @@ function step1({ formik }: step1Type) {
 							label="E-mail"
 							formik={formik}
 							col={6}
+							type="email"
 							required
 							value={formik.values.email}
-							onChange={formik.handleChange}
 						/>
 						<CustomTextField
 							id="nomeFantasia"
@@ -78,24 +97,31 @@ function step1({ formik }: step1Type) {
 							col={6}
 							formik={formik}
 							value={formik.values.nomeFantasia}
-							onChange={formik.handleChange}
 						/>
-						<CustomTextField
+						<InputMask
 							id="telefoneEmpresa"
 							label="Tel. Empresa"
-							required
-							col={3}
 							formik={formik}
+							col={3}
+							mascara="(00) 0 0000-0000"
+							definitions={{
+								"#": /[1-9]/,
+							}}
 							value={formik.values.telefoneEmpresa}
+							required
 							onChange={formik.handleChange}
 						/>
-						<CustomTextField
+						<InputMask
 							id="telefoneContabilidade"
 							label="Tel. Contabilidade"
-							required
-							col={3}
 							formik={formik}
+							col={3}
+							mascara="(00) 0 0000-0000"
+							definitions={{
+								"#": /[1-9]/,
+							}}
 							value={formik.values.telefoneContabilidade}
+							required
 							onChange={formik.handleChange}
 						/>
 						<CustomTextField
@@ -105,15 +131,18 @@ function step1({ formik }: step1Type) {
 							formik={formik}
 							col={3}
 							value={formik.values.inscricaoEstadual}
-							onChange={formik.handleChange}
 						/>
-						<CustomTextField
+						<InputMask
 							id="cpfOuCnpj"
 							label="CNPJ/CPF"
-							required
-							col={3}
 							formik={formik}
+							col={3}
+							mascara="000.000.000-00"
+							definitions={{
+								"#": /[1-9]/,
+							}}
 							value={formik.values.cpfOuCnpj}
+							required
 							onChange={formik.handleChange}
 						/>
 						<CustomTextField
@@ -123,24 +152,32 @@ function step1({ formik }: step1Type) {
 							col={6}
 							formik={formik}
 							value={formik.values.nomeAdministrador}
-							onChange={formik.handleChange}
 						/>
-						<Select
-							id="municipio"
-							name="municipio"
-							label="Cidade"
-							labelId="municipio-display-name"
-							placeholder="Selecione uma cidade"
-							value={formik.values.municipio}
-							onChange={formik.handleChange}
-							className="col3"
-						>
-							{municipios.map(({ id, descricao }: ICnae) => {
-								return (
-									<MenuItem value={id}>{descricao}</MenuItem>
-								);
-							})}
-						</Select>
+						<FormControl className="col3">
+							<InputLabel required id="municipio">
+								Cidade
+							</InputLabel>
+							<Select
+								id="municipio"
+								name="municipio"
+								label="Cidade"
+								labelId="municipio"
+								placeholder="Selecione uma cidade"
+								value={formik.values.municipio}
+								fullWidth
+								onChange={formik.handleChange}
+							>
+								{municipios.map(
+									({ id, nome }: Imunicipio, index) => {
+										return (
+											<MenuItem key={index} value={id}>
+												{nome}
+											</MenuItem>
+										);
+									},
+								)}
+							</Select>
+						</FormControl>
 						<CustomTextField
 							id="porte"
 							label="Porte"
@@ -148,18 +185,20 @@ function step1({ formik }: step1Type) {
 							col={3}
 							formik={formik}
 							value={formik.values.porte}
-							onChange={formik.handleChange}
 						/>
-						<CustomTextField
+						<InputMask
 							id="telefoneAdministrador"
 							label="Tel. Administrador"
-							required
-							col={6}
 							formik={formik}
+							col={6}
+							mascara="(00) 0 0000-0000"
+							definitions={{
+								"#": /[1-9]/,
+							}}
 							value={formik.values.telefoneAdministrador}
+							required
 							onChange={formik.handleChange}
 						/>
-
 						<CustomTextField
 							id="ramoAtividade"
 							label="Ramo de Atividade"
@@ -167,61 +206,56 @@ function step1({ formik }: step1Type) {
 							col={6}
 							formik={formik}
 							value={formik.values.ramoAtividade}
-							onChange={formik.handleChange}
 						/>
 						<InputLabel className="col12" id="cnae-display-name">
 							CNAE
 						</InputLabel>
-						<Select
-							id="cnaes"
-							name="cnaes"
-							label="CNAE"
-							labelId="cnae-display-name"
-							placeholder="Selecione um CNAE"
+						<Autocomplete
 							multiple
-							value={formik.values.cnaes}
-							onChange={formik.handleChange}
+							id="cnaes"
+							options={cnaesList}
 							className="col12"
-						>
-							{cnaesList.map(({ id, descricao }: ICnae) => {
-								return (
-									<MenuItem value={id}>{descricao}</MenuItem>
+							fullWidth
+							placeholder="Selecione um CNAE"
+							disableCloseOnSelect
+							getOptionLabel={(option) =>
+								`${option.codigo} - ${option.descricao}`
+							}
+							value={selectedCnaes}
+							renderOption={(props, option) => (
+								<li {...props}>
+									<Checkbox
+										icon={
+											<CheckBoxOutlineBlankIcon fontSize="small" />
+										}
+										checkedIcon={
+											<CheckBoxIcon fontSize="small" />
+										}
+										style={{ marginRight: 8 }}
+										checked={
+											formik.values.cnaes.indexOf(
+												option.id,
+											) > -1
+										}
+									/>
+									{`${option.codigo} - ${option.descricao}`}
+								</li>
+							)}
+							onChange={(_, value) => {
+								formik.setFieldValue(
+									"cnaes",
+									value.map((i) => i.id),
 								);
-							})}
-						</Select>
-						<div className={styles.cnaesContainer}>
-							{formik.values.cnaes.length > 0
-								? formik.values.cnaes.map((item) => {
-										const cnae: ICnae = cnaesList.find(
-											(itemObj) => itemObj.id === item,
-										) ?? {
-											id: 0,
-											codigo: "",
-											descricao: "",
-										};
-										return (
-											<span
-												className={`${styles.cnaeItem}`}
-											>
-												{cnae?.descricao}
-												<CloseIcon
-													onClick={() => {
-														const cnaes =
-															formik.values.cnaes.filter(
-																(i) =>
-																	i !== item,
-															);
-														formik.setFieldValue(
-															"cnaes",
-															cnaes,
-														);
-													}}
-												/>
-											</span>
-										);
-								  })
-								: ""}
-						</div>
+							}}
+							renderInput={(params) => (
+								<TextField
+									{...params}
+									label="CNAE"
+									placeholder="Selecione um CNAE"
+								/>
+							)}
+						/>
+
 						<CustomTextField
 							id="descricao"
 							label="Descrição"
@@ -231,14 +265,13 @@ function step1({ formik }: step1Type) {
 							col={12}
 							formik={formik}
 							value={formik.values.descricao}
-							onChange={formik.handleChange}
 						/>
 					</div>
 				</Card>
 				<Card className={styles.card}>
 					<h1 className={styles.title}>Telefones</h1>
 					<span className={styles.error}>
-						{/* {formik.errors.telefones} */}
+						{formik.errors.telefones}
 					</span>
 					<div className={styles.beneficiarioForm}>
 						{formik.values.telefones.map((_, index) => {
@@ -269,26 +302,28 @@ function step1({ formik }: step1Type) {
 											);
 										}}
 									/>
-									<TextField
-										id="telefone"
-										label="Telefone"
-										variant="outlined"
-										required
-										error={false}
-										className={styles.col6}
+									<InputMask
+										id={`telefones-${index}`}
+										label="Tel. Administrador"
+										formik={formik}
+										col={6}
+										mascara="(00) 0 0000-0000"
+										definitions={{
+											"#": /[1-9]/,
+										}}
 										value={
 											formik.values.telefones[index]
 												.telefone
 										}
-										onChange={(ev) => {
+										required
+										onChange={(ev: {
+											target: { value: string };
+										}) => {
 											let newPhones =
 												formik.values.telefones;
 											newPhones[index].telefone =
 												ev.target.value;
-											formik.setFieldValue(
-												"telefones",
-												newPhones,
-											);
+											formik.handleChange(ev);
 										}}
 									/>
 								</div>

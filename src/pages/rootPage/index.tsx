@@ -3,7 +3,7 @@ import Sidebar from "../../components/sidebar";
 
 function Root() {
 	return (
-		<div>
+		<div style={{ maxWidth: "100vw" }}>
 			<Sidebar />
 			<Outlet />
 		</div>

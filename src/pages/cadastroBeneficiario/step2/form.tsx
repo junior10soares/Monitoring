@@ -1,9 +1,12 @@
-import { Button, Card, InputAdornment, TextField } from "@mui/material";
+import { Button, Card } from "@mui/material";
 
 import styles from "./styles.module.scss";
 
 import { FormikProps } from "formik";
-import CustomTextField from "../../../components/customTextField";
+import { useEffect } from "react";
+import NumericMask from "../../../components/numericMask";
+import { formatBRCurrency } from "../../../utils/Currency";
+import { isEmpty } from "../../../utils/Global";
 import { inputs } from "./inputs";
 
 type step2Type = {
@@ -12,20 +15,27 @@ type step2Type = {
 };
 
 function step2({ setStep, formik }: step2Type) {
-	const monthsData = {
-		janeiro: { label: "Janeiro" },
-		fevereiro: { label: "Fevereiro" },
-		marco: { label: "Março" },
-		abril: { label: "Abril" },
-		maio: { label: "Maio" },
-		junho: { label: "Junho" },
-		julho: { label: "Julho" },
-		agosto: { label: "Agosto" },
-		setembro: { label: "Setembro" },
-		outubro: { label: "Outubro" },
-		novembro: { label: "Novembro" },
-		dezembro: { label: "Dezembro" },
-	};
+	const monthsData = [
+		{ codigo: "janeiro", label: "Janeiro" },
+		{ codigo: "fevereiro", label: "Fevereiro" },
+		{ codigo: "marco", label: "Março" },
+		{ codigo: "abril", label: "Abril" },
+		{ codigo: "maio", label: "Maio" },
+		{ codigo: "junho", label: "Junho" },
+		{ codigo: "julho", label: "Julho" },
+		{ codigo: "agosto", label: "Agosto" },
+		{ codigo: "setembro", label: "Setembro" },
+		{ codigo: "outubro", label: "Outubro" },
+		{ codigo: "novembro", label: "Novembro" },
+		{ codigo: "dezembro", label: "Dezembro" },
+	];
+
+	useEffect(() => {
+		const localItem = localStorage.getItem("step2");
+		if (localItem) {
+			formik.setValues(JSON.parse(localItem));
+		}
+	}, []);
 
 	return (
 		<form onSubmit={formik.handleSubmit}>
@@ -44,77 +54,135 @@ function step2({ setStep, formik }: step2Type) {
 							<span>Empregos direto (homem)</span>
 							<span>Empregos direto (mulher)</span>
 						</div>
-						{Object.keys(monthsData).map((item) => {
+						{monthsData.map(({ codigo, label }, index) => {
 							return (
 								<>
 									<span
 										className={`${styles.col2} ${styles.monthTitle}`}
 									>
-										{/* {monthsData[item].label} */}
+										{label}
 									</span>
-									<CustomTextField
-										id={`${item}-investimento-mensal`}
+									<NumericMask
+										id={`${codigo}-investimento-mensal`}
+										name={`${codigo}-investimento-mensal`}
+										formik={formik}
+										col={3}
+										prefix="R$"
+										label=""
+										onChange={(ev: {
+											target: { value: string };
+										}) => {
+											const newInvestimentoMensal = [
+												...formik.values
+													.investimentoMensal,
+											];
+											newInvestimentoMensal[index] = {
+												codigo,
+												valor: ev.target.value,
+											};
+											formik.setFieldValue(
+												"investimentoMensal",
+												newInvestimentoMensal,
+											);
+										}}
+										required={false}
+										value={
+											formik.values.investimentoMensal[
+												index
+											].valor
+										}
+										className={`${styles.tableInput}`}
+									/>
+									<NumericMask
+										id={`${codigo}-empregos-direto-homem`}
 										formik={formik}
 										col={3}
 										label=""
-										onChange={formik.handleChange}
+										onChange={(ev: {
+											target: { value: string };
+										}) => {
+											const newEmpregosHomem = [
+												...formik.values.empregoHomem,
+											];
+											newEmpregosHomem[index] = {
+												codigo,
+												valor: ev.target.value,
+											};
+											formik.setFieldValue(
+												"empregoHomem",
+												newEmpregosHomem,
+											);
+										}}
 										required={false}
 										value={
-											// formik.values.investimentoMensal[
-											// 	item
-											// ]
-											[]
+											formik.values.empregoHomem[index]
+												.valor
 										}
-										type="number"
-										InputProps={{
-											startAdornment: (
-												<InputAdornment position="start">
-													R$
-												</InputAdornment>
-											),
-										}}
 										className={`${styles.tableInput}`}
 									/>
-									<TextField
-										id={`${item}-empregos-direto-homem`}
-										variant="outlined"
-										error={false}
-										className={`${styles.col3} ${styles.tableInput}`}
-									/>
-									<TextField
-										id={`${item}-empregos-direto-mulher`}
-										variant="outlined"
-										error={false}
-										className={`${styles.col3} ${styles.tableInput}`}
+									<NumericMask
+										id={`${codigo}-empregos-direto-mulher`}
+										formik={formik}
+										col={3}
+										label=""
+										onChange={(ev: {
+											target: { value: string };
+										}) => {
+											const newEmpregosMulher = [
+												...formik.values.empregoMulher,
+											];
+											newEmpregosMulher[index] = {
+												codigo,
+												valor: ev.target.value,
+											};
+											formik.setFieldValue(
+												"empregoMulher",
+												newEmpregosMulher,
+											);
+										}}
+										required={false}
+										value={
+											formik.values.empregoMulher[index]
+												.valor
+										}
+										className={`${styles.tableInput}`}
 									/>
 								</>
 							);
 						})}
 						<div className={styles.totals}>
 							<span className={styles.monthTitle}>
-								Investimento anual: R$00,00
+								Investimento anual:
+								{formatBRCurrency(
+									formik.values.investimentoMensal
+										.reduce(
+											(total, item) =>
+												total +
+												parseFloat(
+													!isEmpty(item?.valor)
+														? item?.valor
+														: "0",
+												),
+											0,
+										)
+										.toString(),
+									{},
+								)}
 							</span>
 							<span
 								className={`${styles.monthTitle} ${styles.totalAcumulado}`}
 							>
 								Investimento acumulado:
-								<CustomTextField
-									variant="outlined"
-									formik={formik}
+								<NumericMask
 									id="investimentoAcumulado"
-									onChange={formik.handleChange}
-									required={true}
+									formik={formik}
+									prefix="R$"
 									label=""
-									value={formik.values.investimentoAcumulado}
 									col={6}
-									type="number"
-									InputProps={{
-										startAdornment: (
-											<InputAdornment position="start">
-												R$
-											</InputAdornment>
-										),
-									}}
+									onChange={formik.handleChange}
+									required={false}
+									value={formik.values.investimentoAcumulado}
+									className={`${styles.tableInput}`}
 								/>
 							</span>
 						</div>

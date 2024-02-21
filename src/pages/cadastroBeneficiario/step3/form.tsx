@@ -1,28 +1,29 @@
-import { Button, Card, InputAdornment, TextField } from "@mui/material";
+import { Button, Card, InputAdornment, Select, TextField } from "@mui/material";
 
-import { IMonthsType } from "monthType";
+import { FormikProps } from "formik";
+import { inputs } from "./inputs";
 import styles from "./styles.module.scss";
 
 type step3Type = {
 	setStep: Function;
-	formik: {};
+	formik: FormikProps<typeof inputs>;
 };
 
-function step3({ setStep }: step3Type) {
-	const monthsData: IMonthsType = {
-		janeiro: { label: "Janeiro" },
-		fevereiro: { label: "Fevereiro" },
-		marco: { label: "Março" },
-		abril: { label: "Abril" },
-		maio: { label: "Maio" },
-		junho: { label: "Junho" },
-		julho: { label: "Julho" },
-		agosto: { label: "Agosto" },
-		setembro: { label: "Setembro" },
-		outubro: { label: "Outubro" },
-		novembro: { label: "Novembro" },
-		dezembro: { label: "Dezembro" },
-	};
+function step3({ setStep, formik }: step3Type) {
+	const monthsData = [
+		{ codigo: "janeiro", label: "Janeiro" },
+		{ codigo: "fevereiro", label: "Fevereiro" },
+		{ codigo: "marco", label: "Março" },
+		{ codigo: "abril", label: "Abril" },
+		{ codigo: "maio", label: "Maio" },
+		{ codigo: "junho", label: "Junho" },
+		{ codigo: "julho", label: "Julho" },
+		{ codigo: "agosto", label: "Agosto" },
+		{ codigo: "setembro", label: "Setembro" },
+		{ codigo: "outubro", label: "Outubro" },
+		{ codigo: "novembro", label: "Novembro" },
+		{ codigo: "dezembro", label: "Dezembro" },
+	];
 
 	return (
 		<form action="">
@@ -33,6 +34,15 @@ function step3({ setStep }: step3Type) {
 						Preencha corretamente o formulário
 					</h3>
 					<div className={styles.beneficiarioForm}>
+						<Select
+							id="incentivoFiscal"
+							name="incentivoFiscal"
+							label="Cidade"
+							placeholder="Selecione um incentivo fiscal"
+							value={formik.values.municipio}
+							onChange={formik.handleChange}
+							className="col3"
+						></Select>
 						<TextField
 							id="submodulo1"
 							label="Sub módulo 1"
@@ -62,16 +72,16 @@ function step3({ setStep }: step3Type) {
 							<span>Fundes</span>
 							<span>Funded</span>
 						</div>
-						{Object.keys(monthsData).map((item) => {
+						{monthsData.map(({ codigo, label }) => {
 							return (
 								<>
 									<span
 										className={`${styles.col4} ${styles.monthTitle}`}
 									>
-										{/* {monthsData[item].label} */}
+										{label}
 									</span>
 									<TextField
-										id={`${item}-investimento-mensal`}
+										id={`${codigo}-investimento-mensal`}
 										variant="outlined"
 										required
 										error={false}
@@ -86,7 +96,7 @@ function step3({ setStep }: step3Type) {
 										className={`${styles.col4} ${styles.tableInput}`}
 									/>
 									<TextField
-										id={`${item}-empregos-direto-homem`}
+										id={`${codigo}-empregos-direto-homem`}
 										variant="outlined"
 										required
 										error={false}

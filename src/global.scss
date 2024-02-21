@@ -88,3 +88,10 @@ table {
     font-size: 13px;
     margin-left: 10px;
 }
+
+.iconButton{
+    color: $primary-color;
+    &:hover{
+        cursor: pointer;
+    }
+}

@@ -1,17 +1,6 @@
 import { TextField } from "@mui/material";
-import { FormikProps } from "formik";
+import { CustomTextFieldProps } from "customTexteFieldProps";
 import styles from "./customTextField.module.scss";
-
-type CustomTextFieldProps = {
-	id: string;
-	label: string | undefined;
-	value: any;
-	formik: FormikProps<any>;
-	onChange: Function;
-	required: boolean | undefined;
-	col: number;
-	[key: string]: any;
-};
 
 export default function CustomTextField({
 	id,
@@ -31,7 +20,11 @@ export default function CustomTextField({
 				label={label}
 				error={!!error}
 				value={formik.values[id]}
-				onChange={formik.handleChange}
+				onChange={(ev) =>
+					typeof onChange === "function"
+						? onChange(ev)
+						: formik.handleChange(ev)
+				}
 				required={required}
 				variant="outlined"
 				className="col12"
