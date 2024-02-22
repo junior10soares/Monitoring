@@ -1,13 +1,12 @@
 import { Button, Card } from "@mui/material";
-
-import styles from "./styles.module.scss";
-
 import { FormikProps } from "formik";
 import { useEffect } from "react";
 import NumericMask from "../../../components/numericMask";
 import { formatBRCurrency } from "../../../utils/Currency";
+import { monthsData } from "../../../utils/DateTime";
 import { isEmpty } from "../../../utils/Global";
 import { inputs } from "./inputs";
+import styles from "./styles.module.scss";
 
 type step2Type = {
 	setStep: Function;
@@ -15,21 +14,6 @@ type step2Type = {
 };
 
 function step2({ setStep, formik }: step2Type) {
-	const monthsData = [
-		{ codigo: "janeiro", label: "Janeiro" },
-		{ codigo: "fevereiro", label: "Fevereiro" },
-		{ codigo: "marco", label: "Março" },
-		{ codigo: "abril", label: "Abril" },
-		{ codigo: "maio", label: "Maio" },
-		{ codigo: "junho", label: "Junho" },
-		{ codigo: "julho", label: "Julho" },
-		{ codigo: "agosto", label: "Agosto" },
-		{ codigo: "setembro", label: "Setembro" },
-		{ codigo: "outubro", label: "Outubro" },
-		{ codigo: "novembro", label: "Novembro" },
-		{ codigo: "dezembro", label: "Dezembro" },
-	];
-
 	useEffect(() => {
 		const localItem = localStorage.getItem("step2");
 		if (localItem) {
@@ -46,7 +30,9 @@ function step2({ setStep, formik }: step2Type) {
 						Preencha corretamente o formulário
 					</h3>
 					<h3 className={styles.yearTitle}>Ano de referência</h3>
-					<h3 className={styles.year}>2023</h3>
+					<h3 className={styles.year}>
+						{new Date().getFullYear() - 1}
+					</h3>
 					<div className={styles.beneficiarioForm}>
 						<div className={styles.monthsTitle}>
 							<span>Mês referência</span>
@@ -154,19 +140,16 @@ function step2({ setStep, formik }: step2Type) {
 							<span className={styles.monthTitle}>
 								Investimento anual:
 								{formatBRCurrency(
-									formik.values.investimentoMensal
-										.reduce(
-											(total, item) =>
-												total +
-												parseFloat(
-													!isEmpty(item?.valor)
-														? item?.valor
-														: "0",
-												),
-											0,
-										)
-										.toString(),
-									{},
+									formik.values.investimentoMensal.reduce(
+										(total, item) =>
+											total +
+											parseFloat(
+												!isEmpty(item?.valor)
+													? item?.valor
+													: "0",
+											),
+										0,
+									),
 								)}
 							</span>
 							<span
@@ -175,6 +158,7 @@ function step2({ setStep, formik }: step2Type) {
 								Investimento acumulado:
 								<NumericMask
 									id="investimentoAcumulado"
+									name="investimentoAcumulado"
 									formik={formik}
 									prefix="R$"
 									label=""

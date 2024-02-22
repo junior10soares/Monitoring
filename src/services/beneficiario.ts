@@ -5,4 +5,6 @@ async function getAllBeneficiarios() {
 	return res.data;
 }
 
+async function insertBeneficiario() {}
+
 export { getAllBeneficiarios };

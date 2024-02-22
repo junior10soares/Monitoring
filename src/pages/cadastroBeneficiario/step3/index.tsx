@@ -1,19 +1,21 @@
 import { Formik } from "formik";
 import { stepType } from "stepsType";
 import Form from "./form";
+import { inputs } from "./inputs";
 
 export default function ({ setStep }: stepType) {
 	return (
 		<Formik
-			initialValues={{ email: "", password: "" }}
+			initialValues={inputs}
 			validate={(_values) => {
 				const errors = {};
 				return errors;
 			}}
 			onSubmit={(values, { setSubmitting }) => {
+				localStorage.setItem("step3", JSON.stringify(values));
 				setTimeout(() => {
-					alert(JSON.stringify(values, null, 2));
 					setSubmitting(false);
+					setStep(4);
 				}, 400);
 			}}
 		>

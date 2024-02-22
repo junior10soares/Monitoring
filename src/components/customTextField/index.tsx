@@ -19,7 +19,7 @@ export default function CustomTextField({
 				id={id}
 				label={label}
 				error={!!error}
-				value={formik.values[id]}
+				value={value ?? formik.values[id]}
 				onChange={(ev) =>
 					typeof onChange === "function"
 						? onChange(ev)
