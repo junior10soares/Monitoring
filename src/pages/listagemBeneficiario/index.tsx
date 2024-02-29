@@ -11,11 +11,16 @@ import styles from "./styles.module.scss";
 function listagemBeneficiario() {
 	const [rows, setRows] = useState([]);
 	const columns: GridColDef[] = [
-		{ field: "id", headerName: "ID", width: 70 },
+		{ field: "id", headerName: "ID", width: 100 },
 		{
 			field: "nomeOuRazaoSocial",
 			headerName: "Nome ou Razão social",
-			width: 350,
+			width:
+				window.innerWidth <= 1400
+					? 300
+					: window.innerWidth <= 1770
+					? 500
+					: 700,
 		},
 		{ field: "cpfOuCnpj", headerName: "CPF/CNPJ", width: 300 },
 		{

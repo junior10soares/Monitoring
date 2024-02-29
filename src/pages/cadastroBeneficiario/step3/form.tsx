@@ -10,6 +10,7 @@ import { FormikProps } from "formik";
 import { IFundo } from "fundo";
 import { IIncentivoFiscal } from "incentivoFiscal";
 import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { ISubmodulo } from "submodulo";
 import { IValorFundo } from "valorFundo";
 import NumericMask from "../../../components/numericMask";
@@ -30,14 +31,17 @@ function step3({ setStep, formik }: step3Type) {
 		IIncentivoFiscal[]
 	>([]);
 	const [submodulos, setSubmodulos] = useState<ISubmodulo[]>([]);
+	const { pathname } = useLocation();
+	const isView = pathname?.includes("/view");
 
 	useEffect(() => {
 		loadData();
 		(async function fetch() {
+			const step1 = JSON.parse(localStorage.getItem("step1") ?? "");
 			const incentivos = await getAllIncentivosFiscais();
 			setIncentivosFiscais(incentivos);
 			const submds = await getAllSubmodulosByInscricaoEstadual(
-				"137616066",
+				step1.inscricaoEstadual,
 			);
 			setSubmodulos(submds);
 		})();
@@ -51,11 +55,11 @@ function step3({ setStep, formik }: step3Type) {
 	}
 
 	const total = useMemo(() => {
-		return formik.values.valoresFundo.reduce(
+		return formik.values.valoresFundo?.reduce(
 			(totalFundo, item: IValorFundo) =>
 				totalFundo +
 				parseFloat(
-					Object.values(item).reduce(
+					Object.values(item)?.reduce(
 						(totalItem, itemValue) =>
 							totalItem +
 							parseFloat(
@@ -90,8 +94,9 @@ function step3({ setStep, formik }: step3Type) {
 								label="Incentivo Fiscal"
 								labelId="id"
 								placeholder="Selecione um incentivo"
-								value={formik.values.incentivoFiscal.id}
+								value={formik.values.incentivoFiscal?.id}
 								fullWidth
+								disabled={isView}
 								onChange={(e) =>
 									formik.setFieldValue(
 										e.target.name,
@@ -129,8 +134,9 @@ function step3({ setStep, formik }: step3Type) {
 								label="Submódulo"
 								labelId="submodulo"
 								placeholder="Selecione um Submodulo"
-								value={formik.values.submodulo}
+								value={formik.values?.submodulo}
 								fullWidth
+								disabled={isView}
 								onChange={formik.handleChange}
 							>
 								{submodulos.map(
@@ -162,7 +168,8 @@ function step3({ setStep, formik }: step3Type) {
 							col={6}
 							onChange={formik.handleChange}
 							required={false}
-							value={formik.values.vendaAnualInterna}
+							disabled={isView}
+							value={formik.values?.vendaAnualInterna ?? ""}
 							className={`${styles.tableInput}`}
 						/>
 						<NumericMask
@@ -174,7 +181,8 @@ function step3({ setStep, formik }: step3Type) {
 							col={6}
 							onChange={formik.handleChange}
 							required={false}
-							value={formik.values.vendaAnualInterestadual}
+							disabled={isView}
+							value={formik.values?.vendaAnualInterestadual ?? ""}
 							className={`${styles.tableInput}`}
 						/>
 						{formik?.values?.incentivoFiscal?.fundos?.length >
@@ -203,6 +211,7 @@ function step3({ setStep, formik }: step3Type) {
 															id={`${sigla}-valor`}
 															name={`${sigla}-valor`}
 															formik={formik}
+															disabled={isView}
 															col={Math.ceil(
 																8 /
 																	formik

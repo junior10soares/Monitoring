@@ -1,13 +1,16 @@
 import { Alert } from "@mui/material";
 import { Formik } from "formik";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { stepType } from "stepsType";
+import { insertBeneficiario } from "../../../services/beneficiario";
 import Form from "./form";
 import { inputs } from "./inputs";
 import styles from "./styles.module.scss";
 
 export default function ({ setStep }: stepType) {
 	const [show, setShow] = useState(false);
+	const navigate = useNavigate();
 	return (
 		<>
 			{show && (
@@ -25,12 +28,36 @@ export default function ({ setStep }: stepType) {
 					const errors = {};
 					return errors;
 				}}
-				onSubmit={(values, { setSubmitting }) => {
-					setShow(true);
-					setTimeout(() => {
-						setSubmitting(false);
-						setShow(false);
-					}, 2000);
+				onSubmit={async (values, { setSubmitting }) => {
+					const step1 = JSON.parse(
+						localStorage.getItem("step1") ?? "",
+					);
+					const step2 = JSON.parse(
+						localStorage.getItem("step2") ?? "",
+					);
+					const step3 = JSON.parse(
+						localStorage.getItem("step3") ?? "",
+					);
+					const step4 = JSON.parse(
+						localStorage.getItem("step4") ?? "",
+					);
+					const res = await insertBeneficiario({
+						...step1,
+						...step2,
+						...step3,
+						...step4,
+					});
+					if (res.success) {
+						setShow(true);
+						for (let index = 0; index < 5; index++) {
+							localStorage.removeItem(`step${index + 1}`);
+						}
+						setTimeout(() => {
+							setSubmitting(false);
+							setShow(false);
+							navigate("/beneficiario");
+						}, 1000);
+					}
 				}}
 			>
 				{(formik) => <Form setStep={setStep} formik={formik} />}

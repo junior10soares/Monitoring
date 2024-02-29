@@ -22,6 +22,7 @@ const InputCustomMask = forwardRef<HTMLInputElement, CustomProps>(
 				onAccept={(value: any) =>
 					onChange({ target: { name: name, value } })
 				}
+				unmask
 				inputRef={ref}
 				overwrite
 			/>
@@ -47,7 +48,9 @@ export default function InputMask({
 	return (
 		<div className={`col${col} ${styles.customTextFieldContainer}`}>
 			<FormControl fullWidth variant="outlined">
-				<InputLabel htmlFor={id}>{label}</InputLabel>
+				<InputLabel required={required} htmlFor={id}>
+					{label}
+				</InputLabel>
 				<OutlinedInput
 					value={value ?? formik.values[id]}
 					onChange={(ev) => {
@@ -55,6 +58,7 @@ export default function InputMask({
 							? onChange(ev)
 							: formik.handleChange(ev);
 					}}
+					error={!!error}
 					fullWidth
 					name={id}
 					label={label}
@@ -66,7 +70,9 @@ export default function InputMask({
 					inputComponent={InputCustomMask as any}
 					{...rest}
 				/>
-				{!!formik.errors[id] && <span>{error}</span>}
+				{!!formik.errors[id] && (
+					<span className={styles.error}>{error}</span>
+				)}
 			</FormControl>
 		</div>
 	);

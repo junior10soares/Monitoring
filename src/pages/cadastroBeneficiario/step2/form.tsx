@@ -1,6 +1,7 @@
 import { Button, Card } from "@mui/material";
 import { FormikProps } from "formik";
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import NumericMask from "../../../components/numericMask";
 import { formatBRCurrency } from "../../../utils/Currency";
 import { monthsData } from "../../../utils/DateTime";
@@ -14,6 +15,9 @@ type step2Type = {
 };
 
 function step2({ setStep, formik }: step2Type) {
+	const { pathname } = useLocation();
+	const isView = pathname?.includes("/view");
+
 	useEffect(() => {
 		const localItem = localStorage.getItem("step2");
 		if (localItem) {
@@ -31,7 +35,8 @@ function step2({ setStep, formik }: step2Type) {
 					</h3>
 					<h3 className={styles.yearTitle}>Ano de referência</h3>
 					<h3 className={styles.year}>
-						{new Date().getFullYear() - 1}
+						{formik.values.anoReferencia ??
+							new Date().getFullYear() - 1}
 					</h3>
 					<div className={styles.beneficiarioForm}>
 						<div className={styles.monthsTitle}>
@@ -55,6 +60,7 @@ function step2({ setStep, formik }: step2Type) {
 										col={3}
 										prefix="R$"
 										label=""
+										disabled={isView}
 										onChange={(ev: {
 											target: { value: string };
 										}) => {
@@ -73,9 +79,9 @@ function step2({ setStep, formik }: step2Type) {
 										}}
 										required={false}
 										value={
-											formik.values.investimentoMensal[
+											formik.values.investimentoMensal?.[
 												index
-											].valor
+											]?.valor
 										}
 										className={`${styles.tableInput}`}
 									/>
@@ -84,6 +90,7 @@ function step2({ setStep, formik }: step2Type) {
 										formik={formik}
 										col={3}
 										label=""
+										disabled={isView}
 										onChange={(ev: {
 											target: { value: string };
 										}) => {
@@ -101,8 +108,8 @@ function step2({ setStep, formik }: step2Type) {
 										}}
 										required={false}
 										value={
-											formik.values.empregoHomem[index]
-												.valor
+											formik.values.empregoHomem?.[index]
+												?.valor
 										}
 										className={`${styles.tableInput}`}
 									/>
@@ -111,6 +118,7 @@ function step2({ setStep, formik }: step2Type) {
 										formik={formik}
 										col={3}
 										label=""
+										disabled={isView}
 										onChange={(ev: {
 											target: { value: string };
 										}) => {
@@ -128,8 +136,8 @@ function step2({ setStep, formik }: step2Type) {
 										}}
 										required={false}
 										value={
-											formik.values.empregoMulher[index]
-												.valor
+											formik.values.empregoMulher?.[index]
+												?.valor
 										}
 										className={`${styles.tableInput}`}
 									/>
@@ -140,16 +148,20 @@ function step2({ setStep, formik }: step2Type) {
 							<span className={styles.monthTitle}>
 								Investimento anual:
 								{formatBRCurrency(
-									formik.values.investimentoMensal.reduce(
-										(total, item) =>
-											total +
-											parseFloat(
-												!isEmpty(item?.valor)
-													? item?.valor
-													: "0",
-											),
-										0,
-									),
+									Array.isArray(
+										formik.values?.investimentoMensal,
+									)
+										? formik.values?.investimentoMensal?.reduce(
+												(total, item) =>
+													total +
+													parseFloat(
+														!isEmpty(item?.valor)
+															? item?.valor
+															: "0",
+													),
+												0,
+										  )
+										: 0,
 								)}
 							</span>
 							<span
@@ -162,6 +174,7 @@ function step2({ setStep, formik }: step2Type) {
 									formik={formik}
 									prefix="R$"
 									label=""
+									disabled={isView}
 									col={6}
 									onChange={formik.handleChange}
 									required={false}

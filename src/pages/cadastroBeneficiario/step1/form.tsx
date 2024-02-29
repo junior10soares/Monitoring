@@ -17,8 +17,10 @@ import { ICnae } from "cnaeType";
 import { FormikProps } from "formik";
 import { Imunicipio } from "municipioType";
 import { useEffect, useMemo, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import CustomTextField from "../../../components/customTextField";
 import InputMask from "../../../components/inputMask";
+import { getBeneficiarioById } from "../../../services/beneficiario";
 import { getAllCnaes } from "../../../services/cnaeService";
 import { getAllMunicipios } from "../../../services/municipioService";
 import { inputs } from "./inputs";
@@ -30,27 +32,234 @@ type step1Type = {
 };
 
 function step1({ formik }: step1Type) {
+	const params = useParams();
 	const [cnaesList, setCnaesList] = useState([
 		{ id: 0, codigo: "", descricao: "" },
 	]);
 	const [municipios, setMunicipios] = useState([]);
+	const { pathname } = useLocation();
+	const isView = pathname?.includes("/view");
 
 	useEffect(() => {
-		const localItem = localStorage.getItem("step1");
-		if (localItem) {
-			formik.setValues(JSON.parse(localItem));
+		fillCombos();
+		if (params.id) {
+			fetchApi();
+		} else {
+			const localItem = localStorage.getItem("step1");
+			if (localItem) {
+				formik.setValues(JSON.parse(localItem));
+			}
 		}
 	}, []);
 
-	useEffect(() => {
-		async function fetch() {
-			const list = await getAllCnaes();
-			const municipiorsList = await getAllMunicipios();
-			setCnaesList(list);
-			setMunicipios(municipiorsList);
+	async function fetchApi() {
+		if (params.id) {
+			var beneficiario = await getBeneficiarioById(parseInt(params.id));
+			beneficiario.cnaes = beneficiario.cnaes.map((i) => i.cnae.id);
+			beneficiario.municipio = beneficiario.municipio.id;
+			const dadosEconomicos = {
+				...beneficiario.dadosEconomicos,
+				investimentoMensal: [
+					{
+						codigo: "janeiroValor",
+						valor: beneficiario.dadosEconomicos.investimentoMensal
+							.janeiroValor,
+					},
+					{
+						codigo: "fevereiroValor",
+						valor: beneficiario.dadosEconomicos.investimentoMensal
+							.fevereiroValor,
+					},
+					{
+						codigo: "marcoValor",
+						valor: beneficiario.dadosEconomicos.investimentoMensal
+							.marcoValor,
+					},
+					{
+						codigo: "abrilValor",
+						valor: beneficiario.dadosEconomicos.investimentoMensal
+							.abrilValor,
+					},
+					{
+						codigo: "maioValor",
+						valor: beneficiario.dadosEconomicos.investimentoMensal
+							.maioValor,
+					},
+					{
+						codigo: "junhoValor",
+						valor: beneficiario.dadosEconomicos.investimentoMensal
+							.junhoValor,
+					},
+					{
+						codigo: "julhoValor",
+						valor: beneficiario.dadosEconomicos.investimentoMensal
+							.julhoValor,
+					},
+					{
+						codigo: "agostoValor",
+						valor: beneficiario.dadosEconomicos.investimentoMensal
+							.agostoValor,
+					},
+					{
+						codigo: "setembroValor",
+						valor: beneficiario.dadosEconomicos.investimentoMensal
+							.setembroValor,
+					},
+					{
+						codigo: "outubroValor",
+						valor: beneficiario.dadosEconomicos.investimentoMensal
+							.outubroValor,
+					},
+					{
+						codigo: "novembroValor",
+						valor: beneficiario.dadosEconomicos.investimentoMensal
+							.novembroValor,
+					},
+					{
+						codigo: "dezembroValor",
+						valor: beneficiario.dadosEconomicos.investimentoMensal
+							.dezembroValor,
+					},
+				],
+				empregoHomem: [
+					{
+						codigo: "janeiroValor",
+						valor: beneficiario.dadosEconomicos.empregoHomem
+							.janeiroValor,
+					},
+					{
+						codigo: "fevereiroValor",
+						valor: beneficiario.dadosEconomicos.empregoHomem
+							.fevereiroValor,
+					},
+					{
+						codigo: "marcoValor",
+						valor: beneficiario.dadosEconomicos.empregoHomem
+							.marcoValor,
+					},
+					{
+						codigo: "abrilValor",
+						valor: beneficiario.dadosEconomicos.empregoHomem
+							.abrilValor,
+					},
+					{
+						codigo: "maioValor",
+						valor: beneficiario.dadosEconomicos.empregoHomem
+							.maioValor,
+					},
+					{
+						codigo: "junhoValor",
+						valor: beneficiario.dadosEconomicos.empregoHomem
+							.junhoValor,
+					},
+					{
+						codigo: "julhoValor",
+						valor: beneficiario.dadosEconomicos.empregoHomem
+							.julhoValor,
+					},
+					{
+						codigo: "agostoValor",
+						valor: beneficiario.dadosEconomicos.empregoHomem
+							.agostoValor,
+					},
+					{
+						codigo: "setembroValor",
+						valor: beneficiario.dadosEconomicos.empregoHomem
+							.setembroValor,
+					},
+					{
+						codigo: "outubroValor",
+						valor: beneficiario.dadosEconomicos.empregoHomem
+							.outubroValor,
+					},
+					{
+						codigo: "novembroValor",
+						valor: beneficiario.dadosEconomicos.empregoHomem
+							.novembroValor,
+					},
+					{
+						codigo: "dezembroValor",
+						valor: beneficiario.dadosEconomicos.empregoHomem
+							.dezembroValor,
+					},
+				],
+				empregoMulher: [
+					{
+						codigo: "janeiroValor",
+						valor: beneficiario.dadosEconomicos.empregoMulher
+							.janeiroValor,
+					},
+					{
+						codigo: "fevereiroValor",
+						valor: beneficiario.dadosEconomicos.empregoMulher
+							.fevereiroValor,
+					},
+					{
+						codigo: "marcoValor",
+						valor: beneficiario.dadosEconomicos.empregoMulher
+							.marcoValor,
+					},
+					{
+						codigo: "abrilValor",
+						valor: beneficiario.dadosEconomicos.empregoMulher
+							.abrilValor,
+					},
+					{
+						codigo: "maioValor",
+						valor: beneficiario.dadosEconomicos.empregoMulher
+							.maioValor,
+					},
+					{
+						codigo: "junhoValor",
+						valor: beneficiario.dadosEconomicos.empregoMulher
+							.junhoValor,
+					},
+					{
+						codigo: "julhoValor",
+						valor: beneficiario.dadosEconomicos.empregoMulher
+							.julhoValor,
+					},
+					{
+						codigo: "agostoValor",
+						valor: beneficiario.dadosEconomicos.empregoMulher
+							.agostoValor,
+					},
+					{
+						codigo: "setembroValor",
+						valor: beneficiario.dadosEconomicos.empregoMulher
+							.setembroValor,
+					},
+					{
+						codigo: "outubroValor",
+						valor: beneficiario.dadosEconomicos.empregoMulher
+							.outubroValor,
+					},
+					{
+						codigo: "novembroValor",
+						valor: beneficiario.dadosEconomicos.empregoMulher
+							.novembroValor,
+					},
+					{
+						codigo: "dezembroValor",
+						valor: beneficiario.dadosEconomicos.empregoMulher
+							.dezembroValor,
+					},
+				],
+			};
+			formik.setValues(beneficiario);
+			localStorage.setItem("step1", JSON.stringify(beneficiario));
+			localStorage.setItem("step2", JSON.stringify(dadosEconomicos));
+			localStorage.setItem("step3", JSON.stringify(beneficiario));
+			localStorage.setItem("step4", JSON.stringify(beneficiario));
 		}
-		fetch();
-	}, []);
+	}
+
+	async function fillCombos() {
+		const list = await getAllCnaes();
+		const municipiorsList = await getAllMunicipios();
+		setCnaesList(list);
+		setMunicipios(municipiorsList);
+	}
 
 	const selectedCnaes = useMemo(() => {
 		const newList: ICnae[] = cnaesList.filter((v: ICnae) =>
@@ -80,6 +289,7 @@ function step1({ formik }: step1Type) {
 							col={6}
 							value={formik.values.nomeOuRazaoSocial}
 							required
+							disabled={isView}
 						/>
 						<CustomTextField
 							id="email"
@@ -89,6 +299,7 @@ function step1({ formik }: step1Type) {
 							type="email"
 							required
 							value={formik.values.email}
+							disabled={isView}
 						/>
 						<CustomTextField
 							id="nomeFantasia"
@@ -97,6 +308,7 @@ function step1({ formik }: step1Type) {
 							col={6}
 							formik={formik}
 							value={formik.values.nomeFantasia}
+							disabled={isView}
 						/>
 						<InputMask
 							id="telefoneEmpresa"
@@ -110,6 +322,7 @@ function step1({ formik }: step1Type) {
 							value={formik.values.telefoneEmpresa}
 							required
 							onChange={formik.handleChange}
+							disabled={isView}
 						/>
 						<InputMask
 							id="telefoneContabilidade"
@@ -123,6 +336,7 @@ function step1({ formik }: step1Type) {
 							value={formik.values.telefoneContabilidade}
 							required
 							onChange={formik.handleChange}
+							disabled={isView}
 						/>
 						<CustomTextField
 							id="inscricaoEstadual"
@@ -131,6 +345,7 @@ function step1({ formik }: step1Type) {
 							formik={formik}
 							col={3}
 							value={formik.values.inscricaoEstadual}
+							disabled={isView}
 						/>
 						<InputMask
 							id="cpfOuCnpj"
@@ -144,6 +359,7 @@ function step1({ formik }: step1Type) {
 							value={formik.values.cpfOuCnpj}
 							required
 							onChange={formik.handleChange}
+							disabled={isView}
 						/>
 						<CustomTextField
 							id="nomeAdministrador"
@@ -152,6 +368,7 @@ function step1({ formik }: step1Type) {
 							col={6}
 							formik={formik}
 							value={formik.values.nomeAdministrador}
+							disabled={isView}
 						/>
 						<FormControl className="col3">
 							<InputLabel required id="municipio">
@@ -166,6 +383,7 @@ function step1({ formik }: step1Type) {
 								value={formik.values.municipio}
 								fullWidth
 								onChange={formik.handleChange}
+								disabled={isView}
 							>
 								{municipios.map(
 									({ id, nome }: Imunicipio, index) => {
@@ -185,6 +403,7 @@ function step1({ formik }: step1Type) {
 							col={3}
 							formik={formik}
 							value={formik.values.porte}
+							disabled={isView}
 						/>
 						<InputMask
 							id="telefoneAdministrador"
@@ -198,6 +417,7 @@ function step1({ formik }: step1Type) {
 							value={formik.values.telefoneAdministrador}
 							required
 							onChange={formik.handleChange}
+							disabled={isView}
 						/>
 						<CustomTextField
 							id="ramoAtividade"
@@ -206,6 +426,7 @@ function step1({ formik }: step1Type) {
 							col={6}
 							formik={formik}
 							value={formik.values.ramoAtividade}
+							disabled={isView}
 						/>
 						<InputLabel className="col12" id="cnae-display-name">
 							CNAE
@@ -222,6 +443,7 @@ function step1({ formik }: step1Type) {
 								`${option.codigo} - ${option.descricao}`
 							}
 							value={selectedCnaes}
+							disabled={isView}
 							renderOption={(props, option) => (
 								<li {...props}>
 									<Checkbox
@@ -265,6 +487,7 @@ function step1({ formik }: step1Type) {
 							col={12}
 							formik={formik}
 							value={formik.values.descricao}
+							disabled={isView}
 						/>
 					</div>
 				</Card>
@@ -291,6 +514,7 @@ function step1({ formik }: step1Type) {
 											formik.values.telefones[index]
 												.titulo
 										}
+										disabled={isView}
 										onChange={(ev) => {
 											let newPhones =
 												formik.values.telefones;
@@ -311,6 +535,7 @@ function step1({ formik }: step1Type) {
 										definitions={{
 											"#": /[1-9]/,
 										}}
+										disabled={isView}
 										value={
 											formik.values.telefones[index]
 												.telefone
@@ -330,21 +555,23 @@ function step1({ formik }: step1Type) {
 							);
 						})}
 					</div>
-					<Button
-						type="button"
-						variant="contained"
-						className={styles.primaryButton}
-						onClick={(ev) => {
-							ev.preventDefault();
-							formik.setFieldValue("telefones", [
-								...formik.values.telefones,
-								{ titulo: "", telefone: "" },
-							]);
-						}}
-					>
-						<AddIcon />
-						Novo Telefone
-					</Button>
+					{!isView && (
+						<Button
+							type="button"
+							variant="contained"
+							className={styles.primaryButton}
+							onClick={(ev) => {
+								ev.preventDefault();
+								formik.setFieldValue("telefones", [
+									...formik.values.telefones,
+									{ titulo: "", telefone: "" },
+								]);
+							}}
+						>
+							<AddIcon />
+							Novo Telefone
+						</Button>
+					)}
 				</Card>
 				<div className={`${styles.col12} ${styles.buttonsRigth}`}>
 					<Button

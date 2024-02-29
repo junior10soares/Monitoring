@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { FormikProps } from "formik";
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import CustomTextField from "../../../components/customTextField";
 import NumericMask from "../../../components/numericMask";
 import { getAllNcms } from "../../../services/ncmService";
@@ -23,6 +24,8 @@ type step4Type = {
 
 function step4({ setStep, formik }: step4Type) {
 	const [ncms, setNcms] = useState([]);
+	const { pathname } = useLocation();
+	const isView = pathname?.includes("/view");
 
 	useEffect(() => {
 		loadData();
@@ -63,7 +66,7 @@ function step4({ setStep, formik }: step4Type) {
 								Quant. Interestadual
 							</span>
 						</div>
-						{Object.keys(formik.values.infoVendas).map(
+						{Object.keys(formik.values?.infoVendas ?? {})?.map(
 							(item, index) => (
 								<>
 									<Autocomplete
@@ -197,25 +200,27 @@ function step4({ setStep, formik }: step4Type) {
 								</>
 							),
 						)}
-						<Button
-							type="button"
-							variant="contained"
-							className={styles.primaryButton}
-							onClick={() => {
-								var lines = formik.values.infoVendas;
-								lines.push({
-									ncm: null,
-									produtoIncentivado: "",
-									quantidadeInterestadual: "",
-									quantidadeInterna: "",
-									unidadeMedida: "",
-								});
-								formik.setFieldValue("infoVendas", lines);
-							}}
-						>
-							<AddIcon />
-							Adicionar linhas e colunas
-						</Button>
+						{!isView && (
+							<Button
+								type="button"
+								variant="contained"
+								className={styles.primaryButton}
+								onClick={() => {
+									var lines = formik.values.infoVendas;
+									lines.push({
+										ncm: null,
+										produtoIncentivado: "",
+										quantidadeInterestadual: "",
+										quantidadeInterna: "",
+										unidadeMedida: "",
+									});
+									formik.setFieldValue("infoVendas", lines);
+								}}
+							>
+								<AddIcon />
+								Adicionar linhas e colunas
+							</Button>
+						)}
 					</div>
 				</Card>
 
