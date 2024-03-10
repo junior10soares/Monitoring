@@ -1,9 +1,10 @@
-import { Box, CircularProgress } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "../../components/sidebar";
 import { getToken } from "../../services/mtiAuth";
 import { isEmpty } from "../../utils/Global";
+import styles from "./rootpage.module.scss";
 
 function Root() {
 	const [isLoading, setIsLoading] = useState(false);
@@ -55,9 +56,21 @@ function Root() {
 			)}
 			<Sidebar />
 			{isEmpty(token) ? (
-				<a href="https://dev.login.mt.gov.br/auth/realms/mt-realm/protocol/openid-connect/auth?client_id=projeto-template-integracao&redirect_uri=http://localhost:3000&response_type=code">
-					sign in
-				</a>
+				<div className={styles.loginDiv}>
+					<h1>Você está deslogado, faça o login para prosseguir!</h1>
+					<Button
+						className={styles.loginBtn}
+						type="button"
+						variant="contained"
+					>
+						<a
+							className={styles.loginButton}
+							href="https://dev.login.mt.gov.br/auth/realms/mt-realm/protocol/openid-connect/auth?client_id=projeto-template-integracao&redirect_uri=http://localhost:3000&response_type=code"
+						>
+							Entrar
+						</a>
+					</Button>
+				</div>
 			) : (
 				<Outlet context={[isLoading, setIsLoading]} />
 			)}
