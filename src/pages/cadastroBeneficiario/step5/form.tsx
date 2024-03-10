@@ -26,7 +26,6 @@ type step5Type = {
 
 function step5({ setStep, formik }: step5Type) {
 	const [ncms, setNcms] = useState([]);
-
 	useEffect(() => {
 		loadData();
 		(async function fetch() {

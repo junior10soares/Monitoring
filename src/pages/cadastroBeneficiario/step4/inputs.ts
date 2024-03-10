@@ -7,12 +7,5 @@ export const inputs = {
 			quantidadeInterna: "",
 			unidadeMedida: "",
 		},
-		{
-			ncm: null,
-			produtoIncentivado: "",
-			quantidadeInterestadual: "",
-			quantidadeInterna: "",
-			unidadeMedida: "",
-		},
 	],
 };

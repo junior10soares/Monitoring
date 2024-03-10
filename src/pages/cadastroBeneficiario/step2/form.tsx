@@ -60,6 +60,7 @@ function step2({ setStep, formik }: step2Type) {
 										col={3}
 										prefix="R$"
 										label=""
+										fixedDecimalScale
 										disabled={isView}
 										onChange={(ev: {
 											target: { value: string };
@@ -174,10 +175,11 @@ function step2({ setStep, formik }: step2Type) {
 									formik={formik}
 									prefix="R$"
 									label=""
+									fixedDecimalScale
 									disabled={isView}
 									col={6}
 									onChange={formik.handleChange}
-									required={false}
+									required={true}
 									value={formik.values.investimentoAcumulado}
 									className={`${styles.tableInput}`}
 								/>

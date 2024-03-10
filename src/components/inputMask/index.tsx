@@ -19,9 +19,9 @@ const InputCustomMask = forwardRef<HTMLInputElement, CustomProps>(
 				{...other}
 				mask={mascara}
 				definitions={definitions}
-				onAccept={(value: any) =>
-					onChange({ target: { name: name, value } })
-				}
+				onAccept={(value: any) => {
+					onChange({ target: { name: name, value } });
+				}}
 				unmask
 				inputRef={ref}
 				overwrite

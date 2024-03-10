@@ -1,18 +1,13 @@
 import AddIcon from "@mui/icons-material/Add";
-import {
-	Autocomplete,
-	Button,
-	Card,
-	MenuItem,
-	Select,
-	TextField,
-} from "@mui/material";
+import RemoveIcon from "@mui/icons-material/DeleteOutline";
+import { Autocomplete, Button, Card, TextField } from "@mui/material";
 import { FormikProps } from "formik";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useOutletContext } from "react-router-dom";
 import CustomTextField from "../../../components/customTextField";
 import NumericMask from "../../../components/numericMask";
 import { getAllNcms } from "../../../services/ncmService";
+import { Messages } from "../../../utils/Messages";
 import { unidadesDeMedida } from "../../../utils/Unm";
 import { inputs } from "./inputs";
 import styles from "./styles.module.scss";
@@ -25,13 +20,16 @@ type step4Type = {
 function step4({ setStep, formik }: step4Type) {
 	const [ncms, setNcms] = useState([]);
 	const { pathname } = useLocation();
+	const [isLoading, setIsLoading] = useOutletContext();
 	const isView = pathname?.includes("/view");
 
 	useEffect(() => {
 		loadData();
 		(async function fetch() {
+			setIsLoading(true);
 			const list = await getAllNcms();
 			setNcms(list);
+			setIsLoading(false);
 		})();
 	}, []);
 
@@ -39,6 +37,32 @@ function step4({ setStep, formik }: step4Type) {
 		const localItem = localStorage.getItem("step4");
 		if (localItem) {
 			formik.setValues(JSON.parse(localItem));
+		}
+	}
+
+	function addLinha() {
+		var lines = formik.values.infoVendas;
+		const lastLinha = lines.slice(-1)[0];
+		if (
+			!lastLinha.ncm ||
+			!lastLinha.produtoIncentivado ||
+			!lastLinha.quantidadeInterestadual ||
+			!lastLinha.quantidadeInterna ||
+			!lastLinha.unidadeMedida
+		) {
+			formik.setFieldError(
+				"infoVendas",
+				Messages.form.lastElementIsEmpty,
+			);
+		} else {
+			lines.push({
+				ncm: null,
+				produtoIncentivado: "",
+				quantidadeInterestadual: "",
+				quantidadeInterna: "",
+				unidadeMedida: "",
+			});
+			formik.setFieldValue("infoVendas", lines);
 		}
 	}
 
@@ -73,8 +97,13 @@ function step4({ setStep, formik }: step4Type) {
 										id="ncm"
 										options={ncms}
 										disableListWrap
-										className={styles.col3}
+										className={styles.col2}
 										placeholder="Selecione um NCM"
+										disabled={isView}
+										groupBy={(option) => option.father}
+										getOptionDisabled={(option) =>
+											option.disabled
+										}
 										disableCloseOnSelect
 										getOptionLabel={(option) =>
 											`${option.codigo} - ${option.descricao}`
@@ -104,6 +133,7 @@ function step4({ setStep, formik }: step4Type) {
 										label=""
 										col={2}
 										formik={formik}
+										disabled={isView}
 										value={
 											formik.values?.infoVendas[index]
 												?.produtoIncentivado
@@ -117,52 +147,52 @@ function step4({ setStep, formik }: step4Type) {
 											)
 										}
 									/>
-									<Select
+									<Autocomplete
 										id="unidadeMedida"
-										name="unidadeMedida"
-										label=""
-										className={styles.col2}
-										labelId="unidadeMedida"
-										placeholder="Selecione uma cidade"
-										value={
-											formik.values?.infoVendas[index]
-												?.unidadeMedida
-										}
-										onChange={(ev) =>
-											formik.setFieldValue(
-												`infoVendas[${index}].unidadeMedida`,
-												ev.target.value,
-											)
-										}
-									>
-										{unidadesDeMedida?.map(
-											(
-												{
-													key,
-													value,
-												}: {
-													key: string;
-													value: string;
-												},
-												index,
-											) => {
-												return (
-													<MenuItem
-														key={index}
-														value={key}
-													>
-														{value}
-													</MenuItem>
-												);
+										options={unidadesDeMedida.sort(
+											function (a, b) {
+												if (a.value < b.value) {
+													return -1;
+												}
+												if (a.value > b.value) {
+													return 1;
+												}
+												return 0;
 											},
 										)}
-									</Select>
+										disableListWrap
+										className={styles.col2}
+										placeholder="Selecione uma cidade"
+										disabled={isView}
+										disableCloseOnSelect
+										getOptionLabel={(option) =>
+											`${option.key} - ${option.value}`
+										}
+										value={
+											formik.values?.infoVendas[index]
+												?.unidadeMedida?.value
+										}
+										onChange={(_, value) => {
+											formik.setFieldValue(
+												`infoVendas[${index}].unidadeMedida`,
+												value,
+											);
+										}}
+										renderInput={(params) => (
+											<TextField
+												{...params}
+												label="Unidade de Medida"
+												placeholder="Selecione uma unidade de medida"
+											/>
+										)}
+									/>
 									<NumericMask
 										id={`${item}-quantidade-interna`}
 										name={`${item}-quantidade-interna`}
 										formik={formik}
 										label=""
 										col={2}
+										disabled={isView}
 										required={false}
 										value={
 											formik.values?.infoVendas[index]
@@ -183,6 +213,7 @@ function step4({ setStep, formik }: step4Type) {
 										formik={formik}
 										label=""
 										col={2}
+										disabled={isView}
 										required={false}
 										value={
 											formik.values?.infoVendas[index]
@@ -197,25 +228,40 @@ function step4({ setStep, formik }: step4Type) {
 											)
 										}
 									/>
+									{index !== 0 && !isView && (
+										<div
+											className={`${styles.col1} ${styles.removeButtonDiv}`}
+										>
+											<RemoveIcon
+												className={styles.removeIcon}
+												onClick={(ev) => {
+													ev.preventDefault();
+													const newArray = [
+														...formik.values
+															.infoVendas,
+													];
+													newArray.splice(index, 1);
+													formik.setFieldValue(
+														"infoVendas",
+														newArray,
+													);
+												}}
+											/>
+										</div>
+									)}
 								</>
 							),
 						)}
+						<span className={`${styles.error} ${styles.col12}`}>
+							{formik.errors.infoVendas as string | undefined}
+						</span>
+
 						{!isView && (
 							<Button
 								type="button"
 								variant="contained"
 								className={styles.primaryButton}
-								onClick={() => {
-									var lines = formik.values.infoVendas;
-									lines.push({
-										ncm: null,
-										produtoIncentivado: "",
-										quantidadeInterestadual: "",
-										quantidadeInterna: "",
-										unidadeMedida: "",
-									});
-									formik.setFieldValue("infoVendas", lines);
-								}}
+								onClick={addLinha}
 							>
 								<AddIcon />
 								Adicionar linhas e colunas

@@ -67,6 +67,18 @@
         padding: 1rem;
         margin-top: 2rem;
     }
+    .removeButtonDiv{
+        display: flex;
+        align-items: center;
+        .removeIcon{
+            color: #fc3c3c;
+            font-size: 2.5rem;
+            &:hover{
+                cursor: pointer;
+            }
+        }
+        
+    }
     .buttonsRigth{
         display: flex;
         justify-content: flex-end;

@@ -8,11 +8,12 @@ interface CustomProps {
 	onChange: (event: { target: { name: string; value: string } }) => void;
 	name: string;
 	prefix: string;
+	fixedDecimalScale: boolean;
 }
 
 const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(
 	function NumericFormatCustom(props, ref) {
-		const { onChange, ...other } = props;
+		const { onChange, fixedDecimalScale, ...other } = props;
 
 		return (
 			<NumericFormat
@@ -29,6 +30,7 @@ const NumericFormatCustom = forwardRef<NumericFormatProps, CustomProps>(
 				thousandSeparator="."
 				decimalSeparator=","
 				decimalScale={2}
+				fixedDecimalScale={fixedDecimalScale}
 				prefix={other.prefix}
 			/>
 		);
@@ -46,6 +48,7 @@ export default function NumericMask({
 	definitions,
 	col,
 	maks,
+	fixedDecimalScale,
 	...rest
 }: CustomTextFieldProps) {
 	const error = formik.errors[id] as string | undefined;
@@ -68,11 +71,16 @@ export default function NumericMask({
 					className="col12"
 					InputProps={{
 						inputComponent: NumericFormatCustom as any,
-						inputProps: { prefix: rest.prefix },
+						inputProps: {
+							prefix: rest.prefix,
+							fixedDecimalScale: fixedDecimalScale,
+						},
 					}}
 					{...rest}
 				/>
-				{!!formik.errors[id] && <span>{error}</span>}
+				{!!formik.errors[id] && (
+					<span className={styles.error}>{error}</span>
+				)}
 			</FormControl>
 		</div>
 	);

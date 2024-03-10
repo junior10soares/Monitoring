@@ -6,7 +6,7 @@ import {
 	DialogContentText,
 	DialogTitle,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import SedecBanner from "../../assets/sedecbanner.png";
 import "./styles.scss";
@@ -22,6 +22,12 @@ export default function Sidebar() {
 	const handleClose = () => {
 		setOpen(false);
 	};
+
+	useEffect(() => {
+		for (let index = 0; index < 5; index++) {
+			localStorage.removeItem(`step${index + 1}`);
+		}
+	}, []);
 
 	return (
 		<>

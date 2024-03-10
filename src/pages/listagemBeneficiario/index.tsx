@@ -4,12 +4,15 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Button } from "@mui/material";
 import { DataGrid, GridColDef, GridRowParams, ptPT } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { getAllBeneficiarios } from "../../services/beneficiario";
+import { cpfMask } from "../../utils/Mask";
 import styles from "./styles.module.scss";
 
 function listagemBeneficiario() {
 	const [rows, setRows] = useState([]);
+	const [isLoading, setIsLoading] = useOutletContext();
+
 	const columns: GridColDef[] = [
 		{ field: "id", headerName: "ID", width: 100 },
 		{
@@ -20,7 +23,7 @@ function listagemBeneficiario() {
 					? 300
 					: window.innerWidth <= 1770
 					? 500
-					: 700,
+					: 800,
 		},
 		{ field: "cpfOuCnpj", headerName: "CPF/CNPJ", width: 300 },
 		{
@@ -55,8 +58,14 @@ function listagemBeneficiario() {
 	const navigate = useNavigate();
 
 	async function fetch() {
+		setIsLoading(true);
 		const res = await getAllBeneficiarios();
-		setRows(res.content);
+		const formated = res.content.map((i) => ({
+			...i,
+			cpfOuCnpj: cpfMask(i.cpfOuCnpj),
+		}));
+		setRows(formated);
+		setIsLoading(false);
 	}
 
 	useEffect(() => {

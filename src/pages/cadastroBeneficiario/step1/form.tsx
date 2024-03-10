@@ -1,6 +1,7 @@
 import AddIcon from "@mui/icons-material/Add";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import RemoveIcon from "@mui/icons-material/DeleteOutline";
 import {
 	Autocomplete,
 	Button,
@@ -17,12 +18,14 @@ import { ICnae } from "cnaeType";
 import { FormikProps } from "formik";
 import { Imunicipio } from "municipioType";
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useOutletContext, useParams } from "react-router-dom";
 import CustomTextField from "../../../components/customTextField";
 import InputMask from "../../../components/inputMask";
 import { getBeneficiarioById } from "../../../services/beneficiario";
 import { getAllCnaes } from "../../../services/cnaeService";
 import { getAllMunicipios } from "../../../services/municipioService";
+import { monthsData } from "../../../utils/DateTime";
+import { Messages } from "../../../utils/Messages";
 import { inputs } from "./inputs";
 import styles from "./styles.module.scss";
 
@@ -37,220 +40,77 @@ function step1({ formik }: step1Type) {
 		{ id: 0, codigo: "", descricao: "" },
 	]);
 	const [municipios, setMunicipios] = useState([]);
+	const [isLoading, setIsLoading] = useOutletContext();
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
 
 	useEffect(() => {
-		fillCombos();
-		if (params.id) {
-			fetchApi();
-		} else {
-			const localItem = localStorage.getItem("step1");
-			if (localItem) {
-				formik.setValues(JSON.parse(localItem));
+		(async function fetchAll() {
+			setIsLoading(true);
+			await fillCombos();
+			if (params.id) {
+				await fetchApi();
+			} else {
+				const localItem = localStorage.getItem("step1");
+				if (localItem) {
+					formik.setValues(JSON.parse(localItem));
+				}
 			}
-		}
+			setIsLoading(false);
+		})();
 	}, []);
 
 	async function fetchApi() {
 		if (params.id) {
 			var beneficiario = await getBeneficiarioById(parseInt(params.id));
-			beneficiario.cnaes = beneficiario.cnaes.map((i) => i.cnae.id);
-			beneficiario.municipio = beneficiario.municipio.id;
+			var step1 = {
+				id: beneficiario.id,
+				nomeOuRazaoSocial: beneficiario.nomeOuRazaoSocial,
+				cpfOuCnpj: beneficiario.cpfOuCnpj,
+				email: beneficiario.email,
+				telefoneEmpresa: beneficiario.telefoneEmpresa,
+				telefoneContabilidade: beneficiario.telefoneContabilidade,
+				nomeFantasia: beneficiario.nomeFantasia,
+				inscricaoEstadual: beneficiario.inscricaoEstadual,
+				nomeAdministrador: beneficiario.nomeAdministrador,
+				telefoneAdministrador: beneficiario.telefoneAdministrador,
+				municipio: beneficiario.municipio.id,
+				porte: beneficiario.porte,
+				ramoAtividade: beneficiario.ramoAtividade,
+				descricao: beneficiario.descricao,
+				cnaes: beneficiario.cnaes.map(
+					(i: { cnae: { id: any } }) => i.cnae.id,
+				),
+				telefones: beneficiario.telefones,
+			};
 			const dadosEconomicos = {
 				...beneficiario.dadosEconomicos,
-				investimentoMensal: [
-					{
-						codigo: "janeiroValor",
-						valor: beneficiario.dadosEconomicos.investimentoMensal
-							.janeiroValor,
-					},
-					{
-						codigo: "fevereiroValor",
-						valor: beneficiario.dadosEconomicos.investimentoMensal
-							.fevereiroValor,
-					},
-					{
-						codigo: "marcoValor",
-						valor: beneficiario.dadosEconomicos.investimentoMensal
-							.marcoValor,
-					},
-					{
-						codigo: "abrilValor",
-						valor: beneficiario.dadosEconomicos.investimentoMensal
-							.abrilValor,
-					},
-					{
-						codigo: "maioValor",
-						valor: beneficiario.dadosEconomicos.investimentoMensal
-							.maioValor,
-					},
-					{
-						codigo: "junhoValor",
-						valor: beneficiario.dadosEconomicos.investimentoMensal
-							.junhoValor,
-					},
-					{
-						codigo: "julhoValor",
-						valor: beneficiario.dadosEconomicos.investimentoMensal
-							.julhoValor,
-					},
-					{
-						codigo: "agostoValor",
-						valor: beneficiario.dadosEconomicos.investimentoMensal
-							.agostoValor,
-					},
-					{
-						codigo: "setembroValor",
-						valor: beneficiario.dadosEconomicos.investimentoMensal
-							.setembroValor,
-					},
-					{
-						codigo: "outubroValor",
-						valor: beneficiario.dadosEconomicos.investimentoMensal
-							.outubroValor,
-					},
-					{
-						codigo: "novembroValor",
-						valor: beneficiario.dadosEconomicos.investimentoMensal
-							.novembroValor,
-					},
-					{
-						codigo: "dezembroValor",
-						valor: beneficiario.dadosEconomicos.investimentoMensal
-							.dezembroValor,
-					},
-				],
-				empregoHomem: [
-					{
-						codigo: "janeiroValor",
-						valor: beneficiario.dadosEconomicos.empregoHomem
-							.janeiroValor,
-					},
-					{
-						codigo: "fevereiroValor",
-						valor: beneficiario.dadosEconomicos.empregoHomem
-							.fevereiroValor,
-					},
-					{
-						codigo: "marcoValor",
-						valor: beneficiario.dadosEconomicos.empregoHomem
-							.marcoValor,
-					},
-					{
-						codigo: "abrilValor",
-						valor: beneficiario.dadosEconomicos.empregoHomem
-							.abrilValor,
-					},
-					{
-						codigo: "maioValor",
-						valor: beneficiario.dadosEconomicos.empregoHomem
-							.maioValor,
-					},
-					{
-						codigo: "junhoValor",
-						valor: beneficiario.dadosEconomicos.empregoHomem
-							.junhoValor,
-					},
-					{
-						codigo: "julhoValor",
-						valor: beneficiario.dadosEconomicos.empregoHomem
-							.julhoValor,
-					},
-					{
-						codigo: "agostoValor",
-						valor: beneficiario.dadosEconomicos.empregoHomem
-							.agostoValor,
-					},
-					{
-						codigo: "setembroValor",
-						valor: beneficiario.dadosEconomicos.empregoHomem
-							.setembroValor,
-					},
-					{
-						codigo: "outubroValor",
-						valor: beneficiario.dadosEconomicos.empregoHomem
-							.outubroValor,
-					},
-					{
-						codigo: "novembroValor",
-						valor: beneficiario.dadosEconomicos.empregoHomem
-							.novembroValor,
-					},
-					{
-						codigo: "dezembroValor",
-						valor: beneficiario.dadosEconomicos.empregoHomem
-							.dezembroValor,
-					},
-				],
-				empregoMulher: [
-					{
-						codigo: "janeiroValor",
-						valor: beneficiario.dadosEconomicos.empregoMulher
-							.janeiroValor,
-					},
-					{
-						codigo: "fevereiroValor",
-						valor: beneficiario.dadosEconomicos.empregoMulher
-							.fevereiroValor,
-					},
-					{
-						codigo: "marcoValor",
-						valor: beneficiario.dadosEconomicos.empregoMulher
-							.marcoValor,
-					},
-					{
-						codigo: "abrilValor",
-						valor: beneficiario.dadosEconomicos.empregoMulher
-							.abrilValor,
-					},
-					{
-						codigo: "maioValor",
-						valor: beneficiario.dadosEconomicos.empregoMulher
-							.maioValor,
-					},
-					{
-						codigo: "junhoValor",
-						valor: beneficiario.dadosEconomicos.empregoMulher
-							.junhoValor,
-					},
-					{
-						codigo: "julhoValor",
-						valor: beneficiario.dadosEconomicos.empregoMulher
-							.julhoValor,
-					},
-					{
-						codigo: "agostoValor",
-						valor: beneficiario.dadosEconomicos.empregoMulher
-							.agostoValor,
-					},
-					{
-						codigo: "setembroValor",
-						valor: beneficiario.dadosEconomicos.empregoMulher
-							.setembroValor,
-					},
-					{
-						codigo: "outubroValor",
-						valor: beneficiario.dadosEconomicos.empregoMulher
-							.outubroValor,
-					},
-					{
-						codigo: "novembroValor",
-						valor: beneficiario.dadosEconomicos.empregoMulher
-							.novembroValor,
-					},
-					{
-						codigo: "dezembroValor",
-						valor: beneficiario.dadosEconomicos.empregoMulher
-							.dezembroValor,
-					},
-				],
+				investimentoMensal: monthsData.map((i) => ({
+					codigo: `${i.codigo}Valor`,
+					valor: beneficiario.dadosEconomicos.investimentoMensal?.[
+						`${i.codigo}Valor`
+					],
+				})),
+				empregoHomem: monthsData.map((i) => ({
+					codigo: `${i.codigo}Valor`,
+					valor: beneficiario.dadosEconomicos.empregoHomem?.[
+						`${i.codigo}Valor`
+					],
+				})),
+
+				empregoMulher: monthsData.map((i) => ({
+					codigo: `${i.codigo}Valor`,
+					valor: beneficiario.dadosEconomicos.empregoMulher?.[
+						`${i.codigo}Valor`
+					],
+				})),
 			};
-			formik.setValues(beneficiario);
+
+			formik.setValues(step1);
 			localStorage.setItem("step1", JSON.stringify(beneficiario));
 			localStorage.setItem("step2", JSON.stringify(dadosEconomicos));
 			localStorage.setItem("step3", JSON.stringify(beneficiario));
-			localStorage.setItem("step4", JSON.stringify(beneficiario));
+			// localStorage.setItem("step4", JSON.stringify(beneficiario));
 		}
 	}
 
@@ -259,6 +119,19 @@ function step1({ formik }: step1Type) {
 		const municipiorsList = await getAllMunicipios();
 		setCnaesList(list);
 		setMunicipios(municipiorsList);
+	}
+
+	async function addTelefoneOnList(ev: { preventDefault: () => void }) {
+		ev.preventDefault();
+		const lastTelefone = formik.values.telefones.slice(-1)[0];
+		if (!lastTelefone.titulo || !lastTelefone.telefone) {
+			formik.setFieldError("telefones", Messages.form.lastElementIsEmpty);
+		} else {
+			formik.setFieldValue("telefones", [
+				...formik.values.telefones,
+				{ titulo: "", telefone: "" },
+			]);
+		}
 	}
 
 	const selectedCnaes = useMemo(() => {
@@ -494,7 +367,7 @@ function step1({ formik }: step1Type) {
 				<Card className={styles.card}>
 					<h1 className={styles.title}>Telefones</h1>
 					<span className={styles.error}>
-						{formik.errors.telefones}
+						{formik.errors.telefones as string | undefined}
 					</span>
 					<div className={styles.beneficiarioForm}>
 						{formik.values.telefones.map((_, index) => {
@@ -509,7 +382,7 @@ function step1({ formik }: step1Type) {
 										variant="outlined"
 										required
 										error={false}
-										className={styles.col6}
+										className={styles.col5}
 										value={
 											formik.values.telefones[index]
 												.titulo
@@ -530,7 +403,7 @@ function step1({ formik }: step1Type) {
 										id={`telefones-${index}`}
 										label="Tel. Administrador"
 										formik={formik}
-										col={6}
+										col={5}
 										mascara="(00) 0 0000-0000"
 										definitions={{
 											"#": /[1-9]/,
@@ -551,6 +424,27 @@ function step1({ formik }: step1Type) {
 											formik.handleChange(ev);
 										}}
 									/>
+									{index !== 0 && !isView && (
+										<div
+											className={`${styles.col1} ${styles.removeButtonDiv}`}
+										>
+											<RemoveIcon
+												className={styles.removeIcon}
+												onClick={(ev) => {
+													ev.preventDefault();
+													const newArray = [
+														...formik.values
+															.telefones,
+													];
+													newArray.splice(index, 1);
+													formik.setFieldValue(
+														"telefones",
+														newArray,
+													);
+												}}
+											/>
+										</div>
+									)}
 								</div>
 							);
 						})}
@@ -560,13 +454,7 @@ function step1({ formik }: step1Type) {
 							type="button"
 							variant="contained"
 							className={styles.primaryButton}
-							onClick={(ev) => {
-								ev.preventDefault();
-								formik.setFieldValue("telefones", [
-									...formik.values.telefones,
-									{ titulo: "", telefone: "" },
-								]);
-							}}
+							onClick={addTelefoneOnList}
 						>
 							<AddIcon />
 							Novo Telefone

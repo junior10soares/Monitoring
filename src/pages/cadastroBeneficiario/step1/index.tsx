@@ -56,6 +56,10 @@ export default function ({ setStep }: stepType) {
 		if (_values.telefones.length === 0 || !_values.telefones[0].titulo) {
 			errors.telefones = Messages.form.arrayRequired;
 		}
+		const lastTelefone = [..._values.telefones].splice(-1)?.[0];
+		if (lastTelefone && (!lastTelefone.titulo || !lastTelefone.telefone)) {
+			errors.telefones = Messages.form.lastElementIsEmpty;
+		}
 		if (Object.keys(errors).length > 0) {
 			setErrors(errors);
 			return false;

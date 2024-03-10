@@ -10,7 +10,7 @@ import { FormikProps } from "formik";
 import { IFundo } from "fundo";
 import { IIncentivoFiscal } from "incentivoFiscal";
 import { useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useOutletContext } from "react-router-dom";
 import { ISubmodulo } from "submodulo";
 import { IValorFundo } from "valorFundo";
 import NumericMask from "../../../components/numericMask";
@@ -31,12 +31,14 @@ function step3({ setStep, formik }: step3Type) {
 		IIncentivoFiscal[]
 	>([]);
 	const [submodulos, setSubmodulos] = useState<ISubmodulo[]>([]);
+	const [isLoading, setIsLoading] = useOutletContext();
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
 
 	useEffect(() => {
 		loadData();
 		(async function fetch() {
+			setIsLoading(true);
 			const step1 = JSON.parse(localStorage.getItem("step1") ?? "");
 			const incentivos = await getAllIncentivosFiscais();
 			setIncentivosFiscais(incentivos);
@@ -44,6 +46,7 @@ function step3({ setStep, formik }: step3Type) {
 				step1.inscricaoEstadual,
 			);
 			setSubmodulos(submds);
+			setIsLoading(false);
 		})();
 	}, []);
 
@@ -97,7 +100,8 @@ function step3({ setStep, formik }: step3Type) {
 								value={formik.values.incentivoFiscal?.id}
 								fullWidth
 								disabled={isView}
-								onChange={(e) =>
+								onChange={(e) => {
+									formik.setFieldValue("valoresFundo", null);
 									formik.setFieldValue(
 										e.target.name,
 										incentivosFiscais.find(
@@ -108,8 +112,8 @@ function step3({ setStep, formik }: step3Type) {
 													? parseInt(e.target.value)
 													: e.target.value),
 										),
-									)
-								}
+									);
+								}}
 							>
 								{incentivosFiscais.map(
 									(
@@ -164,6 +168,7 @@ function step3({ setStep, formik }: step3Type) {
 							name="vendaAnualInterna"
 							formik={formik}
 							prefix="R$"
+							fixedDecimalScale
 							label="Venda anual interna"
 							col={6}
 							onChange={formik.handleChange}
@@ -177,6 +182,7 @@ function step3({ setStep, formik }: step3Type) {
 							name="vendaAnualInterestadual"
 							formik={formik}
 							prefix="R$"
+							fixedDecimalScale
 							label="Venda anual interestadual"
 							col={6}
 							onChange={formik.handleChange}
@@ -221,6 +227,7 @@ function step3({ setStep, formik }: step3Type) {
 																		.length,
 															)}
 															prefix="R$"
+															fixedDecimalScale
 															label=""
 															onChange={async (ev: {
 																target: {
@@ -253,7 +260,7 @@ function step3({ setStep, formik }: step3Type) {
 																				.fundoIncentivo
 																				.id !==
 																			id,
-																	);
+																	) ?? [];
 
 																newValorFundo[
 																	`${codigo}Valor`
@@ -299,8 +306,40 @@ function step3({ setStep, formik }: step3Type) {
 									);
 								})}
 								<div className={styles.totals}>
+									{formik.values.incentivoFiscal.fundos.map(
+										({ sigla, id }: IFundo) => {
+											return (
+												<span
+													className={
+														styles.monthTitle
+													}
+												>
+													Valor Total {sigla}:
+													{formatBRCurrency(
+														monthsData.reduce(
+															(total, item) =>
+																total +
+																parseFloat(
+																	formik.values.valoresFundo?.find(
+																		(i) =>
+																			i
+																				.fundoIncentivo
+																				.id ===
+																			id,
+																	)?.[
+																		`${item.codigo}Valor`
+																	] ?? 0,
+																),
+															0,
+														),
+													)}
+												</span>
+											);
+										},
+									)}
 									<span className={styles.monthTitle}>
-										Valor Total: {formatBRCurrency(total)}
+										Valor Total:{" "}
+										{formatBRCurrency(total ?? 0)}
 									</span>
 								</div>
 							</>

@@ -1,7 +1,7 @@
 import { Alert } from "@mui/material";
 import { Formik } from "formik";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { stepType } from "stepsType";
 import { insertBeneficiario } from "../../../services/beneficiario";
 import Form from "./form";
@@ -10,6 +10,8 @@ import styles from "./styles.module.scss";
 
 export default function ({ setStep }: stepType) {
 	const [show, setShow] = useState(false);
+	const [isLoading, setIsLoading] = useOutletContext();
+
 	const navigate = useNavigate();
 	return (
 		<>
@@ -41,6 +43,7 @@ export default function ({ setStep }: stepType) {
 					const step4 = JSON.parse(
 						localStorage.getItem("step4") ?? "",
 					);
+					setIsLoading(true);
 					const res = await insertBeneficiario({
 						...step1,
 						...step2,
@@ -58,6 +61,7 @@ export default function ({ setStep }: stepType) {
 							navigate("/beneficiario");
 						}, 1000);
 					}
+					setIsLoading(false);
 				}}
 			>
 				{(formik) => <Form setStep={setStep} formik={formik} />}
