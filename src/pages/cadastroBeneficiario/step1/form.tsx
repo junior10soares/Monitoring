@@ -188,7 +188,8 @@ function step1({ formik }: step1Type) {
 							label="Tel. Empresa"
 							formik={formik}
 							col={3}
-							mascara="(00) 0 0000-0000"
+							mascara="(00) 0000-0000"
+							secondMask="(00) 0 0000-0000"
 							definitions={{
 								"#": /[1-9]/,
 							}}
@@ -202,7 +203,8 @@ function step1({ formik }: step1Type) {
 							label="Tel. Contabilidade"
 							formik={formik}
 							col={3}
-							mascara="(00) 0 0000-0000"
+							mascara="(00) 0000-0000"
+							secondMask="(00) 0 0000-0000"
 							definitions={{
 								"#": /[1-9]/,
 							}}
@@ -226,6 +228,7 @@ function step1({ formik }: step1Type) {
 							formik={formik}
 							col={3}
 							mascara="000.000.000-00"
+							secondMask="00.000.000/0000-00"
 							definitions={{
 								"#": /[1-9]/,
 							}}
@@ -283,7 +286,8 @@ function step1({ formik }: step1Type) {
 							label="Tel. Administrador"
 							formik={formik}
 							col={6}
-							mascara="(00) 0 0000-0000"
+							mascara="(00) 0000-0000"
+							secondMask="(00) 0 0000-0000"
 							definitions={{
 								"#": /[1-9]/,
 							}}
@@ -404,7 +408,8 @@ function step1({ formik }: step1Type) {
 										label="Tel. Administrador"
 										formik={formik}
 										col={5}
-										mascara="(00) 0 0000-0000"
+										mascara="(00) 0000-0000"
+										secondMask="(00) 0 0000-0000"
 										definitions={{
 											"#": /[1-9]/,
 										}}

@@ -8,22 +8,35 @@ interface CustomProps {
 	onChange: (event: { target: { name: string; value: string } }) => void;
 	name: string;
 	mascara: string;
+	secondMask: string;
 	definitions: {};
 }
 
 const InputCustomMask = forwardRef<HTMLInputElement, CustomProps>(
 	function TextMaskCustom(props, ref) {
-		const { onChange, name, mascara, definitions, ...other } = props;
-		const [mascara, setmascara] = useState();
+		const { onChange, name, mascara, secondMask, definitions, ...other } =
+			props;
+		const [mask, setMask] = useState(mascara);
 		return (
 			<IMaskInput
-				mask={mascara}
+				mask={mask}
 				definitions={definitions}
 				onAccept={(value: any) => {
 					onChange({ target: { name: name, value } });
 				}}
 				onKeyDownCapture={(ev) => {
-					console.log(ev);
+					if (
+						ev.target.value.length === mascara.length &&
+						secondMask &&
+						ev.key !== "Backspace"
+					) {
+						setMask(secondMask);
+					} else if (
+						ev.target.value.length === mascara.length &&
+						ev.key === "Backspace"
+					) {
+						setMask(mascara);
+					}
 				}}
 				maxLength={20}
 				unmask
@@ -43,6 +56,7 @@ export default function InputMask({
 	onChange,
 	required = false,
 	mascara,
+	secondMask,
 	definitions,
 	col,
 	maks,
@@ -70,6 +84,7 @@ export default function InputMask({
 					inputProps={{
 						mascara: mascara,
 						definitions: definitions,
+						secondMask: secondMask,
 					}}
 					id="formatted-text-mask-input"
 					inputComponent={InputCustomMask as any}
