@@ -206,7 +206,7 @@ function step3({ setStep, formik }: step3Type) {
 									return (
 										<>
 											<span
-												className={`${styles.col4} ${styles.monthTitle}`}
+												className={`${styles.col3} ${styles.monthTitle}`}
 											>
 												{label}
 											</span>
