@@ -25,7 +25,7 @@ function Root() {
 				},
 			);
 			const code = params.code;
-			if (code) {
+			if (code && !token) {
 				const tokenres = await getToken(params.code);
 				if (tokenres.access_token) {
 					localStorage.setItem("access_token", tokenres.access_token);
@@ -33,6 +33,7 @@ function Root() {
 					navigate("/beneficiario");
 				}
 			}
+			return code;
 		})();
 	}, []);
 

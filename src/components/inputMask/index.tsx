@@ -1,6 +1,6 @@
 import { FormControl, InputLabel, OutlinedInput } from "@mui/material";
 import { CustomTextFieldProps } from "customTexteFieldProps";
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import { IMaskInput } from "react-imask";
 import styles from "./inputMask.module.scss";
 
@@ -14,17 +14,22 @@ interface CustomProps {
 const InputCustomMask = forwardRef<HTMLInputElement, CustomProps>(
 	function TextMaskCustom(props, ref) {
 		const { onChange, name, mascara, definitions, ...other } = props;
+		const [mascara, setmascara] = useState();
 		return (
 			<IMaskInput
-				{...other}
 				mask={mascara}
 				definitions={definitions}
 				onAccept={(value: any) => {
 					onChange({ target: { name: name, value } });
 				}}
+				onKeyDownCapture={(ev) => {
+					console.log(ev);
+				}}
+				maxLength={20}
 				unmask
 				inputRef={ref}
 				overwrite
+				{...other}
 			/>
 		);
 	},

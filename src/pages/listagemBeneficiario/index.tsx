@@ -66,10 +66,11 @@ function listagemBeneficiario() {
 		}));
 		setRows(formated);
 		setIsLoading(false);
+		return formated;
 	}
 
 	useEffect(() => {
-		fetch();
+		(() => fetch())();
 	}, []);
 
 	return (
