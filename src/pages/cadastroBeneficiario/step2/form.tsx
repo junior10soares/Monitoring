@@ -40,14 +40,30 @@ function step2({ setStep, formik }: step2Type) {
 					</h3>
 					<div className={styles.beneficiarioForm}>
 						<div className={styles.monthsTitle}>
-							<span>Mês referência</span>
-							<span>Investimento mensal</span>
-							<span>Empregos direto (homem)</span>
-							<span>Empregos direto (mulher)</span>
+							<span
+								className={`${styles.col2} ${styles.monthTitle}`}
+							>
+								Mês referência
+							</span>
+							<span
+								className={`${styles.col3} ${styles.monthTitle}`}
+							>
+								Investimento mensal
+							</span>
+							<span
+								className={`${styles.col3} ${styles.monthTitle}`}
+							>
+								Empregos direto (homem)
+							</span>
+							<span
+								className={`${styles.col3} ${styles.monthTitle}`}
+							>
+								Empregos direto (mulher)
+							</span>
 						</div>
 						{monthsData.map(({ codigo, label }, index) => {
 							return (
-								<>
+								<div className={styles.TableInputs}>
 									<span
 										className={`${styles.col2} ${styles.monthTitle}`}
 									>
@@ -142,7 +158,7 @@ function step2({ setStep, formik }: step2Type) {
 										}
 										className={`${styles.tableInput}`}
 									/>
-								</>
+								</div>
 							);
 						})}
 						<div className={styles.totals}>

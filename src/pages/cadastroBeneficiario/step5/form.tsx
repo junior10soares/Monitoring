@@ -370,7 +370,7 @@ function step5({ setStep, formik }: step5Type) {
 						variant="contained"
 						className={styles.secondaryButton}
 						onClick={() => {
-							setStep(3);
+							setStep(4);
 							window.scrollTo({
 								top: 0,
 								behavior: "smooth",

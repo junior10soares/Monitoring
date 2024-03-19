@@ -60,14 +60,19 @@ export default function InputMask({
 	definitions,
 	col,
 	maks,
+	error,
 	...rest
 }: CustomTextFieldProps) {
-	const error = formik.errors[id] as string | undefined;
+	const errors = formik.errors[id] as string | undefined;
 
 	return (
 		<div className={`col${col} ${styles.customTextFieldContainer}`}>
 			<FormControl fullWidth variant="outlined">
-				<InputLabel required={required} htmlFor={id}>
+				<InputLabel
+					error={error || !!errors}
+					required={required}
+					htmlFor={id}
+				>
 					{label}
 				</InputLabel>
 				<OutlinedInput
@@ -77,7 +82,7 @@ export default function InputMask({
 							? onChange(ev)
 							: formik.handleChange(ev);
 					}}
-					error={!!error}
+					error={error || !!errors}
 					fullWidth
 					name={id}
 					label={label}
@@ -91,7 +96,7 @@ export default function InputMask({
 					{...rest}
 				/>
 				{!!formik.errors[id] && (
-					<span className={styles.error}>{error}</span>
+					<span className={styles.error}>{errors}</span>
 				)}
 			</FormControl>
 		</div>

@@ -76,35 +76,56 @@ function step4({ setStep, formik }: step4Type) {
 					</h3>
 					<div className={styles.beneficiarioForm}>
 						<div className={styles.tableHeader}>
-							<span className={styles.col3}>NCM</span>
-							<span className={styles.col2}>
+							<span
+								className={`${styles.col3} ${styles.monthTitle}`}
+							>
+								NCM
+							</span>
+							<span
+								className={`${styles.col2} ${styles.monthTitle}`}
+							>
 								Produto incentivado
 							</span>
-							<span className={styles.col2}>
+							<span
+								className={`${styles.col2} ${styles.monthTitle}`}
+							>
 								Unidade de medida
 							</span>
-							<span className={styles.col3}>
+							<span
+								className={`${styles.col2} ${styles.monthTitle}`}
+							>
 								Quantidade interna
 							</span>
-							<span className={styles.col2}>
+							<span
+								className={`${styles.col2} ${styles.monthTitle}`}
+							>
 								Quant. Interestadual
 							</span>
+							<span className={styles.col1}></span>
 						</div>
 						{Object.keys(formik.values?.infoVendas ?? {})?.map(
 							(item, index) => (
-								<>
+								<div className={styles.TableInputs}>
 									<Autocomplete
 										id="ncm"
 										options={ncms}
 										disableListWrap
-										className={styles.col2}
+										className={styles.col3}
 										placeholder="Selecione um NCM"
 										disabled={isView}
-										groupBy={(option) => option.father}
-										getOptionDisabled={(option) =>
-											option.disabled
-										}
 										disableCloseOnSelect
+										renderOption={(
+											props,
+											option,
+											{ selected },
+										) => {
+											return (
+												<li {...props}>
+													{option.codigo} -{" "}
+													{option.descricao}
+												</li>
+											);
+										}}
 										getOptionLabel={(option) =>
 											`${option.codigo} - ${option.descricao}`
 										}
@@ -228,10 +249,10 @@ function step4({ setStep, formik }: step4Type) {
 											)
 										}
 									/>
-									{index !== 0 && !isView && (
-										<div
-											className={`${styles.col1} ${styles.removeButtonDiv}`}
-										>
+									<div
+										className={`${styles.col1} ${styles.removeButtonDiv}`}
+									>
+										{index !== 0 && !isView && (
 											<RemoveIcon
 												className={styles.removeIcon}
 												onClick={(ev) => {
@@ -247,9 +268,9 @@ function step4({ setStep, formik }: step4Type) {
 													);
 												}}
 											/>
-										</div>
-									)}
-								</>
+										)}
+									</div>
+								</div>
 							),
 						)}
 						<span className={`${styles.error} ${styles.col12}`}>

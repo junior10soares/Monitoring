@@ -17,6 +17,7 @@ import {
 import { ICnae } from "cnaeType";
 import { FormikProps } from "formik";
 import { Imunicipio } from "municipioType";
+import { IPorte } from "porte";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useOutletContext, useParams } from "react-router-dom";
 import CustomTextField from "../../../components/customTextField";
@@ -40,6 +41,7 @@ function step1({ formik }: step1Type) {
 		{ id: 0, codigo: "", descricao: "" },
 	]);
 	const [municipios, setMunicipios] = useState([]);
+	const [portes, setPortes] = useState([]);
 	const [isLoading, setIsLoading] = useOutletContext();
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
@@ -117,6 +119,8 @@ function step1({ formik }: step1Type) {
 	async function fillCombos() {
 		const list = await getAllCnaes();
 		const municipiorsList = await getAllMunicipios();
+		// const listPortes = await getAllPortes();
+		// setPortes(listPortes);
 		setCnaesList(list);
 		setMunicipios(municipiorsList);
 	}
@@ -213,13 +217,18 @@ function step1({ formik }: step1Type) {
 							onChange={formik.handleChange}
 							disabled={isView}
 						/>
-						<CustomTextField
+						<InputMask
 							id="inscricaoEstadual"
 							label="Ins. Estadual"
-							required
 							formik={formik}
 							col={3}
+							mascara="00000000000"
+							definitions={{
+								"#": /[1-9]/,
+							}}
 							value={formik.values.inscricaoEstadual}
+							required
+							onChange={formik.handleChange}
 							disabled={isView}
 						/>
 						<InputMask
@@ -272,15 +281,39 @@ function step1({ formik }: step1Type) {
 								)}
 							</Select>
 						</FormControl>
-						<CustomTextField
-							id="porte"
-							label="Porte"
-							required
-							col={3}
-							formik={formik}
-							value={formik.values.porte}
-							disabled={isView}
-						/>
+						<FormControl className="col3">
+							<InputLabel
+								error={!!formik.errors.porte}
+								required
+								id="porte"
+							>
+								Porte
+							</InputLabel>
+							<Select
+								id="porte"
+								name="porte"
+								label="Porte"
+								labelId="porte"
+								placeholder="Selecione um porte"
+								value={formik.values.porte}
+								error={!!formik.errors.porte}
+								fullWidth
+								onChange={formik.handleChange}
+								disabled={isView}
+							>
+								{portes.map(({ id, nome }: IPorte, index) => {
+									return (
+										<MenuItem key={index} value={id}>
+											{nome}
+										</MenuItem>
+									);
+								})}
+							</Select>
+							<span className={styles.error}>
+								{formik.errors.porte as string | undefined}
+							</span>
+						</FormControl>
+
 						<InputMask
 							id="telefoneAdministrador"
 							label="Tel. Administrador"
@@ -370,9 +403,6 @@ function step1({ formik }: step1Type) {
 				</Card>
 				<Card className={styles.card}>
 					<h1 className={styles.title}>Telefones</h1>
-					<span className={styles.error}>
-						{formik.errors.telefones as string | undefined}
-					</span>
 					<div className={styles.beneficiarioForm}>
 						{formik.values.telefones.map((_, index) => {
 							return (
@@ -385,7 +415,7 @@ function step1({ formik }: step1Type) {
 										label="Título"
 										variant="outlined"
 										required
-										error={false}
+										error={!!formik.errors.telefones}
 										className={styles.col5}
 										value={
 											formik.values.telefones[index]
@@ -408,6 +438,7 @@ function step1({ formik }: step1Type) {
 										label="Tel. Administrador"
 										formik={formik}
 										col={5}
+										error={!!formik.errors.telefones}
 										mascara="(00) 0000-0000"
 										secondMask="(00) 0 0000-0000"
 										definitions={{
@@ -453,6 +484,9 @@ function step1({ formik }: step1Type) {
 								</div>
 							);
 						})}
+						<span className={styles.error}>
+							{formik.errors.telefones as string | undefined}
+						</span>
 					</div>
 					{!isView && (
 						<Button

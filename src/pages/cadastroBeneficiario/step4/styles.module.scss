@@ -51,10 +51,28 @@
 
         }
 
-        .monthTitle{
-            padding-left: 3rem;
-            font-weight: 700;
+        .tableHeader{
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            padding: 1rem 4rem 1rem 2rem;
+            border-radius: 2rem;
+            background-color: global.$primary-color;
+            color: white;
 
+        }
+
+        .monthTitle{
+            font-weight: 700;
+        }
+        .TableInputs{
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0rem 4rem 0rem 2rem;  
         }
 
         .tableInput{
@@ -102,7 +120,7 @@
         align-items: center;
         .removeIcon{
             color: #fc3c3c;
-            font-size: 2.5rem;
+            font-size: 2rem;
             &:hover{
                 cursor: pointer;
             }

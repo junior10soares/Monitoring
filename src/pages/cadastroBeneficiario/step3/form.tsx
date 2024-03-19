@@ -88,7 +88,7 @@ function step3({ setStep, formik }: step3Type) {
 						{new Date().getFullYear() - 1}
 					</h3>
 					<div className={styles.beneficiarioForm}>
-						<FormControl className="col3">
+						<FormControl className="col6">
 							<InputLabel required id="incentivoFiscal">
 								Incentivo Fiscal
 							</InputLabel>
@@ -129,7 +129,7 @@ function step3({ setStep, formik }: step3Type) {
 								)}
 							</Select>
 						</FormControl>
-						<FormControl className="col3">
+						<FormControl className="col6">
 							<InputLabel required id="submodulo">
 								Submódulo
 							</InputLabel>
@@ -156,6 +156,7 @@ function step3({ setStep, formik }: step3Type) {
 												key={index}
 												value={codgBeneficio}
 											>
+												{codgBeneficio} -{" "}
 												{nomeBeneficio}
 											</MenuItem>
 										);
@@ -195,18 +196,39 @@ function step3({ setStep, formik }: step3Type) {
 							0 && (
 							<>
 								<div className={styles.monthsTitle}>
-									<span>Mês referência</span>
+									<span
+										className={`${styles.col2} ${styles.monthTitle}`}
+									>
+										Mês referência
+									</span>
 									{formik.values?.incentivoFiscal?.fundos?.map(
 										({ sigla }: IFundo) => {
-											return <span>{sigla}</span>;
+											return (
+												<span
+													className={`${
+														styles?.[
+															`col${Math.ceil(
+																10 /
+																	formik
+																		.values
+																		?.incentivoFiscal
+																		?.fundos
+																		.length,
+															)}`
+														]
+													} ${styles.monthTitle}`}
+												>
+													{sigla}
+												</span>
+											);
 										},
 									)}
 								</div>
 								{monthsData.map(({ codigo, label }) => {
 									return (
-										<>
+										<div className={styles.TableInputs}>
 											<span
-												className={`${styles.col3} ${styles.monthTitle}`}
+												className={`${styles.col2} ${styles.monthTitle}`}
 											>
 												{label}
 											</span>
@@ -219,7 +241,7 @@ function step3({ setStep, formik }: step3Type) {
 															formik={formik}
 															disabled={isView}
 															col={Math.ceil(
-																8 /
+																10 /
 																	formik
 																		.values
 																		?.incentivoFiscal
@@ -295,14 +317,14 @@ function step3({ setStep, formik }: step3Type) {
 																		id,
 																)?.[
 																	`${codigo}Valor`
-																] ?? 0
+																] ?? null
 															}
 															className={`${styles.tableInput}`}
 														/>
 													);
 												},
 											)}
-										</>
+										</div>
 									);
 								})}
 								<div className={styles.totals}>

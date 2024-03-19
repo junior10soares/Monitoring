@@ -24,7 +24,7 @@ async function insertBeneficiario(values: any) {
 		municipio: {
 			id: values.municipio,
 		},
-		porte: values.porte,
+		porte: values.porte || "teste",
 		ramoAtividade: values.ramoAtividade,
 		descricao: values.descricao,
 		telefones: values.telefones,
