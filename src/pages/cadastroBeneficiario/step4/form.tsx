@@ -161,7 +161,7 @@ function step4({ setStep, formik }: step4Type) {
 										)}
 										disableListWrap
 										className={styles.col2}
-										placeholder="Selecione uma cidade"
+										placeholder="Selecione uma unidade de medida"
 										disabled={isView}
 										disableCloseOnSelect
 										getOptionLabel={(option) =>
@@ -169,7 +169,7 @@ function step4({ setStep, formik }: step4Type) {
 										}
 										value={
 											formik.values?.infoVendas[index]
-												?.unidadeMedida?.value
+												?.unidadeMedida
 										}
 										onChange={(_, value) => {
 											formik.setFieldValue(

@@ -1,16 +1,10 @@
-import {
-	Autocomplete,
-	Button,
-	Card,
-	MenuItem,
-	Select,
-	TextField,
-} from "@mui/material";
+import { Autocomplete, Button, Card, TextField } from "@mui/material";
 
 import { FormikProps } from "formik";
 import { useEffect, useState } from "react";
 import CustomTextField from "../../../components/customTextField";
 import NumericMask from "../../../components/numericMask";
+import TreeDropdown from "../../../components/treeDropdown";
 import { getAllNcms } from "../../../services/ncmService";
 import { formatBRCurrency } from "../../../utils/Currency";
 import { monthsData } from "../../../utils/DateTime";
@@ -231,133 +225,113 @@ function step5({ setStep, formik }: step5Type) {
 					</h3>
 					<div className={styles.beneficiarioForm}>
 						<div className={styles.tableHeader}>
-							<span className={styles.col3}>NCM</span>
-							<span className={styles.col2}>
+							<span
+								className={`${styles.col3} ${styles.monthTitle}`}
+							>
+								NCM
+							</span>
+							<span
+								className={`${styles.col2} ${styles.monthTitle}`}
+							>
 								Produto incentivado
 							</span>
-							<span className={styles.col2}>
+							<span
+								className={`${styles.col2} ${styles.monthTitle}`}
+							>
 								Unidade de medida
 							</span>
-							<span className={styles.col3}>
+							<span
+								className={`${styles.col2} ${styles.monthTitle}`}
+							>
 								Quantidade interna
 							</span>
-							<span className={styles.col2}>
+							<span
+								className={`${styles.col2} ${styles.monthTitle}`}
+							>
 								Quant. Interestadual
 							</span>
+							<span className={styles.col1}></span>
 						</div>
-						{Object.keys(formik.values.infoVendas ?? {}).map(
+						{Object.keys(formik.values?.infoVendas ?? {})?.map(
 							(item, index) => (
-								<>
-									<Autocomplete
-										id="ncm"
-										options={ncms}
-										disableListWrap
-										className={styles.col3}
-										disabled
-										placeholder="Selecione um NCM"
-										disableCloseOnSelect
-										getOptionLabel={(option) =>
-											`${option.codigo} - ${option.descricao}`
-										}
-										value={
-											formik.values?.infoVendas[index]
-												?.ncm
-										}
-										onChange={(_, value) => {
-											formik.setFieldValue(
-												`infoVendas[${index}].ncm`,
-												value,
-											);
-										}}
-										renderInput={(params) => (
-											<TextField
-												{...params}
-												label="NCM"
-												placeholder="Selecione um NCM"
-											/>
-										)}
-									/>
+								<div
+									key={index}
+									className={`${styles.TableInputs}`}
+								>
+									<div className={styles.col3}>
+										<TreeDropdown
+											data={ncms}
+											onChange={(_, value) => {
+												formik.setFieldValue(
+													`infoVendas[${index}].ncm`,
+													value[0].value,
+												);
+											}}
+											placeholder="Selecione um NCM"
+										/>
+									</div>
 
 									<CustomTextField
 										id={`${item}-produto-incentivado`}
 										name={`${item}-produto-incentivado`}
 										label=""
 										col={2}
-										disabled
 										formik={formik}
+										disabled={true}
+										error={!!formik.errors.infoVendas}
 										value={
 											formik.values?.infoVendas[index]
 												?.produtoIncentivado
 										}
-										onChange={(ev: {
-											target: { value: any };
-										}) =>
-											formik.setFieldValue(
-												`infoVendas[${index}].produtoIncentivado`,
-												ev.target.value,
-											)
-										}
 									/>
-									<Select
+									<Autocomplete
 										id="unidadeMedida"
-										name="unidadeMedida"
-										label=""
-										disabled
+										options={unidadesDeMedida.sort(
+											function (a, b) {
+												if (a.value < b.value) {
+													return -1;
+												}
+												if (a.value > b.value) {
+													return 1;
+												}
+												return 0;
+											},
+										)}
+										disableListWrap
 										className={styles.col2}
-										labelId="unidadeMedida"
 										placeholder="Selecione uma cidade"
+										disabled={true}
+										disableCloseOnSelect
+										getOptionLabel={(option) =>
+											`${option.key} - ${option.value}`
+										}
 										value={
 											formik.values?.infoVendas[index]
 												?.unidadeMedida
 										}
-										onChange={(ev) =>
-											formik.setFieldValue(
-												`infoVendas[${index}].unidadeMedida`,
-												ev.target.value,
-											)
-										}
-									>
-										{unidadesDeMedida?.map(
-											(
-												{
-													key,
-													value,
-												}: {
-													key: string;
-													value: string;
-												},
-												index,
-											) => {
-												return (
-													<MenuItem
-														key={index}
-														value={key}
-													>
-														{value}
-													</MenuItem>
-												);
-											},
+										renderInput={(params) => (
+											<TextField
+												{...params}
+												label="Unidade de Medida"
+												placeholder="Selecione uma unidade de medida"
+												error={
+													!!formik.errors.infoVendas
+												}
+											/>
 										)}
-									</Select>
+									/>
 									<NumericMask
 										id={`${item}-quantidade-interna`}
 										name={`${item}-quantidade-interna`}
 										formik={formik}
 										label=""
+										error={!!formik.errors.infoVendas}
 										col={2}
-										disabled
+										disabled={true}
 										required={false}
 										value={
 											formik.values?.infoVendas[index]
 												?.quantidadeInterna
-										}
-										onChange={(ev: {
-											target: { value: string };
-										}) =>
-											formik.setFieldValue(
-												`infoVendas[${index}].quantidadeInterna`,
-												ev.target.value,
-											)
 										}
 									/>
 									<NumericMask
@@ -365,23 +339,19 @@ function step5({ setStep, formik }: step5Type) {
 										name={`${item}-quantidade-interestadual`}
 										formik={formik}
 										label=""
-										disabled
 										col={2}
+										disabled={true}
+										error={!!formik.errors.infoVendas}
 										required={false}
 										value={
 											formik.values?.infoVendas[index]
 												?.quantidadeInterestadual
 										}
-										onChange={(ev: {
-											target: { value: string };
-										}) =>
-											formik.setFieldValue(
-												`infoVendas[${index}].quantidadeInterestadual`,
-												ev.target.value,
-											)
-										}
 									/>
-								</>
+									<div
+										className={`${styles.col1} ${styles.removeButtonDiv}`}
+									></div>
+								</div>
 							),
 						)}
 					</div>
