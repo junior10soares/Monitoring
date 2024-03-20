@@ -7,7 +7,7 @@ import Step4 from "./step4/";
 import Step5 from "./step5/";
 
 function cadastroBeneficiario() {
-	const [step, setStep] = useState(4);
+	const [step, setStep] = useState(1);
 	return (
 		<div>
 			<StepCount activeStep={step} />
