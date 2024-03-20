@@ -59,14 +59,30 @@ function step5({ setStep, formik }: step5Type) {
 					</h3>
 					<div className={styles.beneficiarioForm}>
 						<div className={styles.monthsTitle}>
-							<span>Mês referência</span>
-							<span>Investimento mensal</span>
-							<span>Empregos direto (homem)</span>
-							<span>Empregos direto (mulher)</span>
+							<span
+								className={`${styles.col2} ${styles.monthTitle}`}
+							>
+								Mês referência
+							</span>
+							<span
+								className={`${styles.col3} ${styles.monthTitle}`}
+							>
+								Investimento mensal
+							</span>
+							<span
+								className={`${styles.col3} ${styles.monthTitle}`}
+							>
+								Empregos direto (homem)
+							</span>
+							<span
+								className={`${styles.col3} ${styles.monthTitle}`}
+							>
+								Empregos direto (mulher)
+							</span>
 						</div>
 						{monthsData.map(({ codigo, label }, index) => {
 							return (
-								<>
+								<div className={styles.TableInputs}>
 									<span
 										className={`${styles.col2} ${styles.monthTitle}`}
 									>
@@ -77,9 +93,10 @@ function step5({ setStep, formik }: step5Type) {
 										name={`${codigo}-investimento-mensal`}
 										formik={formik}
 										col={3}
-										disabled
 										prefix="R$"
 										label=""
+										fixedDecimalScale
+										disabled={true}
 										onChange={(ev: {
 											target: { value: string };
 										}) => {
@@ -108,8 +125,8 @@ function step5({ setStep, formik }: step5Type) {
 										id={`${codigo}-empregos-direto-homem`}
 										formik={formik}
 										col={3}
-										disabled
 										label=""
+										disabled={true}
 										onChange={(ev: {
 											target: { value: string };
 										}) => {
@@ -136,8 +153,8 @@ function step5({ setStep, formik }: step5Type) {
 										id={`${codigo}-empregos-direto-mulher`}
 										formik={formik}
 										col={3}
-										disabled
 										label=""
+										disabled={true}
 										onChange={(ev: {
 											target: { value: string };
 										}) => {
@@ -160,23 +177,27 @@ function step5({ setStep, formik }: step5Type) {
 										}
 										className={`${styles.tableInput}`}
 									/>
-								</>
+								</div>
 							);
 						})}
 						<div className={styles.totals}>
 							<span className={styles.monthTitle}>
 								Investimento anual:
 								{formatBRCurrency(
-									formik.values?.investimentoMensal?.reduce(
-										(total, item) =>
-											total +
-											parseFloat(
-												!isEmpty(item?.valor)
-													? item?.valor
-													: "0",
-											),
-										0,
-									),
+									Array.isArray(
+										formik.values?.investimentoMensal,
+									)
+										? formik.values?.investimentoMensal?.reduce(
+												(total, item) =>
+													total +
+													parseFloat(
+														!isEmpty(item?.valor)
+															? item?.valor
+															: "0",
+													),
+												0,
+										  )
+										: 0,
 								)}
 							</span>
 							<span
@@ -187,12 +208,13 @@ function step5({ setStep, formik }: step5Type) {
 									id="investimentoAcumulado"
 									name="investimentoAcumulado"
 									formik={formik}
-									disabled
 									prefix="R$"
 									label=""
+									fixedDecimalScale
+									disabled={true}
 									col={6}
 									onChange={formik.handleChange}
-									required={false}
+									required={true}
 									value={formik.values.investimentoAcumulado}
 									className={`${styles.tableInput}`}
 								/>

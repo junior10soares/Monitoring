@@ -16,6 +16,7 @@
     "@mui/material": "^5.15.10",
     "@mui/styled-engine-sc": "^6.0.0-alpha.15",
     "@mui/x-data-grid": "^6.19.3",
+    "@mui/x-data-grid-generator": "^6.19.6",
     "@types/react-input-mask": "^2.0.4",
     "axios": "^1.6.7",
     "dotenv": "^16.4.1",

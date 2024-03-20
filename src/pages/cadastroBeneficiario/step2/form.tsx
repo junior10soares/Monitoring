@@ -94,7 +94,7 @@ function step2({ setStep, formik }: step2Type) {
 												newInvestimentoMensal,
 											);
 										}}
-										required={false}
+										required
 										value={
 											formik.values.investimentoMensal?.[
 												index
@@ -123,7 +123,7 @@ function step2({ setStep, formik }: step2Type) {
 												newEmpregosHomem,
 											);
 										}}
-										required={false}
+										required
 										value={
 											formik.values.empregoHomem?.[index]
 												?.valor
@@ -151,7 +151,7 @@ function step2({ setStep, formik }: step2Type) {
 												newEmpregosMulher,
 											);
 										}}
-										required={false}
+										required
 										value={
 											formik.values.empregoMulher?.[index]
 												?.valor

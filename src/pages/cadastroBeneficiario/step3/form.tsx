@@ -98,6 +98,7 @@ function step3({ setStep, formik }: step3Type) {
 								labelId="id"
 								placeholder="Selecione um incentivo"
 								value={formik.values.incentivoFiscal?.id}
+								required
 								fullWidth
 								disabled={isView}
 								onChange={(e) => {
@@ -140,6 +141,7 @@ function step3({ setStep, formik }: step3Type) {
 								placeholder="Selecione um Submodulo"
 								value={formik.values?.submodulo}
 								fullWidth
+								required
 								disabled={isView}
 								onChange={formik.handleChange}
 							>
@@ -152,13 +154,15 @@ function step3({ setStep, formik }: step3Type) {
 										index,
 									) => {
 										return (
-											<MenuItem
-												key={index}
-												value={codgBeneficio}
-											>
-												{codgBeneficio} -{" "}
-												{nomeBeneficio}
-											</MenuItem>
+											codgBeneficio && (
+												<MenuItem
+													key={index}
+													value={codgBeneficio}
+												>
+													{codgBeneficio} -{" "}
+													{nomeBeneficio}
+												</MenuItem>
+											)
 										);
 									},
 								)}
@@ -171,6 +175,7 @@ function step3({ setStep, formik }: step3Type) {
 							prefix="R$"
 							fixedDecimalScale
 							label="Venda anual interna"
+							required
 							col={6}
 							onChange={formik.handleChange}
 							required={false}
@@ -187,7 +192,7 @@ function step3({ setStep, formik }: step3Type) {
 							label="Venda anual interestadual"
 							col={6}
 							onChange={formik.handleChange}
-							required={false}
+							required
 							disabled={isView}
 							value={formik.values?.vendaAnualInterestadual ?? ""}
 							className={`${styles.tableInput}`}
@@ -305,7 +310,7 @@ function step3({ setStep, formik }: step3Type) {
 																	newValoresFundos,
 																);
 															}}
-															required={false}
+															required
 															value={
 																formik.values?.valoresFundo?.find(
 																	(
