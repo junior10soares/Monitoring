@@ -11,7 +11,7 @@ export const inputs = {
 		fundos: [],
 	},
 	valoresFundo: [],
-	submodulo: 0,
+	submodulo: null,
 	codigoRcr: "",
 	recolhimentoFundos: [
 		{
@@ -40,6 +40,6 @@ export const inputs = {
 			},
 		},
 	],
-	vendaAnualInterestadual: 0,
-	vendaAnualInterna: 0,
+	vendaAnualInterestadual: null,
+	vendaAnualInterna: null,
 };

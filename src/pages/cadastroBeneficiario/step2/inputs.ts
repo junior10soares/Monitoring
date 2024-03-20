@@ -1,6 +1,6 @@
 export const inputs = {
 	anoReferencia: 2023,
-	investimentoAcumulado: 0,
+	investimentoAcumulado: "",
 	investimentoMensal: [
 		{ codigo: "janeiroValor", valor: "" },
 		{ codigo: "fevereiroValor", valor: "" },

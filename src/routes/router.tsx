@@ -2,14 +2,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import BeneficiarioStep1 from "../pages/cadastroBeneficiario";
 import ErrorPage from "../pages/erroPage";
 import ListagemBeneficiario from "../pages/listagemBeneficiario";
-import Login from "../pages/login";
 import Root from "../pages/rootPage";
 
 const router = createBrowserRouter([
-	{
-		path: "/login",
-		element: <Login />,
-	},
 	{
 		path: "/",
 		element: <Root />,
