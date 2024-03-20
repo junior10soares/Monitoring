@@ -25,6 +25,7 @@ import InputMask from "../../../components/inputMask";
 import { getBeneficiarioById } from "../../../services/beneficiario";
 import { getAllCnaes } from "../../../services/cnaeService";
 import { getAllMunicipios } from "../../../services/municipioService";
+import { getAllPortes } from "../../../services/portesService";
 import { monthsData } from "../../../utils/DateTime";
 import { Messages } from "../../../utils/Messages";
 import { inputs } from "./inputs";
@@ -119,8 +120,8 @@ function step1({ formik }: step1Type) {
 	async function fillCombos() {
 		const list = await getAllCnaes();
 		const municipiorsList = await getAllMunicipios();
-		// const listPortes = await getAllPortes();
-		// setPortes(listPortes);
+		const listPortes = await getAllPortes();
+		setPortes(listPortes);
 		setCnaesList(list);
 		setMunicipios(municipiorsList);
 	}
@@ -301,13 +302,15 @@ function step1({ formik }: step1Type) {
 								onChange={formik.handleChange}
 								disabled={isView}
 							>
-								{portes.map(({ id, nome }: IPorte, index) => {
-									return (
-										<MenuItem key={index} value={id}>
-											{nome}
-										</MenuItem>
-									);
-								})}
+								{portes.map(
+									({ id, descricao }: IPorte, index) => {
+										return (
+											<MenuItem key={index} value={id}>
+												{descricao}
+											</MenuItem>
+										);
+									},
+								)}
 							</Select>
 							<span className={styles.error}>
 								{formik.errors.porte as string | undefined}

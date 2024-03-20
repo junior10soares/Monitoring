@@ -18,22 +18,42 @@ function getChildren(
 	return res;
 }
 
+const assignObjectPaths = (obj, stack = "") => {
+	Object.keys(obj).forEach((k) => {
+		const node = obj[k];
+		if (typeof node === "object") {
+			node.path = stack ? `${stack}.${k}` : k;
+			assignObjectPaths(node, node.path);
+		}
+	});
+};
+
 async function getAllNcms() {
 	const res = await axiosInstance.get("/ncms/list");
-	const formatedRes = res.data
+	var formatedRes = res.data
 		.filter((i: INcm) => i.codigo.length === 2)
 		.map((bisavo: INcm) => ({
 			...bisavo,
+			label: `${bisavo.codigo} - ${bisavo.descricao}`,
+			value: bisavo.id,
+			disabled: true,
 			children: getChildren(bisavo.codigo, res.data, 4).map(
 				(avo: INcm) => ({
 					...avo,
+					label: `${avo.codigo} - ${avo.descricao}`,
+					value: avo.id,
+					disabled: true,
 					children: getChildren(avo.codigo, res.data, 5).map(
 						(pai: INcm) => ({
 							...pai,
+							label: `${pai.codigo} - ${pai.descricao}`,
+							value: pai.id,
+							disabled: true,
 							children: getChildren(pai.codigo, res.data, 8).map(
 								(filho: INcm) => ({
 									...filho,
-									selectable: true,
+									label: `${filho.codigo} - ${filho.descricao}`,
+									value: `${filho.codigo} - ${filho.descricao}`,
 								}),
 							),
 						}),
@@ -41,6 +61,7 @@ async function getAllNcms() {
 				}),
 			),
 		}));
+	assignObjectPaths(formatedRes);
 	return formatedRes;
 }
 

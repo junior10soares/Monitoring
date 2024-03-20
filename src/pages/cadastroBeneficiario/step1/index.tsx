@@ -38,9 +38,9 @@ export default function ({ setStep }: stepType) {
 		if (!_values.nomeOuRazaoSocial) {
 			errors.nomeOuRazaoSocial = Messages.form.required;
 		}
-		// if (!_values.porte) {
-		// 	errors.porte = Messages.form.required;
-		// }
+		if (!_values.porte) {
+			errors.porte = Messages.form.required;
+		}
 		if (!_values.ramoAtividade) {
 			errors.ramoAtividade = Messages.form.required;
 		}

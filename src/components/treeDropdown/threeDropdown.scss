@@ -1,0 +1,22 @@
+div.react-dropdown-tree-select{
+    div.dropdown{
+        width: 90%;
+        a.dropdown-trigger{
+            border: 1px solid;
+            border-color: rgba(0, 0, 0, 0.23);
+            border-radius: inherit;
+            overflow: hidden;
+            padding: 15.4px 14px;
+            margin-top: 3px;
+            font: inherit;
+            border-radius: 0.3rem;
+            width: 90%;
+        }
+        div.dropdown-content{
+            z-index: 1000;
+            max-height: 15rem;
+            overflow-x: scroll;
+            position: fixed!important;
+        }
+    }
+}

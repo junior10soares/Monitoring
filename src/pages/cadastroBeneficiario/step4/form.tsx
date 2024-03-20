@@ -1,26 +1,13 @@
 import AddIcon from "@mui/icons-material/Add";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import RemoveIcon from "@mui/icons-material/DeleteOutline";
-import {
-	Accordion,
-	AccordionDetails,
-	AccordionSummary,
-	Autocomplete,
-	Button,
-	Card,
-	FormControl,
-	InputLabel,
-	MenuItem,
-	Select,
-	TextField,
-	Typography,
-} from "@mui/material";
+import { Autocomplete, Button, Card, TextField } from "@mui/material";
 import { FormikProps } from "formik";
-import { INcm } from "ncm";
 import { useEffect, useState } from "react";
+import "react-dropdown-tree-select/dist/styles.css";
 import { useLocation, useOutletContext } from "react-router-dom";
 import CustomTextField from "../../../components/customTextField";
 import NumericMask from "../../../components/numericMask";
+import TreeDropdown from "../../../components/treeDropdown";
 import { getAllNcms } from "../../../services/ncmService";
 import { Messages } from "../../../utils/Messages";
 import { unidadesDeMedida } from "../../../utils/Unm";
@@ -121,273 +108,22 @@ function step4({ setStep, formik }: step4Type) {
 						</div>
 						{Object.keys(formik.values?.infoVendas ?? {})?.map(
 							(item, index) => (
-								<div className={`${styles.TableInputs}`}>
-									{/* <Autocomplete
-										id="ncm"
-										options={ncms}
-										disableListWrap
-										className={styles.col3}
-										placeholder="Selecione um NCM"
-										disabled={isView}
-										disableCloseOnSelect
-										renderOption={(props, option: INcm) => {
-											return (
-												<Accordion>
-													<Accordion>
-														<AccordionSummary
-															expandIcon={
-																<ArrowDownwardIcon />
-															}
-														>
-															<Typography>
-																{option.codigo}{" "}
-																-{" "}
-																{
-																	option.descricao
-																}
-															</Typography>
-														</AccordionSummary>
-														<AccordionDetails>
-															{option.children &&
-																option.children
-																	.length >
-																	0 &&
-																option.children.map(
-																	(
-																		avo: INcm,
-																	) => (
-																		<Accordion>
-																			<AccordionSummary
-																				expandIcon={
-																					<ArrowDownwardIcon />
-																				}
-																			>
-																				<Typography>
-																					{
-																						avo.codigo
-																					}{" "}
-																					-{" "}
-																					{
-																						avo.descricao
-																					}
-																				</Typography>
-																			</AccordionSummary>
-																			<AccordionDetails>
-																				{avo.children &&
-																					avo
-																						.children
-																						.length >
-																						0 &&
-																					avo.children.map(
-																						(
-																							pai: INcm,
-																						) => (
-																							<Accordion>
-																								<AccordionSummary
-																									expandIcon={
-																										<ArrowDownwardIcon />
-																									}
-																								>
-																									<Typography>
-																										{
-																											pai.codigo
-																										}{" "}
-																										-{" "}
-																										{
-																											pai.descricao
-																										}
-																									</Typography>
-																								</AccordionSummary>
-																								<AccordionDetails>
-																									<ul>
-																										{pai.children &&
-																											pai
-																												.children
-																												.length >
-																												0 &&
-																											pai.children.map(
-																												(
-																													filho: INcm,
-																												) => (
-																													<li
-																														{...props}
-																													>
-																														{
-																															filho.codigo
-																														}{" "}
-																														-{" "}
-																														{
-																															filho.descricao
-																														}
-																													</li>
-																												),
-																											)}
-																									</ul>
-																								</AccordionDetails>
-																							</Accordion>
-																						),
-																					)}
-																			</AccordionDetails>
-																		</Accordion>
-																	),
-																)}
-														</AccordionDetails>
-													</Accordion>
-												</Accordion>
-											);
-										}}
-										getOptionLabel={(option) =>
-											`${option.codigo} - ${option.descricao}`
-										}
-										value={
-											formik.values?.infoVendas[index]
-												?.ncm
-										}
-										onChange={(_, value) => {
-											formik.setFieldValue(
-												`infoVendas[${index}].ncm`,
-												value,
-											);
-										}}
-										renderInput={(params) => (
-											<TextField
-												{...params}
-												label="NCM"
-												placeholder="Selecione um NCM"
-												error={
-													!!formik.errors.infoVendas
-												}
-											/>
-										)}
-									/> */}
-
-									<FormControl className="col3">
-										<InputLabel required id="ncm">
-											NCM
-										</InputLabel>
-										<Select
-											id="ncm"
-											name="ncm"
-											label="NCM"
-											labelId="municipio"
-											placeholder="Selecione um Ncm"
-											value={
-												formik.values?.infoVendas[index]
-													?.ncm
-											}
-											fullWidth
-											onChange={formik.handleChange}
-											disabled={isView}
-										>
-											{ncms.map((bisavos: INcm) => (
-												<Accordion>
-													<Accordion>
-														<AccordionSummary
-															expandIcon={
-																<ArrowDownwardIcon />
-															}
-														>
-															<Typography>
-																{bisavos.codigo}{" "}
-																-{" "}
-																{
-																	bisavos.descricao
-																}
-															</Typography>
-														</AccordionSummary>
-														<AccordionDetails>
-															{bisavos.children &&
-																bisavos.children
-																	.length >
-																	0 &&
-																bisavos.children.map(
-																	(
-																		avo: INcm,
-																	) => (
-																		<Accordion>
-																			<AccordionSummary
-																				expandIcon={
-																					<ArrowDownwardIcon />
-																				}
-																			>
-																				<Typography>
-																					{
-																						avo.codigo
-																					}{" "}
-																					-{" "}
-																					{
-																						avo.descricao
-																					}
-																				</Typography>
-																			</AccordionSummary>
-																			<AccordionDetails>
-																				{avo.children &&
-																					avo
-																						.children
-																						.length >
-																						0 &&
-																					avo.children.map(
-																						(
-																							pai: INcm,
-																						) => (
-																							<Accordion>
-																								<AccordionSummary
-																									expandIcon={
-																										<ArrowDownwardIcon />
-																									}
-																								>
-																									<Typography>
-																										{
-																											pai.codigo
-																										}{" "}
-																										-{" "}
-																										{
-																											pai.descricao
-																										}
-																									</Typography>
-																								</AccordionSummary>
-																								<AccordionDetails>
-																									{pai.children &&
-																										pai
-																											.children
-																											.length >
-																											0 &&
-																										pai.children.map(
-																											(
-																												filho: INcm,
-																											) => (
-																												<MenuItem
-																													key={
-																														filho.id
-																													}
-																													value={
-																														filho.id
-																													}
-																												>
-																													{
-																														filho.codigo
-																													}{" "}
-																													-{" "}
-																													{
-																														filho.descricao
-																													}
-																												</MenuItem>
-																											),
-																										)}
-																								</AccordionDetails>
-																							</Accordion>
-																						),
-																					)}
-																			</AccordionDetails>
-																		</Accordion>
-																	),
-																)}
-														</AccordionDetails>
-													</Accordion>
-												</Accordion>
-											))}
-										</Select>
-									</FormControl>
+								<div
+									key={index}
+									className={`${styles.TableInputs}`}
+								>
+									<div className={styles.col3}>
+										<TreeDropdown
+											data={ncms}
+											onChange={(_, value) => {
+												formik.setFieldValue(
+													`infoVendas[${index}].ncm`,
+													value[0].value,
+												);
+											}}
+											placeholder="Selecione um NCM"
+										/>
+									</div>
 
 									<CustomTextField
 										id={`${item}-produto-incentivado`}
