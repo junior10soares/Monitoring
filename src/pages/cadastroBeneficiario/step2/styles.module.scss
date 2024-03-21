@@ -1,0 +1,114 @@
+@use "../../../global";
+
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+
+    .card {
+        padding: 2rem;
+        width: 75%;
+        border-radius: 1rem;
+
+        .title{
+            font-size: 1.5rem;
+            font-weight: bold;
+            font-family: sans-serif;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle{
+            font-family: sans-serif;
+            font-size: 1.125rem;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 1.875rem; 
+            margin-bottom: 2rem;
+        }
+        .yearTitle{
+            font-size: 1rem;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 1.25rem; 
+            margin-bottom: 1rem;
+        }
+        .year{
+            font-weight: 700;
+
+        }
+
+        .monthsTitle{
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            padding: 1rem 4rem 1rem 2rem;
+            border-radius: 2rem;
+            background-color: global.$primary-color;
+            color: white;
+
+        }
+
+        .monthTitle{
+            font-weight: 700;
+
+        }
+        .TableInputs{
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0rem 4rem 0rem 2rem;  
+        }
+
+        .tableInput{
+            border-radius: 2rem;
+        }
+
+        .totals{
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            margin-top: 3rem;
+
+            .totalAcumulado{
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+        }
+    }
+
+    .beneficiarioForm{
+        margin-top: 2rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        align-items: center;
+
+    }
+    .primaryButton{
+        background-color: global.$primary-color;
+        border-radius: 2rem;
+        padding: 1rem;
+        margin-top: 2rem;
+    }
+    .secondaryButton{
+        border: 1px solid global.$primary-color;
+        background-color: white;
+        color: global.$primary-color;
+        border-radius: 2rem;
+        padding: 1rem;
+        margin-top: 2rem;
+    }
+    .buttonsRigth{
+        display: flex;
+        justify-content: flex-end;
+        width: 75%;
+        margin-bottom: 2rem;
+        gap: 1rem;
+    }
+}
