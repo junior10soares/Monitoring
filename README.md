@@ -1,0 +1,1 @@
+# sedec-monitoramento-front
