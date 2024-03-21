@@ -21,6 +21,7 @@
     "axios": "^1.6.7",
     "dotenv": "^16.4.1",
     "formik": "^2.4.5",
+    "primereact": "^10.5.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropdown-tree-select": "^2.8.0",

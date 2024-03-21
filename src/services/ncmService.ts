@@ -35,25 +35,33 @@ async function getAllNcms() {
 		.map((bisavo: INcm) => ({
 			...bisavo,
 			label: `${bisavo.codigo} - ${bisavo.descricao}`,
-			value: bisavo.id,
-			disabled: true,
+			key: bisavo.id,
+			selectable: false,
+			data: bisavo.descricao,
+			leaf: true,
 			children: getChildren(bisavo.codigo, res.data, 4).map(
 				(avo: INcm) => ({
 					...avo,
 					label: `${avo.codigo} - ${avo.descricao}`,
-					value: avo.id,
-					disabled: true,
+					key: avo.id,
+					selectable: false,
+					data: avo.descricao,
+					leaf: true,
 					children: getChildren(avo.codigo, res.data, 5).map(
 						(pai: INcm) => ({
 							...pai,
 							label: `${pai.codigo} - ${pai.descricao}`,
-							value: pai.id,
-							disabled: true,
+							key: pai.id,
+							selectable: false,
+							data: pai.descricao,
+							leaf: true,
 							children: getChildren(pai.codigo, res.data, 8).map(
 								(filho: INcm) => ({
 									...filho,
 									label: `${filho.codigo} - ${filho.descricao}`,
-									value: `${filho.codigo} - ${filho.descricao}`,
+									key: filho.id,
+									data: filho.descricao,
+									icon: "pi pi-check",
 								}),
 							),
 						}),

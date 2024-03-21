@@ -42,4 +42,5 @@ export const inputs = {
 	],
 	vendaAnualInterestadual: null,
 	vendaAnualInterna: null,
+	fundos: [],
 };

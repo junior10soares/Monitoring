@@ -1,6 +1,5 @@
+import { TreeSelect } from "primereact/treeselect";
 import React from "react";
-import DropdownTreeSelect from "react-dropdown-tree-select";
-import "react-dropdown-tree-select/dist/styles.css";
 import "./threeDropdown.scss";
 
 type props = {
@@ -10,21 +9,24 @@ type props = {
 	[key: string]: any;
 };
 
-const TreeDropdown = ({ data, placeholder, onChange, rest }: props) => {
+const TreeDropdown = ({
+	data,
+	placeholder,
+	value,
+	onChange,
+	...rest
+}: props) => {
 	return (
-		<DropdownTreeSelect
-			data={data}
-			onChange={onChange}
-			texts={{
-				placeholder: placeholder,
-			}}
-			showDropdown="default"
-			keepTreeOnSearch
-			inlineSearchInput
-			clearSearchOnChange
-			mode="hierarchical"
-			{...rest}
-		/>
+		<div className="treeSelectDiv">
+			<TreeSelect
+				value={value}
+				onChange={onChange}
+				filter
+				options={data}
+				placeholder={placeholder}
+				{...rest}
+			></TreeSelect>
+		</div>
 	);
 };
 

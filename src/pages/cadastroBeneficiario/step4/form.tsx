@@ -63,7 +63,7 @@ function step4({ setStep, formik }: step4Type) {
 				produtoIncentivado: "",
 				quantidadeInterestadual: "",
 				quantidadeInterna: "",
-				unidadeMedida: "",
+				unidadeMedida: null,
 			});
 			formik.setFieldValue("infoVendas", lines);
 		}
@@ -112,15 +112,20 @@ function step4({ setStep, formik }: step4Type) {
 									key={index}
 									className={`${styles.TableInputs}`}
 								>
-									<div className={styles.col3}>
+									<div className={`${styles.col3} card`}>
 										<TreeDropdown
 											data={ncms}
-											onChange={(_, value) => {
+											onChange={(ev) => {
 												formik.setFieldValue(
 													`infoVendas[${index}].ncm`,
-													value[0].value,
+													ev.target.value,
 												);
 											}}
+											value={
+												formik.values.infoVendas[index]
+													.ncm
+											}
+											showPartiallySelected="true"
 											placeholder="Selecione um NCM"
 										/>
 									</div>

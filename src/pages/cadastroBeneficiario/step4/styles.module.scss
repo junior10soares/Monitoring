@@ -91,7 +91,16 @@
                 gap: 1rem;
             }
         }
-
+        .treeSelectDiv{
+            display: flex;
+            justify-content: center;
+        }
+        .treeSelect{
+            width: 100%;
+        }
+        .treeSelectPanel{
+            width: 10rem
+        }
         
     }
 

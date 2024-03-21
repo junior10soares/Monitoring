@@ -57,6 +57,22 @@ function step3({ setStep, formik }: step3Type) {
 		}
 	}
 
+	function addNewFundo(incentivo: number, submodulo: string = "") {
+		if (incentivo && submodulo) {
+			const fundos = formik.values.fundos;
+			const data = { ...formik.values, fundos: null };
+			formik.setFieldValue("valoresFundo", null);
+			formik.setFieldValue("fundos", [
+				fundos.filter(
+					(i) =>
+						i?.incentivoFiscal?.id !== incentivo &&
+						i.submodulo !== submodulo,
+				),
+				data,
+			]);
+		}
+	}
+
 	const total = useMemo(() => {
 		return formik.values.valoresFundo?.reduce(
 			(totalFundo, item: IValorFundo) =>
@@ -143,7 +159,13 @@ function step3({ setStep, formik }: step3Type) {
 								fullWidth
 								required
 								disabled={isView}
-								onChange={formik.handleChange}
+								onChange={(ev) => {
+									addNewFundo(
+										formik.values.incentivoFiscal.id,
+										formik.values.submodulo,
+									);
+									formik.handleChange(ev);
+								}}
 							>
 								{submodulos.map(
 									(
@@ -178,7 +200,6 @@ function step3({ setStep, formik }: step3Type) {
 							required
 							col={6}
 							onChange={formik.handleChange}
-							required={false}
 							disabled={isView}
 							value={formik.values?.vendaAnualInterna ?? ""}
 							className={`${styles.tableInput}`}
@@ -322,7 +343,7 @@ function step3({ setStep, formik }: step3Type) {
 																		id,
 																)?.[
 																	`${codigo}Valor`
-																] ?? null
+																]
 															}
 															className={`${styles.tableInput}`}
 														/>
