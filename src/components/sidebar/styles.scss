@@ -1,0 +1,22 @@
+#sidebar{
+    display: flex;
+    justify-content: space-between;
+    width: auto;
+    height: 5%;
+    padding: 1rem 3rem;
+    border: 1px solid #D9DBE9;
+
+
+
+    img{
+        width: 10rem;
+        height: 2rem;
+        object-fit: cover;
+    }
+
+    .logout-button{
+        border-radius: 5rem;
+        padding: .5rem 1.5rem;
+        background: var(--azul-escuro, #304186);
+    }
+}

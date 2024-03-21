@@ -1,0 +1,17 @@
+export const inputs = {
+	nomeOuRazaoSocial: "",
+	cpfOuCnpj: "",
+	email: "",
+	telefoneEmpresa: "",
+	telefoneContabilidade: "",
+	nomeFantasia: "",
+	inscricaoEstadual: "",
+	nomeAdministrador: "",
+	telefoneAdministrador: "",
+	municipio: "",
+	porte: "",
+	ramoAtividade: "",
+	descricao: "",
+	cnaes: [],
+	telefones: [{ titulo: "", telefone: "" }],
+};
