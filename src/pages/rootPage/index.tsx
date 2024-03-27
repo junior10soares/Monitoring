@@ -66,7 +66,7 @@ function Root() {
 					>
 						<a
 							className={styles.loginButton}
-							href="https://dev.login.mt.gov.br/auth/realms/mt-realm/protocol/openid-connect/auth?client_id=projeto-template-integracao&redirect_uri=http://localhost:3000&response_type=code"
+							href={`https://dev.login.mt.gov.br/auth/realms/mt-realm/protocol/openid-connect/auth?client_id=projeto-template-integracao&redirect_uri=${window.location.origin}&response_type=code`}
 						>
 							Entrar
 						</a>
