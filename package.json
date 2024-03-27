@@ -19,7 +19,6 @@
     "@mui/x-data-grid-generator": "^6.19.6",
     "@types/react-input-mask": "^2.0.4",
     "axios": "^1.6.7",
-    "dotenv": "^16.4.1",
     "formik": "^2.4.5",
     "primereact": "^10.5.3",
     "react": "^18.2.0",
