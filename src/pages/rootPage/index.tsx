@@ -37,8 +37,6 @@ function Root() {
 		})();
 	}, []);
 
-	console.log(window.location.origin);
-
 	return (
 		<div style={{ maxWidth: "100vw" }}>
 			{isLoading && (
