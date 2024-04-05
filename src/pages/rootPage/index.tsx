@@ -66,7 +66,11 @@ function Root() {
 					>
 						<a
 							className={styles.loginButton}
-							href={`https://dev.login.mt.gov.br/auth/realms/mt-realm/protocol/openid-connect/auth?client_id=projeto-template-integracao&redirect_uri=${window.location.origin}&response_type=code`}
+							href={`${
+								import.meta.env.VITE_MTI_LOGIN_URL
+							}/realms/mt-realm/protocol/openid-connect/auth?client_id=sistema-sedec-simbef&redirect_uri=${
+								window.location.origin
+							}&response_type=code`}
 						>
 							Entrar
 						</a>
