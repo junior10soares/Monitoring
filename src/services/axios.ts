@@ -28,7 +28,7 @@ axiosInstance.interceptors.response.use(
 		return response;
 	},
 	async (error): Promise<any> => {
-		console.log(error);
+		console.error(error);
 		if (error.response?.status === 401) {
 			localStorage.removeItem("access_token");
 			window.location.replace("/");
