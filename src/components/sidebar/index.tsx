@@ -63,18 +63,22 @@ export default function Sidebar() {
 					</DialogContent>
 					<DialogActions>
 						<Button onClick={handleClose}>Não</Button>
-						<Button
-							onClick={() => {
-								for (let index = 0; index < 5; index++) {
-									localStorage.removeItem(`step${index + 1}`);
-								}
-								navigate("/beneficiario");
-								handleClose();
-							}}
-							autoFocus
-						>
-							Sim
-						</Button>
+						{location.pathname.includes("/beneficiario/") && (
+							<Button
+								onClick={() => {
+									for (let index = 0; index < 5; index++) {
+										localStorage.removeItem(
+											`step${index + 1}`,
+										);
+									}
+									navigate("/beneficiario");
+									handleClose();
+								}}
+								autoFocus
+							>
+								Sim
+							</Button>
+						)}
 					</DialogActions>
 				</Dialog>
 			</div>

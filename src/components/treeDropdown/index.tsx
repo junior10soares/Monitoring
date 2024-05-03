@@ -17,7 +17,7 @@ const TreeDropdown = ({
 	...rest
 }: props) => {
 	return (
-		<div className="treeSelectDiv">
+		<div className="treeSelectDiv flex justify-content-center">
 			<TreeSelect
 				value={value}
 				onChange={onChange}

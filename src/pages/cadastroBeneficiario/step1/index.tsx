@@ -44,13 +44,19 @@ export default function ({ setStep }: stepType) {
 		if (!_values.ramoAtividade) {
 			errors.ramoAtividade = Messages.form.required;
 		}
-		if (!_values.telefoneAdministrador) {
+		if (
+			!_values.telefones?.find((i) => i.titulo === "ADMINISTRADOR")
+				?.telefone
+		) {
 			errors.telefoneAdministrador = Messages.form.required;
 		}
-		if (!_values.telefoneContabilidade) {
+		if (
+			!_values.telefones?.find((i) => i.titulo === "CONTABILIDADE")
+				?.telefone
+		) {
 			errors.telefoneContabilidade = Messages.form.required;
 		}
-		if (!_values.telefoneEmpresa) {
+		if (!_values.telefones?.find((i) => i.titulo === "EMPRESA")?.telefone) {
 			errors.telefoneEmpresa = Messages.form.required;
 		}
 		if (_values.telefones.length === 0 || !_values.telefones[0].titulo) {
