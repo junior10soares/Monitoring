@@ -47,6 +47,8 @@ function step1({ formik }: step1Type) {
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
 
+	const excludedListTelefones = ["EMPRESA", "CONTABILIDADE", "ADMINISTRADOR"];
+
 	useEffect(() => {
 		(async function fetchAll() {
 			setIsLoading(true);
@@ -198,9 +200,30 @@ function step1({ formik }: step1Type) {
 							definitions={{
 								"#": /[1-9]/,
 							}}
-							value={formik.values.telefoneEmpresa}
+							value={
+								formik.values.telefones.find(
+									(i) => i.titulo === "EMPRESA",
+								)?.telefone ?? ""
+							}
 							required
-							onChange={formik.handleChange}
+							onChange={(ev) => {
+								var newPhone = formik.values.telefones.find(
+									(i) => i.titulo === "EMPRESA",
+								);
+								if (!newPhone) {
+									newPhone = {
+										titulo: "EMPRESA",
+										telefone: "",
+									};
+								}
+								newPhone.telefone = ev.target.value;
+								formik.setFieldValue("telefones", [
+									...formik.values.telefones.filter(
+										(i) => i.titulo !== "EMPRESA",
+									),
+									newPhone,
+								]);
+							}}
 							disabled={isView}
 						/>
 						<InputMask
@@ -213,9 +236,30 @@ function step1({ formik }: step1Type) {
 							definitions={{
 								"#": /[1-9]/,
 							}}
-							value={formik.values.telefoneContabilidade}
+							value={
+								formik.values.telefones.find(
+									(i) => i.titulo === "CONTABILIDADE",
+								)?.telefone ?? ""
+							}
 							required
-							onChange={formik.handleChange}
+							onChange={(ev) => {
+								var newPhone = formik.values.telefones.find(
+									(i) => i.titulo === "CONTABILIDADE",
+								);
+								if (!newPhone) {
+									newPhone = {
+										titulo: "CONTABILIDADE",
+										telefone: "",
+									};
+								}
+								newPhone.telefone = ev.target.value;
+								formik.setFieldValue("telefones", [
+									...formik.values.telefones.filter(
+										(i) => i.titulo !== "CONTABILIDADE",
+									),
+									newPhone,
+								]);
+							}}
 							disabled={isView}
 						/>
 						<InputMask
@@ -327,9 +371,30 @@ function step1({ formik }: step1Type) {
 							definitions={{
 								"#": /[1-9]/,
 							}}
-							value={formik.values.telefoneAdministrador}
+							value={
+								formik.values.telefones.find(
+									(i) => i.titulo === "ADMINISTRADOR",
+								)?.telefone ?? ""
+							}
 							required
-							onChange={formik.handleChange}
+							onChange={(ev) => {
+								var newPhone = formik.values.telefones.find(
+									(i) => i.titulo === "ADMINISTRADOR",
+								);
+								if (!newPhone) {
+									newPhone = {
+										titulo: "ADMINISTRADOR",
+										telefone: "",
+									};
+								}
+								newPhone.telefone = ev.target.value;
+								formik.setFieldValue("telefones", [
+									...formik.values.telefones.filter(
+										(i) => i.titulo !== "ADMINISTRADOR",
+									),
+									newPhone,
+								]);
+							}}
 							disabled={isView}
 						/>
 						<CustomTextField
@@ -348,7 +413,12 @@ function step1({ formik }: step1Type) {
 							multiple
 							id="cnaes"
 							options={cnaesList}
-							className="col12"
+							className={`col12 ${
+								formik.errors.cnaes ||
+								formik.errors.cnaes?.length === 0
+									? styles.error
+									: ""
+							}`}
 							fullWidth
 							placeholder="Selecione um CNAE"
 							disableCloseOnSelect
@@ -390,7 +460,11 @@ function step1({ formik }: step1Type) {
 								/>
 							)}
 						/>
-
+						{formik.errors.cnaes && (
+							<span className={styles.error}>
+								{formik.errors.cnaes as string | undefined}
+							</span>
+						)}
 						<CustomTextField
 							id="descricao"
 							label="Descrição"
@@ -407,86 +481,96 @@ function step1({ formik }: step1Type) {
 				<Card className={styles.card}>
 					<h1 className={styles.title}>Telefones</h1>
 					<div className={styles.beneficiarioForm}>
-						{formik.values.telefones.map((_, index) => {
-							return (
-								<div
-									className={styles.beneficiarioItem}
-									key={index}
-								>
-									<TextField
-										id="titulo"
-										label="Título"
-										variant="outlined"
-										required
-										error={!!formik.errors.telefones}
-										className={styles.col5}
-										value={
-											formik.values.telefones[index]
-												.titulo
-										}
-										disabled={isView}
-										onChange={(ev) => {
-											let newPhones =
-												formik.values.telefones;
-											newPhones[index].titulo =
-												ev.target.value;
-											formik.setFieldValue(
-												"telefones",
-												newPhones,
-											);
-										}}
-									/>
-									<InputMask
-										id={`telefones-${index}`}
-										label="Tel. Administrador"
-										formik={formik}
-										col={5}
-										error={!!formik.errors.telefones}
-										mascara="(00) 0000-0000"
-										secondMask="(00) 0 0000-0000"
-										definitions={{
-											"#": /[1-9]/,
-										}}
-										disabled={isView}
-										value={
-											formik.values.telefones[index]
-												.telefone
-										}
-										required
-										onChange={(ev: {
-											target: { value: string };
-										}) => {
-											let newPhones =
-												formik.values.telefones;
-											newPhones[index].telefone =
-												ev.target.value;
-											formik.handleChange(ev);
-										}}
-									/>
-									{index !== 0 && !isView && (
-										<div
-											className={`${styles.col1} ${styles.removeButtonDiv}`}
-										>
-											<RemoveIcon
-												className={styles.removeIcon}
-												onClick={(ev) => {
-													ev.preventDefault();
-													const newArray = [
-														...formik.values
-															.telefones,
-													];
-													newArray.splice(index, 1);
-													formik.setFieldValue(
-														"telefones",
-														newArray,
-													);
-												}}
-											/>
-										</div>
-									)}
-								</div>
-							);
-						})}
+						{formik.values.telefones
+							.filter(
+								(i) =>
+									!excludedListTelefones.includes(i.titulo),
+							)
+							.map((_, index) => {
+								return (
+									<div
+										className={styles.beneficiarioItem}
+										key={index}
+									>
+										<TextField
+											id="titulo"
+											label="Título"
+											variant="outlined"
+											required
+											error={!!formik.errors.telefones}
+											className={styles.col5}
+											value={
+												formik.values.telefones[index]
+													.titulo
+											}
+											disabled={isView}
+											onChange={(ev) => {
+												let newPhones =
+													formik.values.telefones;
+												newPhones[index].titulo =
+													ev.target.value;
+												formik.setFieldValue(
+													"telefones",
+													newPhones,
+												);
+											}}
+										/>
+										<InputMask
+											id={`telefones-${index}`}
+											label="Tel. Administrador"
+											formik={formik}
+											col={5}
+											error={!!formik.errors.telefones}
+											mascara="(00) 0000-0000"
+											secondMask="(00) 0 0000-0000"
+											definitions={{
+												"#": /[1-9]/,
+											}}
+											disabled={isView}
+											value={
+												formik.values.telefones[index]
+													.telefone
+											}
+											required
+											onChange={(ev: {
+												target: { value: string };
+											}) => {
+												let newPhones =
+													formik.values.telefones;
+												newPhones[index].telefone =
+													ev.target.value;
+												formik.handleChange(ev);
+											}}
+										/>
+										{index !== 0 && !isView && (
+											<div
+												className={`${styles.col1} ${styles.removeButtonDiv}`}
+											>
+												<RemoveIcon
+													className={
+														styles.removeIcon
+													}
+													onClick={(ev) => {
+														ev.preventDefault();
+														const newArray = [
+															...formik.values
+																.telefones,
+														];
+														newArray.splice(
+															index,
+															1,
+														);
+														formik.setFieldValue(
+															"telefones",
+															newArray,
+														);
+													}}
+												/>
+											</div>
+										)}
+									</div>
+								);
+							})}
 						<span className={styles.error}>
 							{formik.errors.telefones as string | undefined}
 						</span>
