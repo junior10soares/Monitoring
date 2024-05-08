@@ -68,7 +68,9 @@ function Root() {
 							className={styles.loginButton}
 							href={`${
 								import.meta.env.VITE_MTI_LOGIN_URL
-							}/realms/mt-realm/protocol/openid-connect/auth?client_id=projeto-template-integracao&redirect_uri=${
+							}/realms/mt-realm/protocol/openid-connect/auth?client_id=${
+								import.meta.env.VITE_MTI_LOGIN_CLIENT_ID
+							}&redirect_uri=${
 								window.location.origin
 							}&response_type=code`}
 						>
