@@ -31,10 +31,10 @@ cat <<EOF > Dockerfile
 FROM nginx
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 COPY ./dist /usr/share/nginx/html
-COPY ./replace_urls.sh /usr/share/nginx/html/replace_urls.sh
-RUN chmod +x /usr/share/nginx/html/replace_urls.sh
+COPY ./replace_params.sh /usr/share/nginx/html/replace_params.sh
+RUN chmod +x /usr/share/nginx/html/replace_params.sh
 EXPOSE 80
-CMD ["/bin/bash", "-c", "/usr/share/nginx/html/replace_urls.sh && nginx -g 'daemon off;'"]
+CMD ["/bin/bash", "-c", "/usr/share/nginx/html/replace_params.sh && nginx -g 'daemon off;'"]
 
 EOF
 docker build -t "tisedec/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG" .
