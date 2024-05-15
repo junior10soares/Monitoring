@@ -20,8 +20,11 @@ echo
 # Passo 1: Construir o projeto Spring Boot
 echo "Passo 1: Construindo o projeto Spring Boot..."
 cd ..
+mv .env .env.bkp
+cp .env-prod .env
 yarn install
 RUN npm run build
+mv .env.bkp .env
 cp -r ./dist ./docker-build/dist
 cd docker-build
 
