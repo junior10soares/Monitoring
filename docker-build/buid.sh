@@ -40,7 +40,7 @@ EXPOSE 80
 CMD ["/bin/bash", "-c", "/usr/share/nginx/html/replace_params.sh && nginx -g 'daemon off;'"]
 
 EOF
-#docker build -t "tisedec/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG" .
+docker build -t "tisedec/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG" .
 
 # Passo 3: Autenticar no Docker Hub
 echo "Passo 3: Autenticando no Docker Hub..."
