@@ -71,7 +71,7 @@ function Root() {
 							}/realms/mt-realm/protocol/openid-connect/auth?client_id=${
 								import.meta.env.VITE_MTI_LOGIN_CLIENT_ID
 							}&redirect_uri=${
-								window.location.origin
+								import.meta.env.VITE_MTI_LOGIN_REDIREC_URL
 							}&response_type=code`}
 						>
 							Entrar

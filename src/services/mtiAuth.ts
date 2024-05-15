@@ -5,7 +5,7 @@ async function getToken(code: string) {
 		grant_type: "authorization_code",
 		client_id: "sistema-sedec-simbef",
 		code: code,
-		redirect_uri: "http://localhost:3000",
+		redirect_uri: import.meta.env.VITE_MTI_LOGIN_REDIREC_URL,
 	};
 	const res = await axiosInstance.post(
 		`${
