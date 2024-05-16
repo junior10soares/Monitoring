@@ -3,9 +3,9 @@ import { axiosInstance } from "./axios";
 async function getToken(code: string) {
 	const params = {
 		grant_type: "authorization_code",
-		client_id: "sistema-sedec-simbef",
+		client_id: import.meta.env.VITE_AUTH_CLIENT_ID,
 		code: code,
-		redirect_uri: "http://localhost:3000",
+		redirect_uri: import.meta.env.VITE_AUTH_REDIRECT_URL,
 	};
 	const res = await axiosInstance.post(
 		`${
