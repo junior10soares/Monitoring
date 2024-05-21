@@ -130,14 +130,19 @@ function step1({ formik }: step1Type) {
 
 	async function addTelefoneOnList(ev: { preventDefault: () => void }) {
 		ev.preventDefault();
-		const lastTelefone = formik.values.telefones.slice(-1)[0];
+		const lastTelefone = formik.values.telefones
+			.filter((i) => !excludedListTelefones.includes(i.titulo))
+			.slice(-1)[0];
 		if (!lastTelefone.titulo || !lastTelefone.telefone) {
 			formik.setFieldError("telefones", Messages.form.lastElementIsEmpty);
 		} else {
-			formik.setFieldValue("telefones", [
-				...formik.values.telefones,
-				{ titulo: "", telefone: "" },
-			]);
+			const telefones = formik.values.telefones;
+			telefones.push({
+				index: lastTelefone.index + 1,
+				titulo: "",
+				telefone: "",
+			});
+			formik.setFieldValue("telefones", telefones);
 		}
 	}
 
@@ -206,12 +211,13 @@ function step1({ formik }: step1Type) {
 								)?.telefone ?? ""
 							}
 							required
-							onChange={(ev) => {
+							onChange={(ev: { target: { value: string } }) => {
 								var newPhone = formik.values.telefones.find(
 									(i) => i.titulo === "EMPRESA",
 								);
 								if (!newPhone) {
 									newPhone = {
+										index: 999,
 										titulo: "EMPRESA",
 										telefone: "",
 									};
@@ -242,12 +248,13 @@ function step1({ formik }: step1Type) {
 								)?.telefone ?? ""
 							}
 							required
-							onChange={(ev) => {
+							onChange={(ev: { target: { value: string } }) => {
 								var newPhone = formik.values.telefones.find(
 									(i) => i.titulo === "CONTABILIDADE",
 								);
 								if (!newPhone) {
 									newPhone = {
+										index: 999,
 										titulo: "CONTABILIDADE",
 										telefone: "",
 									};
@@ -377,12 +384,13 @@ function step1({ formik }: step1Type) {
 								)?.telefone ?? ""
 							}
 							required
-							onChange={(ev) => {
+							onChange={(ev: { target: { value: string } }) => {
 								var newPhone = formik.values.telefones.find(
 									(i) => i.titulo === "ADMINISTRADOR",
 								);
 								if (!newPhone) {
 									newPhone = {
+										index: 999,
 										titulo: "ADMINISTRADOR",
 										telefone: "",
 									};
@@ -486,11 +494,15 @@ function step1({ formik }: step1Type) {
 								(i) =>
 									!excludedListTelefones.includes(i.titulo),
 							)
-							.map((_, index) => {
+							.map((item, index) => {
+								const itemIndex =
+									formik.values.telefones.findIndex(
+										(i) => i.index === item.index,
+									);
 								return (
 									<div
 										className={styles.beneficiarioItem}
-										key={index}
+										key={itemIndex}
 									>
 										<TextField
 											id="titulo"
@@ -500,15 +512,16 @@ function step1({ formik }: step1Type) {
 											error={!!formik.errors.telefones}
 											className={styles.col5}
 											value={
-												formik.values.telefones[index]
-													.titulo
+												formik.values.telefones[
+													itemIndex
+												].titulo
 											}
 											disabled={isView}
 											onChange={(ev) => {
 												let newPhones =
 													formik.values.telefones;
-												newPhones[index].titulo =
-													ev.target.value;
+												newPhones[itemIndex].titulo =
+													"OUTROS";
 												formik.setFieldValue(
 													"telefones",
 													newPhones,
@@ -516,8 +529,8 @@ function step1({ formik }: step1Type) {
 											}}
 										/>
 										<InputMask
-											id={`telefones-${index}`}
-											label="Tel. Administrador"
+											id={`telefones-${itemIndex}`}
+											label="Telefone"
 											formik={formik}
 											col={5}
 											error={!!formik.errors.telefones}
@@ -528,8 +541,9 @@ function step1({ formik }: step1Type) {
 											}}
 											disabled={isView}
 											value={
-												formik.values.telefones[index]
-													.telefone
+												formik.values.telefones[
+													itemIndex
+												].telefone
 											}
 											required
 											onChange={(ev: {
@@ -537,7 +551,7 @@ function step1({ formik }: step1Type) {
 											}) => {
 												let newPhones =
 													formik.values.telefones;
-												newPhones[index].telefone =
+												newPhones[itemIndex].telefone =
 													ev.target.value;
 												formik.handleChange(ev);
 											}}
@@ -557,7 +571,7 @@ function step1({ formik }: step1Type) {
 																.telefones,
 														];
 														newArray.splice(
-															index,
+															itemIndex,
 															1,
 														);
 														formik.setFieldValue(

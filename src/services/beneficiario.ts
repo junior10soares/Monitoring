@@ -34,7 +34,7 @@ async function insertBeneficiario(values: any) {
 		})),
 		status: [
 			{
-				anoReferencia: values.anoReferencia,
+				anoReferencia: "2022",
 				statusMonitoramento: 1,
 			},
 		],
@@ -158,7 +158,6 @@ async function insertBeneficiario(values: any) {
 	};
 
 	const res = await axiosInstance.post("/beneficiarios", newValues);
-	window.console.log(res);
 	return { data: res.data, success: res.status === 200 };
 }
 

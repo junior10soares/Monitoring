@@ -43,7 +43,7 @@ export default function ({ setStep }: stepType) {
 					const step4 = JSON.parse(
 						localStorage.getItem("step4") ?? "",
 					);
-					setIsLoading(true);
+					// setIsLoading(true);
 					const res = await insertBeneficiario({
 						...step1,
 						...step2,
