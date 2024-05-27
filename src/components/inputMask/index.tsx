@@ -26,6 +26,7 @@ const InputCustomMask = forwardRef<HTMLInputElement, CustomProps>(
 				}}
 				onKeyDownCapture={(ev) => {
 					if (
+						ev.key !== "Tab" &&
 						ev.target.value.length === mascara.length &&
 						secondMask &&
 						ev.key !== "Backspace"
