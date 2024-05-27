@@ -1,8 +1,13 @@
 import { axiosInstance } from "./axios";
 
 async function getAllCnaes() {
-	const res = await axiosInstance.get("/cnaes");
-	return res.data.content;
+	try {
+		const res = await axiosInstance.get("/cnaes/list");
+		return res.data;
+	} catch (error) {
+		console.error("Erro ao obter CNAEs:", error);
+		throw error;
+	}
 }
 
 export { getAllCnaes };

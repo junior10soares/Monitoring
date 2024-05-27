@@ -283,7 +283,7 @@ function step1({ formik }: step1Type) {
 						<InputMask
 							style={{ width: '175px' }}
 							id="cpfOuCnpj"
-							label="CNPJ/CPF"
+							label="CPF/CNPJ"
 							formik={formik}
 							col={3}
 							mascara="000.000.000-00"
