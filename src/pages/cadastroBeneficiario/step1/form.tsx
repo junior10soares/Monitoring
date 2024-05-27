@@ -281,6 +281,7 @@ function step1({ formik }: step1Type) {
 							disabled={isView}
 						/>
 						<InputMask
+							style={{ width: '175px' }}
 							id="cpfOuCnpj"
 							label="CNPJ/CPF"
 							formik={formik}
