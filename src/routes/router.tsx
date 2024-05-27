@@ -1,3 +1,4 @@
+import { PrimeReactProvider } from "primereact/api";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import BeneficiarioStep1 from "../pages/cadastroBeneficiario";
@@ -41,9 +42,9 @@ const router = createBrowserRouter([
 ]);
 function App() {
 	return (
-		<>
+		<PrimeReactProvider>
 			<RouterProvider router={router} />
-		</>
+		</PrimeReactProvider>
 	);
 }
 
