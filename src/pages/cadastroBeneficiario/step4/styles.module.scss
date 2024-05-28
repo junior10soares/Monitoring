@@ -1,6 +1,6 @@
 @use "../../../global";
 
-.container{
+.container {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -13,34 +13,36 @@
         height: 100vh;
         border-radius: 1rem;
 
-        .title{
+        .title {
             font-size: 1.5rem;
             font-weight: bold;
             font-family: sans-serif;
             margin-bottom: 1rem;
         }
 
-        .subtitle{
+        .subtitle {
             font-family: sans-serif;
             font-size: 1.125rem;
             font-style: normal;
             font-weight: 400;
-            line-height: 1.875rem; 
+            line-height: 1.875rem;
             margin-bottom: 2rem;
         }
-        .yearTitle{
+
+        .yearTitle {
             font-size: 1rem;
             font-style: normal;
             font-weight: 500;
-            line-height: 1.25rem; 
+            line-height: 1.25rem;
             margin-bottom: 1rem;
         }
-        .year{
+
+        .year {
             font-weight: 700;
 
         }
 
-        .tableHeader{
+        .tableHeader {
             width: 100%;
             display: flex;
             text-align: center;
@@ -52,7 +54,7 @@
 
         }
 
-        .tableHeader{
+        .tableHeader {
             width: 100%;
             display: flex;
             justify-content: space-between;
@@ -62,50 +64,88 @@
             border-radius: 2rem;
             background-color: global.$primary-color;
             color: white;
-
         }
 
-        .monthTitle{
+        .monthTitle {
             font-weight: 700;
         }
-        .TableInputs{
-            width: 100%;
+
+        @media (max-width: 940px) {
+            .monthTitle {
+                font-size: 14px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .monthTitle:nth-child(1) {
+                margin-right: 50px;
+            }
+
+            .monthTitle:nth-child(2) {
+                margin-left: 20px;
+            }
+
+            .monthTitle:nth-child(3) {
+                margin-left: 50px;
+            }
+
+            .monthTitle:nth-child(4) {
+                margin-left: 50px;
+            }
+
+            .monthTitle:nth-child(5) {
+                margin-left: 50px;
+            }
+        }
+
+        .TableInputs {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0rem 4rem 0rem 2rem;  
+            padding: 0rem 4rem 0rem 2rem;
+            gap: 10px;
         }
 
-        .tableInput{
+        @media (max-width: 992px) {
+            .TableInputs {
+                padding: 0;
+            }
+        }
+
+        .tableInput {
             border-radius: 2rem;
         }
 
-        .totals{
+        .totals {
             display: flex;
             flex-direction: column;
             gap: 2rem;
             margin-top: 3rem;
 
-            .totalAcumulado{
+            .totalAcumulado {
                 display: flex;
                 align-items: center;
                 gap: 1rem;
             }
         }
-        .treeSelectDiv{
+
+        .treeSelectDiv {
             display: flex;
             justify-content: center;
         }
-        .treeSelect{
+
+        .treeSelect {
             width: 100%;
         }
-        .treeSelectPanel{
+
+        .treeSelectPanel {
             width: 10rem
         }
-        
+
     }
 
-    .beneficiarioForm{
+    .beneficiarioForm {
         margin-top: 2rem;
         display: flex;
         gap: 1rem;
@@ -113,13 +153,15 @@
         align-items: center;
 
     }
-    .primaryButton{
+
+    .primaryButton {
         background-color: global.$primary-color;
         border-radius: 2rem;
         padding: 1rem;
         margin-top: 2rem;
     }
-    .secondaryButton{
+
+    .secondaryButton {
         border: 1px solid global.$primary-color;
         background-color: white;
         color: global.$primary-color;
@@ -127,19 +169,23 @@
         padding: 1rem;
         margin-top: 2rem;
     }
-    .removeButtonDiv{
+
+    .removeButtonDiv {
         display: flex;
         align-items: center;
-        .removeIcon{
+
+        .removeIcon {
             color: #fc3c3c;
             font-size: 2rem;
-            &:hover{
+
+            &:hover {
                 cursor: pointer;
             }
         }
-        
+
     }
-    .buttonsRigth{
+
+    .buttonsRigth {
         display: flex;
         justify-content: flex-end;
         width: 75%;
@@ -147,5 +193,5 @@
         gap: 1rem;
     }
 
-    
+
 }
