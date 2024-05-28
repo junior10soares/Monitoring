@@ -213,15 +213,15 @@ function step5({ setStep, formik }: step5Type) {
 										formik.values?.investimentoMensal,
 									)
 										? formik.values?.investimentoMensal?.reduce(
-												(total, item) =>
-													total +
-													parseFloat(
-														!isEmpty(item?.valor)
-															? item?.valor
-															: "0",
-													),
-												0,
-										  )
+											(total, item) =>
+												total +
+												parseFloat(
+													!isEmpty(item?.valor)
+														? item?.valor
+														: "0",
+												),
+											0,
+										)
 										: 0,
 								)}
 							</span>
@@ -401,102 +401,100 @@ function step5({ setStep, formik }: step5Type) {
 									/>
 									{formik?.values?.incentivoFiscal?.fundos
 										?.length > 0 && (
-										<>
-											<div className={styles.monthsTitle}>
-												<span
-													className={`${styles.col2} ${styles.monthTitle}`}
-												>
-													Mês referência
-												</span>
-												{formik.values?.incentivoFiscal?.fundos?.map(
-													({ sigla }: IFundo) => {
-														return (
-															<span
-																className={`${
-																	styles?.[
+											<>
+												<div className={styles.monthsTitle}>
+													<span
+														className={`${styles.col2} ${styles.monthTitle}`}
+													>
+														Mês referência
+													</span>
+													{formik.values?.incentivoFiscal?.fundos?.map(
+														({ sigla }: IFundo) => {
+															return (
+																<span
+																	className={`${styles?.[
 																		`col${Math.ceil(
 																			10 /
-																				formik
-																					.values
-																					?.incentivoFiscal
-																					?.fundos
-																					.length,
+																			formik
+																				.values
+																				?.incentivoFiscal
+																				?.fundos
+																				.length,
 																		)}`
-																	]
-																} ${
-																	styles.monthTitle
-																}`}
+																		]
+																		} ${styles.monthTitle
+																		}`}
+																>
+																	{sigla}
+																</span>
+															);
+														},
+													)}
+												</div>
+												{monthsData.map(
+													({ codigo, label }) => {
+														return (
+															<div
+																className={
+																	styles.TableInputs
+																}
 															>
-																{sigla}
-															</span>
-														);
-													},
-												)}
-											</div>
-											{monthsData.map(
-												({ codigo, label }) => {
-													return (
-														<div
-															className={
-																styles.TableInputs
-															}
-														>
-															<span
-																className={`${styles.col2} ${styles.monthTitle}`}
-															>
-																{label}
-															</span>
-															{formik.values?.incentivoFiscal?.fundos?.map(
-																({
-																	sigla,
-																	id,
-																}: IFundo) => {
-																	return (
-																		<NumericMask
-																			id={`${sigla}-valor`}
-																			name={`${sigla}-valor`}
-																			formik={
-																				formik
-																			}
-																			disabled={
-																				true
-																			}
-																			col={Math.ceil(
-																				10 /
+																<span
+																	className={`${styles.col2} ${styles.monthTitle}`}
+																>
+																	{label}
+																</span>
+																{formik.values?.incentivoFiscal?.fundos?.map(
+																	({
+																		sigla,
+																		id,
+																	}: IFundo) => {
+																		return (
+																			<NumericMask
+																				id={`${sigla}-valor`}
+																				name={`${sigla}-valor`}
+																				formik={
+																					formik
+																				}
+																				disabled={
+																					true
+																				}
+																				col={Math.ceil(
+																					10 /
 																					formik
 																						.values
 																						?.incentivoFiscal
 																						?.fundos
 																						.length,
-																			)}
-																			prefix="R$"
-																			fixedDecimalScale
-																			label=""
-																			required
-																			value={
-																				formik.values?.valoresFundo?.find(
-																					(
-																						i: IValorFundo,
-																					) =>
-																						i
-																							.fundoIncentivo
-																							.id ===
-																						id,
-																				)?.[
+																				)}
+																				prefix="R$"
+																				fixedDecimalScale
+																				label=""
+																				required
+																				value={
+																					formik.values?.valoresFundo?.find(
+																						(
+																							i: IValorFundo,
+																						) =>
+																							i
+																								.fundoIncentivo
+																								.id ===
+																							id,
+																					)?.[
 																					`${codigo}Valor`
-																				]
-																			}
-																			className={`${styles.tableInput}`}
-																		/>
-																	);
-																},
-															)}
-														</div>
-													);
-												},
-											)}
-										</>
-									)}
+																					]
+																				}
+																				className={`${styles.tableInput}`}
+																			/>
+																		);
+																	},
+																)}
+															</div>
+														);
+													},
+												)}
+											</>
+										)}
 								</div>
 							</Card>
 						</AccordionDetails>
@@ -509,27 +507,27 @@ function step5({ setStep, formik }: step5Type) {
 					<div className={styles.beneficiarioForm}>
 						<div className={styles.tableHeader}>
 							<span
-								className={`${styles.col3} ${styles.monthTitle}`}
+								className={`${styles.col3} ${styles.monthTitles}`}
 							>
 								NCM
 							</span>
 							<span
-								className={`${styles.col2} ${styles.monthTitle}`}
+								className={`${styles.col2} ${styles.monthTitles}`}
 							>
 								Produto incentivado
 							</span>
 							<span
-								className={`${styles.col2} ${styles.monthTitle}`}
+								className={`${styles.col2} ${styles.monthTitles}`}
 							>
 								Unidade de medida
 							</span>
 							<span
-								className={`${styles.col2} ${styles.monthTitle}`}
+								className={`${styles.col2} ${styles.monthTitles}`}
 							>
 								Quantidade interna
 							</span>
 							<span
-								className={`${styles.col2} ${styles.monthTitle}`}
+								className={`${styles.col2} ${styles.monthTitles}`}
 							>
 								Quant. Interestadual
 							</span>
