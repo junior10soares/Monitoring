@@ -88,18 +88,6 @@ export default function ({ setStep }: stepType) {
 		if (!_values.telefones?.find((i: { titulo: string; }) => i.titulo === "EMPRESA")?.telefone) {
 			errors.telefoneEmpresa = Messages.form.required;
 		}
-		if (_values.telefones.length === 0 || !_values.telefones[0].titulo) {
-			errors.telefones = Messages.form.arrayRequired;
-		}
-		_values.telefones.forEach((telefone: { telefone: any; }, index: any) => {
-			if (!telefone.telefone) {
-				errors[`telefones-${index}`] = Messages.form.required;
-			}
-		});
-		const lastTelefone = [..._values.telefones].splice(-1)?.[0];
-		if (lastTelefone && (!lastTelefone.titulo || !lastTelefone.telefone)) {
-			errors.telefones = Messages.form.lastElementIsEmpty;
-		}
 		if (Object.keys(errors).length > 0) {
 			setErrors(errors);
 			return false;
