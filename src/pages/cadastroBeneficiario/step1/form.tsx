@@ -19,7 +19,7 @@ import { FormikProps } from "formik";
 import { Imunicipio } from "municipioType";
 import { IPorte } from "porte";
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useOutletContext, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import CustomTextField from "../../../components/customTextField";
 import InputMask from "../../../components/inputMask";
 import { getBeneficiarioById } from "../../../services/beneficiario";
@@ -43,7 +43,6 @@ function step1({ formik }: step1Type) {
 	]);
 	const [municipios, setMunicipios] = useState([]);
 	const [portes, setPortes] = useState([]);
-	const [isLoading, setIsLoading] = useOutletContext();
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
 
@@ -51,7 +50,6 @@ function step1({ formik }: step1Type) {
 
 	useEffect(() => {
 		(async function fetchAll() {
-			setIsLoading(true);
 			await fillCombos();
 			if (params.id) {
 				await fetchApi();
@@ -61,7 +59,6 @@ function step1({ formik }: step1Type) {
 					formik.setValues(JSON.parse(localItem));
 				}
 			}
-			setIsLoading(false);
 		})();
 	}, []);
 
@@ -284,8 +281,9 @@ function step1({ formik }: step1Type) {
 							disabled={isView}
 						/>
 						<InputMask
+							style={{ width: '175px' }}
 							id="cpfOuCnpj"
-							label="CNPJ/CPF"
+							label="CPF/CNPJ"
 							formik={formik}
 							col={3}
 							mascara="000.000.000-00"
@@ -421,12 +419,11 @@ function step1({ formik }: step1Type) {
 							multiple
 							id="cnaes"
 							options={cnaesList}
-							className={`col12 ${
-								formik.errors.cnaes ||
+							className={`col12 ${formik.errors.cnaes ||
 								formik.errors.cnaes?.length === 0
-									? styles.error
-									: ""
-							}`}
+								? styles.error
+								: ""
+								}`}
 							fullWidth
 							placeholder="Selecione um CNAE"
 							disableCloseOnSelect
@@ -517,7 +514,7 @@ function step1({ formik }: step1Type) {
 												].titulo
 											}
 											disabled={isView}
-											onChange={(ev) => {
+											onChange={() => {
 												let newPhones =
 													formik.values.telefones;
 												newPhones[itemIndex].titulo =

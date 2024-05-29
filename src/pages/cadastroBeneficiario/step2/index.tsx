@@ -16,13 +16,16 @@ export default function ({ setStep }: stepType) {
 				if (!_values.investimentoAcumulado) {
 					errors.investimentoAcumulado = Messages.form.required;
 				}
-				const meses = Object.keys(_values.investimentoMensal);
-				for (let index = 0; index < meses.length; index++) {
-					const element = meses[index];
-					if (!element) {
-						errors.investimentoMensal = Messages.form.required;
-					}
+				const investimentoAcumulado = parseFloat(_values.investimentoAcumulado);
+				const totalInvestimentoMensal = Object.values(_values.investimentoMensal).reduce((acc, curr) => {
+					const valorNumerico = parseFloat(curr.valor);
+					return acc + valorNumerico;
+				}, 0);
+
+				if (investimentoAcumulado < totalInvestimentoMensal) {
+					errors.investimentoAcumulado = "O valor acumulado não pode ser menor que o investimento anual.";
 				}
+
 				return errors;
 			}}
 			onSubmit={(values, { setSubmitting }) => {

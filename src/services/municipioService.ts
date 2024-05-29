@@ -1,8 +1,13 @@
 import { axiosInstance } from "./axios";
 
 async function getAllMunicipios() {
-	const res = await axiosInstance.get("/municipios");
-	return res.data.content;
+	try {
+		const res = await axiosInstance.get("/municipios/list");
+		return res.data;
+	} catch (error) {
+		console.error("Erro ao obter municípios:", error);
+		throw error;
+	}
 }
 
 export { getAllMunicipios };
