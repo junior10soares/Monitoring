@@ -553,10 +553,7 @@ function step5({ setStep, formik }: step5Type) {
 							</span>
 							<span className={styles.col1}></span>
 						</div>
-						<div
-							className={`${styles.TableInputs}`}
-						>
-							{/* <div className={`${styles.col3} card`}>
+						{/* <div className={`${styles.col3} card`}>
 								<TreeDropdown
 									data={ncms}
 									value={
@@ -643,99 +640,95 @@ function step5({ setStep, formik }: step5Type) {
 									)
 								}
 							/> */}
-							{Array.isArray(formik.values.infoVendas) && formik.values.infoVendas.map((linha, index) => (
-								<div key={index} style={{ display: 'flex' }}>
-									<div className={styles.TableInputs}>
-										<div className={`${styles.col3} card`}>
-											<TreeDropdown
-												data={ncms}
-												onChange={(ev) => {
-													const selectedNcm = ev.target.value;
-													formik.setFieldValue(`infoVendas.${index}.ncm`, selectedNcm);
-												}}
-												value={linha.ncm}
-												placeholder="Selecione um NCM"
-											/>
-										</div>
-										<CustomTextField
-											id={`produto-incentivado-${index}`}
-											name={`infoVendas.${index}.produtoIncentivado`}
-											label=""
-											col={2}
-											formik={formik}
-											disabled
-											error={!!formik.errors.infoVendas?.[index]?.produtoIncentivado}
-											value={linha.produtoIncentivado}
-											onChange={(ev) =>
-												formik.setFieldValue(
-													`infoVendas.${index}.produtoIncentivado`,
-													ev.target.value
-												)
-											}
-										/>
-										<Autocomplete
-											id={`unidadeMedida-${index}`}
-											options={unidadeMedida}
-											disableListWrap
-											className={styles.col2}
-											placeholder="Selecione uma unidade de medida"
-											disabled
-											disableCloseOnSelect
-											getOptionLabel={(option) => option.descricao}
-											value={unidadeMedida.find(option => option.id === linha.unidadeMedida?.id) || null}
-											onChange={(_, newValue) => {
-												formik.setFieldValue(`infoVendas.${index}.unidadeMedida`, newValue);
+						{Array.isArray(formik.values.infoVendas) && formik.values.infoVendas.map((linha, index) => (
+							<div key={index} style={{ display: 'flex' }}>
+								<div style={{ display: 'flex', flexWrap: 'wrap' }}>
+									<div className={`${styles.col3} card`}>
+										<TreeDropdown
+											data={ncms}
+											onChange={(ev) => {
+												const selectedNcm = ev.target.value;
+												formik.setFieldValue(`infoVendas.${index}.ncm`, selectedNcm);
 											}}
-											renderInput={(params) => (
-												<TextField
-													{...params}
-													label="Unidade de Medida"
-													placeholder="Selecione uma unidade de medida"
-													error={!!formik.errors.infoVendas?.[index]?.unidadeMedida}
-												/>
-											)}
-										/>
-										<NumericMask
-											id={`quantidade-interna-${index}`}
-											name={`infoVendas.${index}.quantidadeInterna`}
-											formik={formik}
-											label=""
-											error={!!formik.errors.infoVendas?.[index]?.quantidadeInterna}
-											col={2}
-											disabled
-											required={false}
-											value={linha.quantidadeInterna}
-											onChange={(ev) =>
-												formik.setFieldValue(
-													`infoVendas.${index}.quantidadeInterna`,
-													parseFloat(ev.target.value) || 0
-												)
-											}
-										/>
-										<NumericMask
-											id={`quantidade-interestadual-${index}`}
-											name={`infoVendas.${index}.quantidadeInterestadual`}
-											formik={formik}
-											label=""
-											col={2}
-											disabled
-											error={!!formik.errors.infoVendas?.[index]?.quantidadeInterestadual}
-											required={false}
-											value={linha.quantidadeInterestadual}
-											onChange={(ev) =>
-												formik.setFieldValue(
-													`infoVendas.${index}.quantidadeInterestadual`,
-													parseFloat(ev.target.value) || 0
-												)
-											}
+											value={linha.ncm}
+											placeholder="Selecione um NCM"
 										/>
 									</div>
+									<CustomTextField
+										id={`produto-incentivado-${index}`}
+										name={`infoVendas.${index}.produtoIncentivado`}
+										label=""
+										col={2}
+										formik={formik}
+										disabled
+										error={!!formik.errors.infoVendas?.[index]?.produtoIncentivado}
+										value={linha.produtoIncentivado}
+										onChange={(ev) =>
+											formik.setFieldValue(
+												`infoVendas.${index}.produtoIncentivado`,
+												ev.target.value
+											)
+										}
+									/>
+									<Autocomplete
+										id={`unidadeMedida-${index}`}
+										options={unidadeMedida}
+										disableListWrap
+										className={styles.col2}
+										placeholder="Selecione uma unidade de medida"
+										disabled
+										disableCloseOnSelect
+										getOptionLabel={(option) => option.descricao}
+										value={unidadeMedida.find(option => option.id === linha.unidadeMedida?.id) || null}
+										onChange={(_, newValue) => {
+											formik.setFieldValue(`infoVendas.${index}.unidadeMedida`, newValue);
+										}}
+										renderInput={(params) => (
+											<TextField
+												{...params}
+												label="Unidade de Medida"
+												placeholder="Selecione uma unidade de medida"
+												error={!!formik.errors.infoVendas?.[index]?.unidadeMedida}
+											/>
+										)}
+									/>
+									<NumericMask
+										id={`quantidade-interna-${index}`}
+										name={`infoVendas.${index}.quantidadeInterna`}
+										formik={formik}
+										label=""
+										error={!!formik.errors.infoVendas?.[index]?.quantidadeInterna}
+										col={2}
+										disabled
+										required={false}
+										value={linha.quantidadeInterna}
+										onChange={(ev) =>
+											formik.setFieldValue(
+												`infoVendas.${index}.quantidadeInterna`,
+												parseFloat(ev.target.value) || 0
+											)
+										}
+									/>
+									<NumericMask
+										id={`quantidade-interestadual-${index}`}
+										name={`infoVendas.${index}.quantidadeInterestadual`}
+										formik={formik}
+										label=""
+										col={2}
+										disabled
+										error={!!formik.errors.infoVendas?.[index]?.quantidadeInterestadual}
+										required={false}
+										value={linha.quantidadeInterestadual}
+										onChange={(ev) =>
+											formik.setFieldValue(
+												`infoVendas.${index}.quantidadeInterestadual`,
+												parseFloat(ev.target.value) || 0
+											)
+										}
+									/>
 								</div>
-							))}
-							<div
-								className={`${styles.col1} ${styles.removeButtonDiv}`}
-							></div>
-						</div>
+							</div>
+						))}
 					</div>
 				</Card>
 				<div className={`${styles.col12} ${styles.buttonsRigth}`}>

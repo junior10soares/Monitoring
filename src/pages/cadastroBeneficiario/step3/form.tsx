@@ -150,6 +150,7 @@ function step3({ setStep, formik }: step3Type) {
 								placeholder="Selecione um Submodulo"
 								value={formik.values?.submodulo}
 								fullWidth
+								required
 								disabled={isView}
 								onChange={(ev) => {
 									addNewFundo(
