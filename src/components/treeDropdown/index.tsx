@@ -1,33 +1,27 @@
 import { TreeSelect } from "primereact/treeselect";
-import React from "react";
 import "./threeDropdown.scss";
 
-type props = {
-	data: never[];
-	onChange: (_: any, value: any) => void;
+type Props = {
+	data: any[];
+	onChange?: (event: any) => void;
 	placeholder: string;
-	[key: string]: any;
-};
+	value: any;
+	disabled?: boolean
+}
 
-const TreeDropdown = ({
-	data,
-	placeholder,
-	value,
-	onChange,
-	...rest
-}: props) => {
+const TreeDropdown = ({ data, placeholder, value, onChange, disabled = false }: Props) => {
 	return (
 		<div className="treeSelectDiv flex justify-content-center">
 			<TreeSelect
 				value={value}
 				onChange={onChange}
+				disabled={disabled}
 				filter
 				options={data}
 				placeholder={placeholder}
-				{...rest}
-			></TreeSelect>
+			/>
 		</div>
 	);
 };
 
-export default React.memo(TreeDropdown);
+export default TreeDropdown;

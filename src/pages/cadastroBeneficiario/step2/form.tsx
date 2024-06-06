@@ -169,15 +169,15 @@ function step2({ setStep, formik }: step2Type) {
 										formik.values?.investimentoMensal,
 									)
 										? formik.values?.investimentoMensal?.reduce(
-												(total, item) =>
-													total +
-													parseFloat(
-														!isEmpty(item?.valor)
-															? item?.valor
-															: "0",
-													),
-												0,
-										  )
+											(total, item) =>
+												total +
+												parseFloat(
+													!isEmpty(item?.valor)
+														? item?.valor
+														: "0",
+												),
+											0,
+										)
 										: 0,
 								)}
 							</span>
