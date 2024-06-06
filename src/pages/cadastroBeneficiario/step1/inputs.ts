@@ -10,5 +10,5 @@ export const inputs = {
 	ramoAtividade: "",
 	descricao: "",
 	cnaes: [],
-	telefones: [{ index: 0, titulo: "", telefone: "" }],
+	telefones: [],
 };

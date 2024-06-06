@@ -22,8 +22,8 @@ function listagemBeneficiario() {
 				window.innerWidth <= 1400
 					? 300
 					: window.innerWidth <= 1770
-					? 380
-					: 800,
+						? 380
+						: 800,
 		},
 		{ field: "cpfOuCnpj", headerName: "CPF/CNPJ", width: 300 },
 		{
