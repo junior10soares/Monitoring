@@ -73,6 +73,13 @@ function listagemBeneficiario() {
 		(() => fetch())();
 	}, []);
 
+	const handleNewBeneficiario = () => {
+		for (let index = 0; index < 5; index++) {
+			localStorage.removeItem(`step${index + 1}`);
+		}
+		navigate("/beneficiario/new");
+	};
+
 	return (
 		<div className={styles.container}>
 			<div className={styles.buttonContainer}>
@@ -80,9 +87,7 @@ function listagemBeneficiario() {
 					type="button"
 					variant="contained"
 					className={styles.primaryButton}
-					onClick={(ev) => {
-						navigate("/beneficiario/new");
-					}}
+					onClick={handleNewBeneficiario}
 				>
 					<AddIcon />
 					Novo Beneficiário

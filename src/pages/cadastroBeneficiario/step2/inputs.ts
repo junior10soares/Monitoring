@@ -1,5 +1,5 @@
 export const inputs = {
-	anoReferencia: 2023,
+	anoReferencia: new Date().getFullYear() - 1,
 	investimentoAcumulado: "",
 	investimentoMensal: [
 		{ codigo: "janeiroValor", valor: "" },

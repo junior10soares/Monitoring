@@ -44,7 +44,6 @@ function step4({ setStep, formik }: step4Type) {
 
 	function loadData() {
 		const localItem = localStorage.getItem("step4");
-		console.log(localItem)
 		if (localItem) {
 			formik.setValues(JSON.parse(localItem));
 		}
@@ -71,8 +70,6 @@ function step4({ setStep, formik }: step4Type) {
 		const updatedInfoVendas = (Array.isArray(formik.values.infoVendas) ? formik.values.infoVendas : []).filter((_, i) => i !== index);
 		formik.setFieldValue('infoVendas', updatedInfoVendas);
 	};
-
-	console.log("formik", formik.values)
 
 	return (
 		<form onSubmit={formik.handleSubmit}>
@@ -102,6 +99,7 @@ function step4({ setStep, formik }: step4Type) {
 											}}
 											value={linha.ncm}
 											placeholder="Selecione um NCM"
+											disabled={isView}
 										/>
 									</div>
 									<CustomTextField
@@ -110,7 +108,7 @@ function step4({ setStep, formik }: step4Type) {
 										label=""
 										col={2}
 										formik={formik}
-										disabled={false}
+										disabled={isView}
 										error={!!formik.errors.infoVendas?.[index]?.produtoIncentivado}
 										value={linha.produtoIncentivado}
 										onChange={(ev) =>
