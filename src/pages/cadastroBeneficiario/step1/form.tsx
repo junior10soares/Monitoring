@@ -143,6 +143,7 @@ function step1({ formik }: step1Type) {
 		setMunicipios(municipiorsList);
 	}
 
+
 	useEffect(() => {
 		const urlPattern = /^\/beneficiario\/view\/\d+$/;
 		const url = window.location.pathname;
@@ -150,6 +151,8 @@ function step1({ formik }: step1Type) {
 			setShowOutrosTrash(true);
 		}
 	}, []);
+
+
 
 	const selectedCnaes = useMemo(() => {
 		const newList: ICnae[] = cnaesList.filter((v: ICnae) =>
@@ -207,6 +210,7 @@ function step1({ formik }: step1Type) {
 							value={formik.values.nomeFantasia}
 							disabled={isView}
 						/>
+
 						<InputMask
 							id="inscricaoEstadual"
 							label="Ins. Estadual"
@@ -391,6 +395,7 @@ function step1({ formik }: step1Type) {
 				<Card className={styles.card}>
 					<h1 className={styles.title}>Telefones</h1>
 					<div className={styles.beneficiarioForm}>
+
 						<div>
 							{newPhone.map((tipoTelefone, index) => (
 								<div key={index} style={{ marginBottom: '15px' }}>
