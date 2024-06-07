@@ -44,6 +44,7 @@ function step1({ formik }: step1Type) {
 	const [showOutros, setShowOutros] = useState(false);
 	const [showOutrosTrash, setShowOutrosTrash] = useState(false);
 	const [portes, setPortes] = useState([]);
+	const [showInput, setShowInput] = useState(false);
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
 	const listTelefones = ["EMPRESA", "CONTABILIDADE", "ADMINISTRADOR"];
@@ -367,11 +368,13 @@ function step1({ formik }: step1Type) {
 								/>
 							)}
 						/>
-						{formik.errors.cnaes && (
-							<span className={styles.error}>
-								{formik.errors.cnaes as string | undefined}
-							</span>
-						)}
+						{
+							formik.errors.cnaes && (
+								<span className={styles.error}>
+									{formik.errors.cnaes as string | undefined}
+								</span>
+							)
+						}
 						<CustomTextField
 							id="descricao"
 							label="Descrição"
@@ -383,8 +386,8 @@ function step1({ formik }: step1Type) {
 							value={formik.values.descricao}
 							disabled={isView}
 						/>
-					</div>
-				</Card>
+					</div >
+				</Card >
 				<Card className={styles.card}>
 					<h1 className={styles.title}>Telefones</h1>
 					<div className={styles.beneficiarioForm}>
@@ -469,7 +472,7 @@ function step1({ formik }: step1Type) {
 							)}
 						</div>
 					</div>
-					{!isView && (
+					{!isView && !showInput && (
 						<Button
 							type="button"
 							variant="contained"
@@ -490,8 +493,8 @@ function step1({ formik }: step1Type) {
 						Continuar
 					</Button>
 				</div>
-			</div>
-		</form>
+			</div >
+		</form >
 	);
 }
 
