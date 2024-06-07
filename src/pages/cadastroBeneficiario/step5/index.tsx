@@ -14,6 +14,17 @@ export default function ({ setStep }: stepType) {
 	const params = useParams();
 	const [data, setData] = useState(null);
 
+
+	const step1 = JSON.parse(localStorage.getItem("step1") ?? "");
+	const step2 = JSON.parse(localStorage.getItem("step2") ?? "");
+	const step3 = JSON.parse(localStorage.getItem("step3") ?? "");
+	const step4 = JSON.parse(localStorage.getItem("step4") ?? "");
+
+	console.log("step1", step1)
+	console.log("step2", step2)
+	console.log("step3", step3)
+	console.log("step4", step4)
+
 	useEffect(() => {
 		if (params.id) {
 			const fetchData = async () => {
@@ -22,26 +33,26 @@ export default function ({ setStep }: stepType) {
 					const responseData = responseGet.data;
 
 					const extractedData = {
-						id: responseData.id,
+						id: step1.id,
 						municipio: {
-							id: responseData?.id,
+							id: step1?.municipio,//aquitemerro
 							nome: responseData?.nome
 						},
-						nomeOuRazaoSocial: responseData?.nomeOuRazaoSocial,
-						cpfOuCnpj: responseData?.cpfOuCnpj,
-						email: responseData?.email,
-						inscricaoEstadual: responseData?.inscricaoEstadual,
-						nomeFantasia: responseData?.nomeFantasia,
-						nomeAdministrador: responseData?.nomeAdministrador,
+						nomeOuRazaoSocial: step1?.nomeOuRazaoSocial,
+						cpfOuCnpj: step1?.cpfOuCnpj,
+						email: step1?.email,
+						inscricaoEstadual: step1?.inscricaoEstadual,
+						nomeFantasia: step1?.nomeFantasia,
+						nomeAdministrador: step1?.nomeAdministrador,
 						porte: {
-							id: responseData?.id,
+							id: step1?.porte,
 							codigo: responseData?.codigo,
 							descricao: responseData?.descricao
 						},
-						ramoAtividade: responseData?.ramoAtividade,
-						descricao: responseData?.descricao,
+						ramoAtividade: step1?.ramoAtividade,
+						descricao: step1?.descricao,
 						version: responseData?.version,
-						cnaes: responseData.cnaes?.map((i, index) => ({
+						cnaes: responseData.cnaes?.map((i, index) => ({//erro
 							id: i?.id,
 							cnae: {
 								id: i?.cnae?.id,
@@ -50,7 +61,7 @@ export default function ({ setStep }: stepType) {
 							},
 							isPrincipal: i.isPrincipal
 						})),
-						telefones: responseData.telefones?.map((telefone) => ({
+						telefones: step1.telefones?.map((telefone) => ({
 							id: telefone?.id,
 							telefone: telefone?.telefone,
 							titulo: telefone?.titulo
@@ -83,7 +94,7 @@ export default function ({ setStep }: stepType) {
 								dezembroValor: responseData.dadosEconomicos?.investimentoMensal?.dezembroValor
 							},
 							empregoHomem: {
-								id: responseData.dadosEconomicos?.empregoHomem?.id,
+								id: responseData.dadosEconomicos?.empregoHomem?.id,//aqui tem erro
 								janeiroValor: responseData.dadosEconomicos?.empregoHomem?.janeiroValor,
 								fevereiroValor: responseData.dadosEconomicos?.empregoHomem?.fevereiroValor,
 								marcoValor: responseData.dadosEconomicos?.empregoHomem?.marcoValor,
@@ -114,10 +125,10 @@ export default function ({ setStep }: stepType) {
 							}
 						},
 						incentivoFiscal: {
-							id: responseData.incentivoFiscal?.id,
-							sigla: responseData.incentivoFiscal?.sigla,
-							descricao: responseData.incentivoFiscal?.descricao,
-							fundos: responseData.incentivoFiscal?.fundos
+							id: step3.incentivoFiscal?.id,
+							sigla: step3.incentivoFiscal?.sigla,
+							descricao: step3.incentivoFiscal?.descricao,
+							fundos: step3.incentivoFiscal?.fundos
 						},
 						vendaAnual: null
 					}
@@ -153,7 +164,7 @@ export default function ({ setStep }: stepType) {
 				onSubmit={async (values, { setSubmitting }) => {
 					if (params.id) {
 						try {
-							const responsePut = await axiosInstance.put(`/beneficiarios/${params.id}`, values);
+							const responsePut = await axiosInstance.put(`/beneficiarios/${params.id}`, data);
 							if (responsePut.status === 200) {
 								setShow(true);
 								setTimeout(() => {
