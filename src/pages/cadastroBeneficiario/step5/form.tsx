@@ -29,6 +29,7 @@ import { isEmpty } from "../../../utils/Global";
 import { unidadesDeMedida } from "../../../utils/Unm";
 import { inputs } from "./inputs";
 import styles from "./styles.module.scss";
+import { getUnidadeMedida } from "../../../services/beneficiario";
 
 type step5Type = {
 	setStep: Function;
@@ -42,6 +43,15 @@ function step5({ setStep, formik }: step5Type) {
 	>([]);
 	const [submodulos, setSubmodulos] = useState<ISubmodulo[]>([]);
 	const [isLoading, setIsLoading] = useOutletContext();
+	const [unidadeMedida, setUnidadeMedida] = useState([]);
+	const [showButton, setShowButton] = useState(false);
+
+	useEffect(() => {
+		(async function fetch() {
+			const listUnidadeMedida = await getUnidadeMedida();
+			setUnidadeMedida(listUnidadeMedida)
+		})();
+	}, []);
 
 	useEffect(() => {
 		loadData();
@@ -58,6 +68,14 @@ function step5({ setStep, formik }: step5Type) {
 			setSubmodulos(submds);
 			setIsLoading(false);
 		})();
+	}, []);
+
+	useEffect(() => {
+		const urlPattern = /^\/beneficiario\/view\/\d+$/;
+		const url = window.location.pathname;
+		if (urlPattern.test(url)) {
+			setShowButton(true);
+		}
 	}, []);
 
 	function loadData() {
@@ -421,7 +439,7 @@ function step5({ setStep, formik }: step5Type) {
 																				?.fundos
 																				.length,
 																		)}`
-																		]
+																	]
 																		} ${styles.monthTitle
 																		}`}
 																>
@@ -533,108 +551,96 @@ function step5({ setStep, formik }: step5Type) {
 							</span>
 							<span className={styles.col1}></span>
 						</div>
-						{Object.keys(formik.values?.infoVendas ?? {})?.map(
-							(item, index) => (
-								<div
-									key={index}
-									className={`${styles.TableInputs}`}
-								>
+						{Array.isArray(formik.values.infoVendas) && formik.values.infoVendas.map((linha, index) => (
+							<div key={index} style={{ display: 'flex' }}>
+								<div style={{ display: 'flex', flexWrap: 'wrap' }}>
 									<div className={`${styles.col3} card`}>
 										<TreeDropdown
 											data={ncms}
-											value={
-												formik.values.infoVendas[index]
-													.ncm
-											}
-											disabled
-											showPartiallySelected="true"
+											onChange={(ev) => {
+												const selectedNcm = ev.target.value;
+												formik.setFieldValue(`infoVendas.${index}.ncm`, selectedNcm);
+											}}
+											value={linha.ncm}
 											placeholder="Selecione um NCM"
+											disabled={true}
 										/>
 									</div>
-
 									<CustomTextField
-										id={`${item}-produto-incentivado`}
-										name={`${item}-produto-incentivado`}
+										id={`produto-incentivado-${index}`}
+										name={`infoVendas.${index}.produtoIncentivado`}
 										label=""
 										col={2}
 										formik={formik}
-										disabled={true}
-										error={!!formik.errors.infoVendas}
-										value={
-											formik.values?.infoVendas[index]
-												?.produtoIncentivado
+										disabled
+										error={!!formik.errors.infoVendas?.[index]?.produtoIncentivado}
+										value={linha.produtoIncentivado}
+										onChange={(ev) =>
+											formik.setFieldValue(
+												`infoVendas.${index}.produtoIncentivado`,
+												ev.target.value
+											)
 										}
 									/>
 									<Autocomplete
-										id="unidadeMedida"
-										options={unidadesDeMedida.sort(
-											function (a, b) {
-												if (a.value < b.value) {
-													return -1;
-												}
-												if (a.value > b.value) {
-													return 1;
-												}
-												return 0;
-											},
-										)}
+										id={`unidadeMedida-${index}`}
+										options={unidadeMedida}
 										disableListWrap
 										className={styles.col2}
 										placeholder="Selecione uma unidade de medida"
-										disabled={true}
+										disabled
 										disableCloseOnSelect
-										getOptionLabel={(option) =>
-											`${option.key} - ${option.value}`
-										}
-										value={
-											formik.values?.infoVendas[index]
-												?.unidadeMedida
-										}
+										getOptionLabel={(option) => option.descricao}
+										value={unidadeMedida.find(option => option.id === linha.unidadeMedida?.id) || null}
+										onChange={(_, newValue) => {
+											formik.setFieldValue(`infoVendas.${index}.unidadeMedida`, newValue);
+										}}
 										renderInput={(params) => (
 											<TextField
 												{...params}
 												label="Unidade de Medida"
 												placeholder="Selecione uma unidade de medida"
-												error={
-													!!formik.errors.infoVendas
-												}
+												error={!!formik.errors.infoVendas?.[index]?.unidadeMedida}
 											/>
 										)}
 									/>
 									<NumericMask
-										id={`${item}-quantidade-interna`}
-										name={`${item}-quantidade-interna`}
+										id={`quantidade-interna-${index}`}
+										name={`infoVendas.${index}.quantidadeInterna`}
 										formik={formik}
 										label=""
-										error={!!formik.errors.infoVendas}
+										error={!!formik.errors.infoVendas?.[index]?.quantidadeInterna}
 										col={2}
-										disabled={true}
+										disabled
 										required={false}
-										value={
-											formik.values?.infoVendas[index]
-												?.quantidadeInterna
+										value={linha.quantidadeInterna}
+										onChange={(ev) =>
+											formik.setFieldValue(
+												`infoVendas.${index}.quantidadeInterna`,
+												parseFloat(ev.target.value) || 0
+											)
 										}
 									/>
 									<NumericMask
-										id={`${item}-quantidade-interestadual`}
-										name={`${item}-quantidade-interestadual`}
+										id={`quantidade-interestadual-${index}`}
+										name={`infoVendas.${index}.quantidadeInterestadual`}
 										formik={formik}
 										label=""
 										col={2}
-										disabled={true}
-										error={!!formik.errors.infoVendas}
+										disabled
+										error={!!formik.errors.infoVendas?.[index]?.quantidadeInterestadual}
 										required={false}
-										value={
-											formik.values?.infoVendas[index]
-												?.quantidadeInterestadual
+										value={linha.quantidadeInterestadual}
+										onChange={(ev) =>
+											formik.setFieldValue(
+												`infoVendas.${index}.quantidadeInterestadual`,
+												parseFloat(ev.target.value) || 0
+											)
 										}
 									/>
-									<div
-										className={`${styles.col1} ${styles.removeButtonDiv}`}
-									></div>
 								</div>
-							),
-						)}
+							</div>
+						))}
 					</div>
 				</Card>
 				<div className={`${styles.col12} ${styles.buttonsRigth}`}>
@@ -652,13 +658,15 @@ function step5({ setStep, formik }: step5Type) {
 					>
 						Voltar
 					</Button>
-					<Button
-						type="submit"
-						variant="contained"
-						className={styles.primaryButton}
-					>
-						Salvar
-					</Button>
+					{!showButton && (
+						<Button
+							type="submit"
+							variant="contained"
+							className={styles.primaryButton}
+						>
+							Salvar
+						</Button>
+					)}
 				</div>
 			</div>
 		</form>

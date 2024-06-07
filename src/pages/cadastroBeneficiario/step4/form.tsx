@@ -1,7 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/DeleteOutline";
 import { Autocomplete, Button, Card, TextField } from "@mui/material";
-import { FormikProps } from "formik";
 import { useEffect, useState } from "react";
 import "react-dropdown-tree-select/dist/styles.css";
 import { useLocation, useOutletContext } from "react-router-dom";
@@ -9,10 +8,10 @@ import CustomTextField from "../../../components/customTextField";
 import NumericMask from "../../../components/numericMask";
 import TreeDropdown from "../../../components/treeDropdown";
 import { getAllNcms } from "../../../services/ncmService";
-import { Messages } from "../../../utils/Messages";
-import { unidadesDeMedida } from "../../../utils/Unm";
+import { getUnidadeMedida } from "../../../services/beneficiario";
 import { inputs } from "./inputs";
 import styles from "./styles.module.scss";
+import { FormikProps } from "formik";
 
 type step4Type = {
 	setStep: Function;
@@ -21,6 +20,7 @@ type step4Type = {
 
 function step4({ setStep, formik }: step4Type) {
 	const [ncms, setNcms] = useState([]);
+	const [unidadeMedida, setUnidadeMedida] = useState([]);
 	const { pathname } = useLocation();
 	const [isLoading, setIsLoading] = useOutletContext();
 	const isView = pathname?.includes("/view");
@@ -35,6 +35,13 @@ function step4({ setStep, formik }: step4Type) {
 		})();
 	}, []);
 
+	useEffect(() => {
+		(async function fetch() {
+			const listUnidadeMedida = await getUnidadeMedida();
+			setUnidadeMedida(listUnidadeMedida);
+		})();
+	}, []);
+
 	function loadData() {
 		const localItem = localStorage.getItem("step4");
 		if (localItem) {
@@ -42,230 +49,147 @@ function step4({ setStep, formik }: step4Type) {
 		}
 	}
 
-	function addLinha(ev) {
+	const addLinha = (ev) => {
 		ev.preventDefault();
-		var lines = formik.values.infoVendas;
-		const lastLinha = lines.slice(-1)[0];
-		if (
-			!lastLinha.ncm ||
-			!lastLinha.produtoIncentivado ||
-			!lastLinha.quantidadeInterestadual ||
-			!lastLinha.quantidadeInterna ||
-			!lastLinha.unidadeMedida
-		) {
-			formik.setFieldError(
-				"infoVendas",
-				Messages.form.lastElementIsEmpty,
-			);
-		} else {
-			lines.push({
+		const infoVendasLength = Array.isArray(formik.values.infoVendas) ? formik.values.infoVendas.length : 0;
+		if (infoVendasLength < 2) {
+			const newLinha = {
 				ncm: null,
 				produtoIncentivado: "",
-				quantidadeInterestadual: "",
 				quantidadeInterna: "",
+				quantidadeInterestadual: "",
 				unidadeMedida: null,
-			});
-			formik.setFieldValue("infoVendas", lines);
+			};
+			const newInfoVendas = [...(Array.isArray(formik.values.infoVendas) ? formik.values.infoVendas : []), newLinha];
+			formik.setFieldValue('infoVendas', newInfoVendas);
 		}
 	}
+	const showButton = Array.isArray(formik.values.infoVendas) ? formik.values.infoVendas.length < 3 : true;
+
+	const removeLinha = (index) => {
+		const updatedInfoVendas = (Array.isArray(formik.values.infoVendas) ? formik.values.infoVendas : []).filter((_, i) => i !== index);
+		formik.setFieldValue('infoVendas', updatedInfoVendas);
+	};
 
 	return (
 		<form onSubmit={formik.handleSubmit}>
 			<div className={styles.container}>
 				<Card className={styles.card}>
 					<h1 className={styles.title}>Informações de venda anual</h1>
-					<h3 className={styles.subtitle}>
-						Preencha corretamente o formulário
-					</h3>
+					<h3 className={styles.subtitle}>Preencha corretamente o formulário</h3>
 					<div className={styles.beneficiarioForm}>
 						<div className={styles.tableHeader}>
-							<span
-								className={`${styles.col3} ${styles.monthTitle}`}
-							>
-								NCM
-							</span>
-							<span
-								className={`${styles.col2} ${styles.monthTitle}`}
-							>
-								Produto incentivado
-							</span>
-							<span
-								className={`${styles.col2} ${styles.monthTitle}`}
-							>
-								Unidade de medida
-							</span>
-							<span
-								className={`${styles.col2} ${styles.monthTitle}`}
-							>
-								Quantidade interna
-							</span>
-							<span
-								className={`${styles.col2} ${styles.monthTitle}`}
-							>
-								Quant. Interestadual
-							</span>
+							<span className={`${styles.col3} ${styles.monthTitle}`}>NCM</span>
+							<span className={`${styles.col2} ${styles.monthTitle}`}>Produto incentivado</span>
+							<span className={`${styles.col2} ${styles.monthTitle}`}>Unidade de medida</span>
+							<span className={`${styles.col2} ${styles.monthTitle}`}>Quantidade interna</span>
+							<span className={`${styles.col2} ${styles.monthTitle}`}>Quant. Interestadual</span>
 							<span className={styles.col1}></span>
 						</div>
-						{Object.keys(formik.values?.infoVendas ?? {})?.map(
-							(item, index) => (
-								<div
-									key={index}
-									className={`${styles.TableInputs}`}
-								>
+
+						{Array.isArray(formik.values.infoVendas) && formik.values.infoVendas.map((linha, index) => (
+							<div key={index} style={{ display: 'flex' }}>
+								<div className={styles.TableInputs}>
 									<div className={`${styles.col3} card`}>
 										<TreeDropdown
 											data={ncms}
 											onChange={(ev) => {
-												formik.setFieldValue(
-													`infoVendas[${index}].ncm`,
-													ev.target.value,
-												);
+												const selectedNcm = ev.target.value;
+												formik.setFieldValue(`infoVendas.${index}.ncm`, selectedNcm);
 											}}
-											value={
-												formik.values.infoVendas[index]
-													.ncm
-											}
-											showPartiallySelected="true"
+											value={linha.ncm}
 											placeholder="Selecione um NCM"
+											disabled={isView}
 										/>
 									</div>
-
 									<CustomTextField
-										id={`${item}-produto-incentivado`}
-										name={`${item}-produto-incentivado`}
+										id={`produto-incentivado-${index}`}
+										name={`infoVendas.${index}.produtoIncentivado`}
 										label=""
 										col={2}
 										formik={formik}
 										disabled={isView}
-										error={!!formik.errors.infoVendas}
-										value={
-											formik.values?.infoVendas[index]
-												?.produtoIncentivado
-										}
-										onChange={(ev: {
-											target: { value: any };
-										}) =>
+										error={!!formik.errors.infoVendas?.[index]?.produtoIncentivado}
+										value={linha.produtoIncentivado}
+										onChange={(ev) =>
 											formik.setFieldValue(
-												`infoVendas[${index}].produtoIncentivado`,
-												ev.target.value,
+												`infoVendas.${index}.produtoIncentivado`,
+												ev.target.value
 											)
 										}
 									/>
 									<Autocomplete
-										id="unidadeMedida"
-										options={unidadesDeMedida.sort(
-											function (a, b) {
-												if (a.value < b.value) {
-													return -1;
-												}
-												if (a.value > b.value) {
-													return 1;
-												}
-												return 0;
-											},
-										)}
+										id={`unidadeMedida-${index}`}
+										options={unidadeMedida}
 										disableListWrap
 										className={styles.col2}
 										placeholder="Selecione uma unidade de medida"
 										disabled={isView}
 										disableCloseOnSelect
-										getOptionLabel={(option) =>
-											`${option.key} - ${option.value}`
-										}
-										value={
-											formik.values?.infoVendas[index]
-												?.unidadeMedida
-										}
-										onChange={(_, value) => {
-											formik.setFieldValue(
-												`infoVendas[${index}].unidadeMedida`,
-												value,
-											);
+										getOptionLabel={(option) => option.descricao}
+										value={unidadeMedida.find(option => option.id === linha.unidadeMedida?.id) || null}
+										onChange={(_, newValue) => {
+											formik.setFieldValue(`infoVendas.${index}.unidadeMedida`, newValue);
 										}}
 										renderInput={(params) => (
 											<TextField
 												{...params}
 												label="Unidade de Medida"
 												placeholder="Selecione uma unidade de medida"
-												error={
-													!!formik.errors.infoVendas
-												}
+												error={!!formik.errors.infoVendas?.[index]?.unidadeMedida}
 											/>
 										)}
 									/>
 									<NumericMask
-										id={`${item}-quantidade-interna`}
-										name={`${item}-quantidade-interna`}
+										id={`quantidade-interna-${index}`}
+										name={`infoVendas.${index}.quantidadeInterna`}
 										formik={formik}
 										label=""
-										error={!!formik.errors.infoVendas}
+										error={!!formik.errors.infoVendas?.[index]?.quantidadeInterna}
 										col={2}
 										disabled={isView}
 										required={false}
-										value={
-											formik.values?.infoVendas[index]
-												?.quantidadeInterna
-										}
-										onChange={(ev: {
-											target: { value: string };
-										}) =>
+										value={linha.quantidadeInterna}
+										onChange={(ev) =>
 											formik.setFieldValue(
-												`infoVendas[${index}].quantidadeInterna`,
-												ev.target.value,
+												`infoVendas.${index}.quantidadeInterna`,
+												parseFloat(ev.target.value) || 0
 											)
 										}
 									/>
 									<NumericMask
-										id={`${item}-quantidade-interestadual`}
-										name={`${item}-quantidade-interestadual`}
+										id={`quantidade-interestadual-${index}`}
+										name={`infoVendas.${index}.quantidadeInterestadual`}
 										formik={formik}
 										label=""
 										col={2}
 										disabled={isView}
-										error={!!formik.errors.infoVendas}
+										error={!!formik.errors.infoVendas?.[index]?.quantidadeInterestadual}
 										required={false}
-										value={
-											formik.values?.infoVendas[index]
-												?.quantidadeInterestadual
-										}
-										onChange={(ev: {
-											target: { value: string };
-										}) =>
+										value={linha.quantidadeInterestadual}
+										onChange={(ev) =>
 											formik.setFieldValue(
-												`infoVendas[${index}].quantidadeInterestadual`,
-												ev.target.value,
+												`infoVendas.${index}.quantidadeInterestadual`,
+												parseFloat(ev.target.value) || 0
 											)
 										}
 									/>
-									<div
-										className={`${styles.col1} ${styles.removeButtonDiv}`}
-									>
-										{index !== 0 && !isView && (
+									<div style={{ position: 'absolute', right: '130px' }} className={`${styles.col1} ${styles.removeButtonDiv}`}>
+										{!isView && (index === 1 || index === 2) && (
 											<RemoveIcon
 												className={styles.removeIcon}
 												onClick={(ev) => {
 													ev.preventDefault();
-													const newArray = [
-														...formik.values
-															.infoVendas,
-													];
-													newArray.splice(index, 1);
-													formik.setFieldValue(
-														"infoVendas",
-														newArray,
-													);
+													removeLinha(index);
 												}}
 											/>
 										)}
 									</div>
 								</div>
-							),
-						)}
-						<span className={`${styles.error} ${styles.col12}`}>
-							{formik.errors.infoVendas as string | undefined}
-						</span>
+							</div>
+						))}
 
-						{!isView && (
+						{!isView && showButton && (
 							<Button
 								type="button"
 								variant="contained"

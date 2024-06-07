@@ -119,17 +119,10 @@ function step3({ setStep, formik }: step3Type) {
 								disabled={isView}
 								onChange={(e) => {
 									formik.setFieldValue("valoresFundo", null);
-									formik.setFieldValue(
-										e.target.name,
-										incentivosFiscais.find(
-											(i) =>
-												i.id ===
-												(typeof e.target.value ===
-													"string"
-													? parseInt(e.target.value)
-													: e.target.value),
-										),
+									const selectedIncentivo = incentivosFiscais.find(
+										(i) => i.id === parseInt(e.target.value)
 									);
+									formik.setFieldValue("incentivoFiscal", selectedIncentivo);
 								}}
 							>
 								{incentivosFiscais.map(
@@ -157,6 +150,7 @@ function step3({ setStep, formik }: step3Type) {
 								placeholder="Selecione um Submodulo"
 								value={formik.values?.submodulo}
 								fullWidth
+								required
 								disabled={isView}
 								onChange={(ev) => {
 									addNewFundo(
@@ -198,7 +192,15 @@ function step3({ setStep, formik }: step3Type) {
 							label="Venda anual interna"
 							required
 							col={6}
-							onChange={formik.handleChange}
+							onChange={(e) => {
+								const value = parseFloat(e.target.value);
+								formik.handleChange({
+									target: {
+										name: e.target.name,
+										value: isNaN(value) ? '' : value,
+									},
+								});
+							}}
 							disabled={isView}
 							value={formik.values?.vendaAnualInterna ?? ""}
 							className={`${styles.tableInput}`}
@@ -211,7 +213,15 @@ function step3({ setStep, formik }: step3Type) {
 							fixedDecimalScale
 							label="Venda anual interestadual"
 							col={6}
-							onChange={formik.handleChange}
+							onChange={(e) => {
+								const value = parseFloat(e.target.value);
+								formik.handleChange({
+									target: {
+										name: e.target.name,
+										value: isNaN(value) ? '' : value,
+									},
+								});
+							}}
 							required
 							disabled={isView}
 							value={formik.values?.vendaAnualInterestadual ?? ""}

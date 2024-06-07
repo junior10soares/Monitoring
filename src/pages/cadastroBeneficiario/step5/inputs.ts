@@ -1,5 +1,5 @@
 export const inputs = {
-	anoReferencia: 2023,
+	anoReferencia: (new Date().getFullYear() - 1),
 	investimentoAcumulado: 0,
 	investimentoMensal: [
 		{ codigo: "janeiroValor", valor: "" },
@@ -78,7 +78,7 @@ export const inputs = {
 		{
 			abrilValor: null,
 			agostoValor: null,
-			anoReferencia: null,
+			anoReferencia: (new Date().getFullYear() - 1),
 			dezembroValor: null,
 			fevereiroValor: null,
 			fundoIncentivo: {

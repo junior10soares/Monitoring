@@ -27,7 +27,6 @@ import { getAllCnaes } from "../../../services/cnaeService";
 import { getAllMunicipios } from "../../../services/municipioService";
 import { getAllPortes } from "../../../services/portesService";
 import { monthsData } from "../../../utils/DateTime";
-import { Messages } from "../../../utils/Messages";
 import { inputs } from "./inputs";
 import styles from "./styles.module.scss";
 
@@ -42,11 +41,14 @@ function step1({ formik }: step1Type) {
 		{ id: 0, codigo: "", descricao: "" },
 	]);
 	const [municipios, setMunicipios] = useState([]);
+	const [showOutros, setShowOutros] = useState(false);
+	const [showOutrosTrash, setShowOutrosTrash] = useState(false);
 	const [portes, setPortes] = useState([]);
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
-
-	const excludedListTelefones = ["EMPRESA", "CONTABILIDADE", "ADMINISTRADOR"];
+	const listTelefones = ["EMPRESA", "CONTABILIDADE", "ADMINISTRADOR"];
+	const excludedListTelefones = ["EMPRESA", "CONTABILIDADE", "ADMINISTRADOR", "OUTROS"];
+	const [newPhone, setNewsPhone] = useState(listTelefones);
 
 	useEffect(() => {
 		(async function fetchAll() {
@@ -77,7 +79,7 @@ function step1({ formik }: step1Type) {
 				nomeAdministrador: beneficiario.nomeAdministrador,
 				telefoneAdministrador: beneficiario.telefoneAdministrador,
 				municipio: beneficiario.municipio.id,
-				porte: beneficiario.porte,
+				porte: beneficiario.porte.id,
 				ramoAtividade: beneficiario.ramoAtividade,
 				descricao: beneficiario.descricao,
 				cnaes: beneficiario.cnaes.map(
@@ -107,12 +109,27 @@ function step1({ formik }: step1Type) {
 					],
 				})),
 			};
+			const step3 = {
+				valoresFundo: beneficiario.submodulo ? beneficiario.submodulo.recolhimentoFundos : null,
+				vendaAnualInterestadual: beneficiario.submodulo ? beneficiario.submodulo.vendaAnualInterestadual : null,
+				vendaAnualInterna: beneficiario.submodulo ? beneficiario.submodulo.vendaAnualInterna : null,
+				incentivoFiscal: beneficiario.incentivoFiscal
+			};
+			const infoVendas = beneficiario.vendaAnual.map(venda => ({
+				ncm: venda.ncm,
+				produtoIncentivado: venda.produtoIncentivado,
+				quantidadeInterestadual: venda.quantidadeInterestadual || "",
+				quantidadeInterna: venda.quantidadeInterna || "",
+				unidadeMedida: venda.unidadeMedida
+			}));
+
+			const step4 = { infoVendas };
 
 			formik.setValues(step1);
 			localStorage.setItem("step1", JSON.stringify(beneficiario));
 			localStorage.setItem("step2", JSON.stringify(dadosEconomicos));
-			localStorage.setItem("step3", JSON.stringify(beneficiario));
-			// localStorage.setItem("step4", JSON.stringify(beneficiario));
+			localStorage.setItem("step3", JSON.stringify(step3));
+			localStorage.setItem("step4", JSON.stringify(step4));
 		}
 	}
 
@@ -125,23 +142,13 @@ function step1({ formik }: step1Type) {
 		setMunicipios(municipiorsList);
 	}
 
-	async function addTelefoneOnList(ev: { preventDefault: () => void }) {
-		ev.preventDefault();
-		const lastTelefone = formik.values.telefones
-			.filter((i) => !excludedListTelefones.includes(i.titulo))
-			.slice(-1)[0];
-		if (!lastTelefone.titulo || !lastTelefone.telefone) {
-			formik.setFieldError("telefones", Messages.form.lastElementIsEmpty);
-		} else {
-			const telefones = formik.values.telefones;
-			telefones.push({
-				index: lastTelefone.index + 1,
-				titulo: "",
-				telefone: "",
-			});
-			formik.setFieldValue("telefones", telefones);
+	useEffect(() => {
+		const urlPattern = /^\/beneficiario\/view\/\d+$/;
+		const url = window.location.pathname;
+		if (urlPattern.test(url)) {
+			setShowOutrosTrash(true);
 		}
-	}
+	}, []);
 
 	const selectedCnaes = useMemo(() => {
 		const newList: ICnae[] = cnaesList.filter((v: ICnae) =>
@@ -149,6 +156,13 @@ function step1({ formik }: step1Type) {
 		);
 		return newList;
 	}, [cnaesList, formik.values.cnaes]);
+
+	const addNewTelefone = () => {
+		const newTelefone = { titulo: '', telefone: '' };
+		const newTelefones = [...formik.values.telefones, newTelefone];
+		setNewsPhone(prevState => [...prevState, newTelefones])
+		formik.setFieldValue('telefones', newTelefones);
+	};
 
 	return (
 		<form
@@ -193,80 +207,6 @@ function step1({ formik }: step1Type) {
 							disabled={isView}
 						/>
 						<InputMask
-							id="telefoneEmpresa"
-							label="Tel. Empresa"
-							formik={formik}
-							col={3}
-							mascara="(00) 0000-0000"
-							secondMask="(00) 0 0000-0000"
-							definitions={{
-								"#": /[1-9]/,
-							}}
-							value={
-								formik.values.telefones.find(
-									(i) => i.titulo === "EMPRESA",
-								)?.telefone ?? ""
-							}
-							required
-							onChange={(ev: { target: { value: string } }) => {
-								var newPhone = formik.values.telefones.find(
-									(i) => i.titulo === "EMPRESA",
-								);
-								if (!newPhone) {
-									newPhone = {
-										index: 999,
-										titulo: "EMPRESA",
-										telefone: "",
-									};
-								}
-								newPhone.telefone = ev.target.value;
-								formik.setFieldValue("telefones", [
-									...formik.values.telefones.filter(
-										(i) => i.titulo !== "EMPRESA",
-									),
-									newPhone,
-								]);
-							}}
-							disabled={isView}
-						/>
-						<InputMask
-							id="telefoneContabilidade"
-							label="Tel. Contabilidade"
-							formik={formik}
-							col={3}
-							mascara="(00) 0000-0000"
-							secondMask="(00) 0 0000-0000"
-							definitions={{
-								"#": /[1-9]/,
-							}}
-							value={
-								formik.values.telefones.find(
-									(i) => i.titulo === "CONTABILIDADE",
-								)?.telefone ?? ""
-							}
-							required
-							onChange={(ev: { target: { value: string } }) => {
-								var newPhone = formik.values.telefones.find(
-									(i) => i.titulo === "CONTABILIDADE",
-								);
-								if (!newPhone) {
-									newPhone = {
-										index: 999,
-										titulo: "CONTABILIDADE",
-										telefone: "",
-									};
-								}
-								newPhone.telefone = ev.target.value;
-								formik.setFieldValue("telefones", [
-									...formik.values.telefones.filter(
-										(i) => i.titulo !== "CONTABILIDADE",
-									),
-									newPhone,
-								]);
-							}}
-							disabled={isView}
-						/>
-						<InputMask
 							id="inscricaoEstadual"
 							label="Ins. Estadual"
 							formik={formik}
@@ -285,7 +225,7 @@ function step1({ formik }: step1Type) {
 							id="cpfOuCnpj"
 							label="CPF/CNPJ"
 							formik={formik}
-							col={3}
+							col={6}
 							mascara="000.000.000-00"
 							secondMask="00.000.000/0000-00"
 							definitions={{
@@ -365,44 +305,6 @@ function step1({ formik }: step1Type) {
 								{formik.errors.porte as string | undefined}
 							</span>
 						</FormControl>
-
-						<InputMask
-							id="telefoneAdministrador"
-							label="Tel. Administrador"
-							formik={formik}
-							col={6}
-							mascara="(00) 0000-0000"
-							secondMask="(00) 0 0000-0000"
-							definitions={{
-								"#": /[1-9]/,
-							}}
-							value={
-								formik.values.telefones.find(
-									(i) => i.titulo === "ADMINISTRADOR",
-								)?.telefone ?? ""
-							}
-							required
-							onChange={(ev: { target: { value: string } }) => {
-								var newPhone = formik.values.telefones.find(
-									(i) => i.titulo === "ADMINISTRADOR",
-								);
-								if (!newPhone) {
-									newPhone = {
-										index: 999,
-										titulo: "ADMINISTRADOR",
-										telefone: "",
-									};
-								}
-								newPhone.telefone = ev.target.value;
-								formik.setFieldValue("telefones", [
-									...formik.values.telefones.filter(
-										(i) => i.titulo !== "ADMINISTRADOR",
-									),
-									newPhone,
-								]);
-							}}
-							disabled={isView}
-						/>
 						<CustomTextField
 							id="ramoAtividade"
 							label="Ramo de Atividade"
@@ -486,112 +388,93 @@ function step1({ formik }: step1Type) {
 				<Card className={styles.card}>
 					<h1 className={styles.title}>Telefones</h1>
 					<div className={styles.beneficiarioForm}>
-						{formik.values.telefones
-							.filter(
-								(i) =>
-									!excludedListTelefones.includes(i.titulo),
-							)
-							.map((item, index) => {
-								const itemIndex =
-									formik.values.telefones.findIndex(
-										(i) => i.index === item.index,
-									);
-								return (
-									<div
-										className={styles.beneficiarioItem}
-										key={itemIndex}
-									>
-										<TextField
-											id="titulo"
-											label="Título"
-											variant="outlined"
-											required
-											error={!!formik.errors.telefones}
-											className={styles.col5}
-											value={
-												formik.values.telefones[
-													itemIndex
-												].titulo
-											}
-											disabled={isView}
-											onChange={() => {
-												let newPhones =
-													formik.values.telefones;
-												newPhones[itemIndex].titulo =
-													"OUTROS";
-												formik.setFieldValue(
-													"telefones",
-													newPhones,
-												);
-											}}
-										/>
-										<InputMask
-											id={`telefones-${itemIndex}`}
-											label="Telefone"
-											formik={formik}
-											col={5}
-											error={!!formik.errors.telefones}
-											mascara="(00) 0000-0000"
-											secondMask="(00) 0 0000-0000"
-											definitions={{
-												"#": /[1-9]/,
-											}}
-											disabled={isView}
-											value={
-												formik.values.telefones[
-													itemIndex
-												].telefone
-											}
-											required
-											onChange={(ev: {
-												target: { value: string };
-											}) => {
-												let newPhones =
-													formik.values.telefones;
-												newPhones[itemIndex].telefone =
-													ev.target.value;
-												formik.handleChange(ev);
-											}}
-										/>
-										{index !== 0 && !isView && (
+						<div>
+							{newPhone.map((tipoTelefone, index) => (
+								<div key={index} style={{ marginBottom: '15px' }}>
+									<div style={{ display: 'flex' }}>
+										<div style={{ flex: '1', marginRight: '15px' }}>
+											<InputLabel id={`select-telefone-${index}`}>Tipo de Telefone</InputLabel>
+											<Select
+												labelId={`select-telefone-${index}`}
+												id={`select-telefone-${index}`}
+												label={`select-telefone-${index}`}
+												value={formik.values.telefones[index]?.titulo || ""}
+												onChange={(ev) => {
+													const selectedTitulo = ev.target.value;
+													const newTelefones = [...formik.values.telefones];
+													newTelefones[index] = { titulo: selectedTitulo, telefone: "" };
+													formik.setFieldValue("telefones", newTelefones);
+												}}
+												disabled={isView}
+												style={{ width: '220px' }}
+											>
+												{excludedListTelefones.map((tipo) => (
+													<MenuItem key={tipo} value={tipo}>{tipo}</MenuItem>
+												))}
+											</Select>
+										</div>
+										<div style={{ marginTop: '23px' }}>
+											<InputMask
+												id={`telefone-${index}`}
+												label="Telefone"
+												formik={formik}
+												col={9}
+												mascara="(00) 0000-0000"
+												secondMask="(00) 0 0000-0000"
+												definitions={{
+													"#": /[1-9]/,
+												}}
+												value={formik.values.telefones[index]?.telefone || ""}
+												required={formik.values.telefones[index]?.titulo && formik.values.telefones[index]?.telefone.trim() === ''}
+												onChange={(ev) => {
+													const updatedTelefone = ev.target.value;
+													const newTelefones = [...formik.values.telefones];
+													newTelefones[index] = { ...newTelefones[index], telefone: updatedTelefone };
+													formik.setFieldValue("telefones", newTelefones);
+												}}
+												disabled={isView}
+												style={{ width: '250px' }}
+											/>
+											{formik.values.telefones[index]?.titulo && formik.values?.telefones[index]?.telefone.trim() === '' && (
+												<span className={styles.error}>Telefone é obrigatório.</span>
+											)}
+										</div>
+										{index >= listTelefones.length ? (
 											<div
+												style={{ marginTop: '20px' }}
 												className={`${styles.col1} ${styles.removeButtonDiv}`}
 											>
 												<RemoveIcon
-													className={
-														styles.removeIcon
-													}
-													onClick={(ev) => {
-														ev.preventDefault();
-														const newArray = [
-															...formik.values
-																.telefones,
-														];
-														newArray.splice(
-															itemIndex,
-															1,
-														);
-														formik.setFieldValue(
-															"telefones",
-															newArray,
-														);
+													className={styles.removeIcon}
+													onClick={() => {
+														const newTelefones = [...formik.values.telefones];
+														const updatedNewPhone = [...newPhone];
+														newTelefones.pop();
+														updatedNewPhone.pop();
+														setNewsPhone(updatedNewPhone);
+														formik.setFieldValue("telefones", newTelefones);
 													}}
 												/>
 											</div>
+										) : (
+											<div style={{ width: '36px', marginTop: '30px', marginLeft: '9px' }}></div>
 										)}
 									</div>
-								);
-							})}
-						<span className={styles.error}>
-							{formik.errors.telefones as string | undefined}
-						</span>
+								</div>
+							))}
+							{['EMPRESA', 'CONTABILIDADE', 'ADMINISTRADOR'].some(tipo => !formik.values?.telefones.find(telefone => telefone?.titulo === tipo)) && (
+								<span className={styles.error}>
+									Pelo menos um telefone para empresa, contabilidade e administrador é obrigatório.
+								</span>
+							)}
+						</div>
 					</div>
 					{!isView && (
 						<Button
 							type="button"
 							variant="contained"
 							className={styles.primaryButton}
-							onClick={addTelefoneOnList}
+							onClick={addNewTelefone}
 						>
 							<AddIcon />
 							Novo Telefone
