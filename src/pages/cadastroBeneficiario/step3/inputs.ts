@@ -17,7 +17,7 @@ export const inputs = {
 		{
 			abrilValor: null,
 			agostoValor: null,
-			anoReferencia: null,
+			anoReferencia: new Date().getFullYear() - 1,
 			dezembroValor: null,
 			fevereiroValor: null,
 			fundoIncentivo: {

@@ -46,8 +46,9 @@ function step1({ formik }: step1Type) {
 	const [portes, setPortes] = useState([]);
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
+	const listTelefones = ["EMPRESA", "CONTABILIDADE", "ADMINISTRADOR"];
 	const excludedListTelefones = ["EMPRESA", "CONTABILIDADE", "ADMINISTRADOR", "OUTROS"];
-	const [newPhone, setNewsPhone] = useState(excludedListTelefones);
+	const [newPhone, setNewsPhone] = useState(listTelefones);
 
 	useEffect(() => {
 		(async function fetchAll() {
@@ -127,7 +128,6 @@ function step1({ formik }: step1Type) {
 			formik.setValues(step1);
 			localStorage.setItem("step1", JSON.stringify(beneficiario));
 			localStorage.setItem("step2", JSON.stringify(dadosEconomicos));
-			console.log("step4", step4)
 			localStorage.setItem("step3", JSON.stringify(step3));
 			localStorage.setItem("step4", JSON.stringify(step4));
 		}
@@ -439,7 +439,7 @@ function step1({ formik }: step1Type) {
 												<span className={styles.error}>Telefone é obrigatório.</span>
 											)}
 										</div>
-										{index >= excludedListTelefones.length ? (
+										{index >= listTelefones.length ? (
 											<div
 												style={{ marginTop: '20px' }}
 												className={`${styles.col1} ${styles.removeButtonDiv}`}
