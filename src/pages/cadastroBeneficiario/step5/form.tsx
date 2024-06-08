@@ -20,16 +20,15 @@ import { useOutletContext } from "react-router-dom";
 import CustomTextField from "../../../components/customTextField";
 import NumericMask from "../../../components/numericMask";
 import TreeDropdown from "../../../components/treeDropdown";
+import { getUnidadeMedida } from "../../../services/beneficiario";
 import { getAllIncentivosFiscais } from "../../../services/incentivoFiscal";
 import { getAllNcms } from "../../../services/ncmService";
 import { getAllSubmodulosByInscricaoEstadual } from "../../../services/submodulo";
 import { formatBRCurrency } from "../../../utils/Currency";
 import { monthsData } from "../../../utils/DateTime";
 import { isEmpty } from "../../../utils/Global";
-import { unidadesDeMedida } from "../../../utils/Unm";
 import { inputs } from "./inputs";
 import styles from "./styles.module.scss";
-import { getUnidadeMedida } from "../../../services/beneficiario";
 
 type step5Type = {
 	setStep: Function;
@@ -49,7 +48,7 @@ function step5({ setStep, formik }: step5Type) {
 	useEffect(() => {
 		(async function fetch() {
 			const listUnidadeMedida = await getUnidadeMedida();
-			setUnidadeMedida(listUnidadeMedida)
+			setUnidadeMedida(listUnidadeMedida);
 		})();
 	}, []);
 
@@ -441,7 +440,7 @@ function step5({ setStep, formik }: step5Type) {
 																				?.fundos
 																				.length,
 																		)}`
-																	]
+																		]
 																		} ${styles.monthTitle
 																		}`}
 																>
