@@ -121,7 +121,7 @@ function step1({ formik }: step1Type) {
 				fundos: beneficiario.incentivoFiscal?.fundos,
 			};
 			const infoVendas = beneficiario.vendaAnual.map((venda) => ({
-				ncm: venda.ncm,
+				ncm: venda.ncm.id,
 				produtoIncentivado: venda.produtoIncentivado,
 				quantidadeInterestadual: venda.quantidadeInterestadual || "",
 				quantidadeInterna: venda.quantidadeInterna || "",

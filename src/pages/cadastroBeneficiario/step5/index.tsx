@@ -256,7 +256,7 @@ export default function ({ setStep }: stepType) {
 							descricao: step3.incentivoFiscal?.descricao,
 							fundos: step3.incentivoFiscal?.fundos,
 						},
-						vendaAnual: null,
+						vendaAnual: step4.infoVendas,
 					};
 					if (params.id) {
 						try {
