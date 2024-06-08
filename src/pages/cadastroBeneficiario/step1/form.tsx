@@ -41,7 +41,6 @@ function step1({ formik }: step1Type) {
 		{ id: 0, codigo: "", descricao: "" },
 	]);
 	const [municipios, setMunicipios] = useState([]);
-	const [showOutros, setShowOutros] = useState(false);
 	const [showOutrosTrash, setShowOutrosTrash] = useState(false);
 	const [portes, setPortes] = useState([]);
 	const [showInput, setShowInput] = useState(false);
@@ -64,6 +63,13 @@ function step1({ formik }: step1Type) {
 			}
 		})();
 	}, []);
+
+	useEffect(() => {
+		if (formik.values.telefones.length > listTelefones.length) {
+			const additionalPhones = formik.values.telefones.slice(listTelefones.length);
+			setNewsPhone([...listTelefones, ...additionalPhones]);
+		}
+	}, [formik.values.telefones]);
 
 	async function fetchApi() {
 		if (params.id) {
@@ -143,7 +149,6 @@ function step1({ formik }: step1Type) {
 		setMunicipios(municipiorsList);
 	}
 
-
 	useEffect(() => {
 		const urlPattern = /^\/beneficiario\/view\/\d+$/;
 		const url = window.location.pathname;
@@ -151,8 +156,6 @@ function step1({ formik }: step1Type) {
 			setShowOutrosTrash(true);
 		}
 	}, []);
-
-
 
 	const selectedCnaes = useMemo(() => {
 		const newList: ICnae[] = cnaesList.filter((v: ICnae) =>

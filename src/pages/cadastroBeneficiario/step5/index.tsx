@@ -14,17 +14,6 @@ export default function ({ setStep }: stepType) {
 	const params = useParams();
 	const [data, setData] = useState(null);
 
-
-	const step1 = JSON.parse(localStorage.getItem("step1") ?? "");
-	const step2 = JSON.parse(localStorage.getItem("step2") ?? "");
-	const step3 = JSON.parse(localStorage.getItem("step3") ?? "");
-	const step4 = JSON.parse(localStorage.getItem("step4") ?? "");
-
-	console.log("step1", step1)
-	console.log("step2", step2)
-	console.log("step3", step3)
-	console.log("step4", step4)
-
 	useEffect(() => {
 		if (params.id) {
 			const fetchData = async () => {
