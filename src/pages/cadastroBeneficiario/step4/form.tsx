@@ -24,6 +24,17 @@ function step4({ setStep, formik }: step4Type) {
 	const { pathname } = useLocation();
 	const [isLoading, setIsLoading] = useOutletContext();
 	const isView = pathname?.includes("/view");
+	const [isAddButtonVisible, setIsAddButtonVisible] = useState(false);
+
+	useEffect(() => {
+		setIsAddButtonVisible(formik.values.infoVendas.every(linha =>
+			linha.ncm?.id &&
+			linha.produtoIncentivado &&
+			linha.unidadeMedida &&
+			(linha.quantidadeInterna !== "" || linha.quantidadeInterna === 0) &&
+			(linha.quantidadeInterestadual !== "" || linha.quantidadeInterestadual === 0)
+		));
+	}, [formik.values.infoVendas]);
 
 	useEffect(() => {
 		loadData();
@@ -49,8 +60,6 @@ function step4({ setStep, formik }: step4Type) {
 		}
 	}
 
-	console.log("formik", formik.values)
-
 	return (
 		<form onSubmit={formik.handleSubmit}>
 			<div className={styles.container}>
@@ -72,17 +81,24 @@ function step4({ setStep, formik }: step4Type) {
 								<>
 									{formik.values.infoVendas.map((linha, index) => (
 										<div key={index} className={styles.TableInputs}>
-											<div className={`${styles.col3} card`}>
-												<TreeDropdown
-													data={ncms}
-													onChange={(ev) => {
-														const selectedNcm = ev.target.value;
-														formik.setFieldValue(`infoVendas[${index}].ncm.id`, selectedNcm);
-													}}
-													value={linha?.ncm?.id}
-													placeholder="Selecione um NCM"
-													disabled={isView}
-												/>
+											<div style={{ display: 'flex', flexDirection: 'column' }} className={`${styles.col3} card`}>
+												<div style={{ minHeight: '20px' }}>
+													<TreeDropdown
+														data={ncms}
+														onChange={(ev) => {
+															const selectedNcm = ev.target.value;
+															formik.setFieldValue(`infoVendas[${index}].ncm.id`, selectedNcm);
+														}}
+														value={linha?.ncm?.id}
+														placeholder="Selecione um NCM"
+														disabled={isView}
+													/>
+													{formik.errors.infoVendas?.[index]?.ncm && (
+														<span className={styles.error}>
+															{formik.errors.infoVendas[index].ncm}
+														</span>
+													)}
+												</div>
 											</div>
 											<CustomTextField
 												id={`infoVendas[${index}].produtoIncentivado`}
@@ -91,6 +107,7 @@ function step4({ setStep, formik }: step4Type) {
 												col={2}
 												formik={formik}
 												disabled={isView}
+												required
 												error={!!formik.errors?.infoVendas?.[index]?.produtoIncentivado}
 												value={linha.produtoIncentivado}
 												onChange={(ev) =>
@@ -119,6 +136,8 @@ function step4({ setStep, formik }: step4Type) {
 														label="Unidade de Medida"
 														placeholder="Selecione uma unidade de medida"
 														error={!!formik.errors?.infoVendas?.[index]?.unidadeMedida}
+														helperText={formik.errors?.infoVendas?.[index]?.unidadeMedida ? 'Campo Obrigatório!' : ''}
+														required={!isView}
 													/>
 												)}
 											/>
@@ -130,8 +149,8 @@ function step4({ setStep, formik }: step4Type) {
 												error={!!formik.errors?.infoVendas?.[index]?.quantidadeInterna}
 												col={2}
 												disabled={isView}
-												required={false}
-												value={linha.quantidadeInterna}
+												required
+												value={linha.quantidadeInterna === 0 ? "" : linha.quantidadeInterna}
 												onChange={(ev) =>
 													formik.setFieldValue(
 														`infoVendas[${index}].quantidadeInterna`,
@@ -147,8 +166,8 @@ function step4({ setStep, formik }: step4Type) {
 												col={2}
 												disabled={isView}
 												error={!!formik.errors?.infoVendas?.[index]?.quantidadeInterestadual}
-												required={false}
-												value={linha.quantidadeInterestadual}
+												required
+												value={linha.quantidadeInterestadual === 0 ? "" : linha.quantidadeInterestadual}
 												onChange={(ev) =>
 													formik.setFieldValue(
 														`infoVendas[${index}].quantidadeInterestadual`,
@@ -166,7 +185,7 @@ function step4({ setStep, formik }: step4Type) {
 											</div>
 										</div>
 									))}
-									{!isView && (
+									{!isView && isAddButtonVisible && (
 										<Button
 											type="button"
 											variant="contained"
