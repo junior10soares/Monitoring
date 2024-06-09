@@ -48,10 +48,10 @@ async function insertBeneficiario(values) {
 		},
 		porte: values.porte,
 		ramoAtividade: values.ramoAtividade,
-		descricao: values.descricao,
+		descricao: values.descricaoStep1,
 		telefones: values.telefones,
 		cnaes: values.cnaes.map((i, index) => ({
-			cnae: i,
+			cnae: { id: i.cnae.id },
 			isPrincipal: index === 0,
 		})),
 		status: [

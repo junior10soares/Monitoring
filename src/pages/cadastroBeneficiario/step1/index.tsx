@@ -15,7 +15,7 @@ export default function ({ setStep }: stepType) {
 		municipio: any;
 		porte: any;
 		ramoAtividade: any;
-		descricao: any;
+		descricaoStep1: any;
 		cnaes: any;
 		telefones: any;
 	},
@@ -30,7 +30,7 @@ export default function ({ setStep }: stepType) {
 				municipio: string;
 				porte: string;
 				ramoAtividade: string;
-				descricao: string;
+				descricaoStep1: string;
 				cnaes: never[];
 				telefones: { index: number; titulo: string; telefone: string; }[];
 			}>): void; (arg0: any): void;
@@ -46,8 +46,8 @@ export default function ({ setStep }: stepType) {
 		if (!_values.cpfOuCnpj) {
 			errors.cpfOuCnpj = Messages.form.required;
 		}
-		if (!_values.descricao) {
-			errors.descricao = Messages.form.required;
+		if (!_values.descricaoStep1) {
+			errors.descricaoStep1 = Messages.form.required;
 		}
 		if (!_values.email) {
 			errors.email = Messages.form.required;
@@ -73,20 +73,14 @@ export default function ({ setStep }: stepType) {
 		if (!_values.ramoAtividade) {
 			errors.ramoAtividade = Messages.form.required;
 		}
-		if (
-			!_values.telefones?.find((i: { titulo: string; }) => i.titulo === "ADMINISTRADOR")
-				?.telefone
-		) {
-			errors.telefoneAdministrador = Messages.form.required;
-		}
-		if (
-			!_values.telefones?.find((i: { titulo: string; }) => i.titulo === "CONTABILIDADE")
-				?.telefone
-		) {
-			errors.telefoneContabilidade = Messages.form.required;
-		}
-		if (!_values.telefones?.find((i: { titulo: string; }) => i.titulo === "EMPRESA")?.telefone) {
-			errors.telefoneEmpresa = Messages.form.required;
+		const telefoneErrors = [];
+		_values.telefones.forEach((telefone, index) => {
+			if (!telefone.telefone && telefone.titulo) {
+				telefoneErrors[index] = { telefone: Messages.form.required };
+			}
+		});
+		if (telefoneErrors.length > 0) {
+			errors.telefones = telefoneErrors;
 		}
 		if (Object.keys(errors).length > 0) {
 			setErrors(errors);

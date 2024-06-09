@@ -19,7 +19,7 @@ import { FormikProps } from "formik";
 import { Imunicipio } from "municipioType";
 import { IPorte } from "porte";
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import CustomTextField from "../../../components/customTextField";
 import InputMask from "../../../components/inputMask";
 import { getBeneficiarioById } from "../../../services/beneficiario";
@@ -40,17 +40,18 @@ function step1({ formik }: step1Type) {
 	const [cnaesList, setCnaesList] = useState([
 		{ id: 0, codigo: "", descricao: "" },
 	]);
+	const navigate = useNavigate();
 	const [municipios, setMunicipios] = useState([]);
 	const [showOutrosTrash, setShowOutrosTrash] = useState(false);
 	const [portes, setPortes] = useState([]);
 	const [showInput, setShowInput] = useState(false);
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
-	const listTelefones = ["EMPRESA", "CONTABILIDADE", "ADMINISTRADOR"];
+	const listTelefones = ["ADMINISTRADOR", "CONTABILIDADE", "EMPRESA"];
 	const excludedListTelefones = [
-		"EMPRESA",
-		"CONTABILIDADE",
 		"ADMINISTRADOR",
+		"CONTABILIDADE",
+		"EMPRESA",
 		"OUTROS",
 	];
 	const [newPhone, setNewsPhone] = useState(listTelefones);
@@ -69,13 +70,6 @@ function step1({ formik }: step1Type) {
 		})();
 	}, []);
 
-	useEffect(() => {
-		if (formik.values.telefones.length > listTelefones.length) {
-			const additionalPhones = formik.values.telefones.slice(listTelefones.length);
-			setNewsPhone([...listTelefones, ...additionalPhones]);
-		}
-	}, [formik.values.telefones]);
-
 	async function fetchApi() {
 		if (params.id) {
 			var beneficiario = await getBeneficiarioById(parseInt(params.id));
@@ -93,7 +87,7 @@ function step1({ formik }: step1Type) {
 				municipio: beneficiario.municipio.id,
 				porte: beneficiario.porte.id,
 				ramoAtividade: beneficiario.ramoAtividade,
-				descricao: beneficiario.descricao,
+				descricaoStep1: beneficiario.descricao,
 				cnaes: beneficiario.cnaes,
 				telefones: beneficiario.telefones,
 			};
@@ -121,13 +115,17 @@ function step1({ formik }: step1Type) {
 			};
 
 			const step3 = {
+				incentivoFiscal: beneficiario.incentivoFiscal,
+				valoresFundo: beneficiario.submodulo ? beneficiario.submodulo.recolhimentoFundos : null,
+				vendaAnualInterestadual: beneficiario.submodulo ? beneficiario.submodulo.vendaAnualInterestadual : null,
+				vendaAnualInterna: beneficiario.submodulo ? beneficiario.submodulo.vendaAnualInterna : null,
 				id: beneficiario.incentivoFiscal?.id,
 				sigla: beneficiario.incentivoFiscal?.sigla,
 				descricao: beneficiario.incentivoFiscal?.descricao,
 				fundos: beneficiario.incentivoFiscal?.fundos,
 			};
 			const infoVendas = beneficiario.vendaAnual.map((venda) => ({
-				ncm: venda.ncm.id,
+				ncm: venda.ncm,
 				produtoIncentivado: venda.produtoIncentivado,
 				quantidadeInterestadual: venda.quantidadeInterestadual || "",
 				quantidadeInterna: venda.quantidadeInterna || "",
@@ -141,9 +139,9 @@ function step1({ formik }: step1Type) {
 			localStorage.setItem("step2", JSON.stringify(dadosEconomicos));
 			localStorage.setItem("step3", JSON.stringify(step3));
 			localStorage.setItem("step4", JSON.stringify(step4));
+
 		}
 	}
-
 	async function fillCombos() {
 		const list = await getAllCnaes();
 		const municipiorsList = await getAllMunicipios();
@@ -161,12 +159,13 @@ function step1({ formik }: step1Type) {
 		}
 	}, []);
 
+	const cnaeIds = useMemo(() => {
+		return formik.values?.cnaes?.map((cnae: { cnae: { id: number } }) => cnae?.cnae?.id);
+	}, [formik.values?.cnaes]);
+
 	const selectedCnaes = useMemo(() => {
-		const newList: ICnae[] = cnaesList.filter((v: ICnae) =>
-			formik.values.cnaes.includes(v.id),
-		);
-		return newList;
-	}, [cnaesList, formik.values.cnaes]);
+		return cnaesList.filter((v: ICnae) => cnaeIds.includes(v?.id));
+	}, [cnaesList, cnaeIds]);
 
 	const addNewTelefone = () => {
 		const newTelefone = { titulo: "", telefone: "" };
@@ -174,6 +173,13 @@ function step1({ formik }: step1Type) {
 		setNewsPhone((prevState) => [...prevState, newTelefones]);
 		formik.setFieldValue("telefones", newTelefones);
 	};
+
+	useEffect(() => {
+		if (formik.values.telefones.length > listTelefones.length) {
+			const additionalPhones = formik.values.telefones.slice(listTelefones.length);
+			setNewsPhone([...listTelefones, ...additionalPhones]);
+		}
+	}, [formik.values.telefones]);
 
 	return (
 		<form
@@ -333,12 +339,11 @@ function step1({ formik }: step1Type) {
 							multiple
 							id="cnaes"
 							options={cnaesList}
-							className={`col12 ${
-								formik.errors.cnaes ||
+							className={`col12 ${formik.errors.cnaes ||
 								formik.errors.cnaes?.length === 0
-									? styles.error
-									: ""
-							}`}
+								? styles.error
+								: ""
+								}`}
 							fullWidth
 							placeholder="Selecione um CNAE"
 							disableCloseOnSelect
@@ -358,19 +363,18 @@ function step1({ formik }: step1Type) {
 										}
 										style={{ marginRight: 8 }}
 										checked={
-											formik.values.cnaes.indexOf(
-												option.id,
-											) > -1
+											formik.values?.cnaes?.some(
+												(cnae: { cnae: { id: number } }) =>
+													cnae?.cnae?.id === option?.id
+											)
 										}
 									/>
 									{`${option.codigo} - ${option.descricao}`}
 								</li>
 							)}
 							onChange={(_, value) => {
-								formik.setFieldValue(
-									"cnaes",
-									value.map((i) => i.id),
-								);
+								const newCnaes = value.map((i) => ({ cnae: { id: i?.id } }));
+								formik.setFieldValue("cnaes", newCnaes);
 							}}
 							renderInput={(params) => (
 								<TextField
@@ -386,14 +390,14 @@ function step1({ formik }: step1Type) {
 							</span>
 						)}
 						<CustomTextField
-							id="descricao"
+							id="descricaoStep1"
 							label="Descrição"
 							required
 							rows={4}
 							multiline
 							col={12}
 							formik={formik}
-							value={formik.values.descricao}
+							value={formik.values.descricaoStep1}
 							disabled={isView}
 						/>
 					</div>
@@ -403,60 +407,34 @@ function step1({ formik }: step1Type) {
 					<div className={styles.beneficiarioForm}>
 						<div>
 							{newPhone.map((tipoTelefone, index) => (
-								<div
-									key={index}
-									style={{ marginBottom: "15px" }}
-								>
+								<div key={index} style={{ marginBottom: "15px" }}>
 									<div style={{ display: "flex" }}>
-										<div
-											style={{
-												flex: "1",
-												marginRight: "15px",
-											}}
-										>
-											<InputLabel
-												id={`select-telefone-${index}`}
-											>
+										<div style={{ flex: "1", marginRight: "15px" }}>
+											<InputLabel id={`select-telefone-${index}`}>
 												Tipo de Telefone
 											</InputLabel>
 											<Select
 												labelId={`select-telefone-${index}`}
 												id={`select-telefone-${index}`}
 												label={`select-telefone-${index}`}
-												value={
-													formik.values.telefones[
-														index
-													]?.titulo || ""
-												}
+												value={formik.values.telefones[index]?.titulo || ""}
 												onChange={(ev) => {
-													const selectedTitulo =
-														ev.target.value;
-													const newTelefones = [
-														...formik.values
-															.telefones,
-													];
+													const selectedTitulo = ev.target.value;
+													const newTelefones = [...formik.values.telefones];
 													newTelefones[index] = {
+														...newTelefones[index],
 														titulo: selectedTitulo,
-														telefone: "",
 													};
-													formik.setFieldValue(
-														"telefones",
-														newTelefones,
-													);
+													formik.setFieldValue("telefones", newTelefones);
 												}}
 												disabled={isView}
 												style={{ width: "220px" }}
 											>
-												{excludedListTelefones.map(
-													(tipo) => (
-														<MenuItem
-															key={tipo}
-															value={tipo}
-														>
-															{tipo}
-														</MenuItem>
-													),
-												)}
+												{excludedListTelefones.map((tipo) => (
+													<MenuItem key={tipo} value={tipo}>
+														{tipo}
+													</MenuItem>
+												))}
 											</Select>
 										</div>
 										<div style={{ marginTop: "23px" }}>
@@ -467,79 +445,44 @@ function step1({ formik }: step1Type) {
 												col={9}
 												mascara="(00) 0000-0000"
 												secondMask="(00) 0 0000-0000"
-												definitions={{
-													"#": /[1-9]/,
-												}}
-												value={
-													formik.values.telefones[
-														index
-													]?.telefone || ""
-												}
+												definitions={{ "#": /[1-9]/ }}
+												value={formik.values.telefones[index]?.telefone || ""}
 												required={
-													formik.values.telefones[
-														index
-													]?.titulo &&
-													formik.values.telefones[
-														index
-													]?.telefone.trim() === ""
+													formik.values.telefones[index]?.titulo &&
+													formik.values.telefones[index]?.telefone?.trim() === ''
 												}
 												onChange={(ev) => {
-													const updatedTelefone =
-														ev.target.value;
-													const newTelefones = [
-														...formik.values
-															.telefones,
-													];
+													const updatedTelefone = ev.target.value;
+													const newTelefones = [...formik.values?.telefones];
 													newTelefones[index] = {
 														...newTelefones[index],
-														telefone:
-															updatedTelefone,
+														telefone: updatedTelefone,
 													};
-													formik.setFieldValue(
-														"telefones",
-														newTelefones,
-													);
+													formik.setFieldValue("telefones", newTelefones);
 												}}
 												disabled={isView}
 												style={{ width: "250px" }}
 											/>
-											{formik.values.telefones[index]
-												?.titulo &&
-												formik.values?.telefones[
-													index
-												]?.telefone.trim() === "" && (
-													<span
-														className={styles.error}
-													>
-														Telefone é obrigatório.
-													</span>
-												)}
+											{formik.errors.telefones?.[index]?.telefone && (
+												<span className={styles.error}>
+													{formik.errors.telefones[index].telefone}
+												</span>
+											)}
 										</div>
-										{index >= listTelefones.length ? (
+										{index >= listTelefones.length && !isView ? (
 											<div
 												style={{ marginTop: "20px" }}
 												className={`${styles.col1} ${styles.removeButtonDiv}`}
 											>
 												<RemoveIcon
-													className={
-														styles.removeIcon
-													}
+													className={styles.removeIcon}
 													onClick={() => {
-														const newTelefones = [
-															...formik.values
-																.telefones,
-														];
-														const updatedNewPhone =
-															[...newPhone];
+														const newTelefones = [...formik.values.telefones];
+														const updatedNewPhone = [...newPhone];
 														newTelefones.pop();
 														updatedNewPhone.pop();
-														setNewsPhone(
-															updatedNewPhone,
-														);
-														formik.setFieldValue(
-															"telefones",
-															newTelefones,
-														);
+														setNewsPhone(updatedNewPhone);
+														formik.setFieldValue("telefones", newTelefones);
 													}}
 												/>
 											</div>
@@ -555,17 +498,18 @@ function step1({ formik }: step1Type) {
 									</div>
 								</div>
 							))}
-							{["EMPRESA", "CONTABILIDADE", "ADMINISTRADOR"].some(
+
+							{["ADMINISTRADOR", "CONTABILIDADE", "EMPRESA"].some(
 								(tipo) =>
 									!formik.values?.telefones.find(
 										(telefone) => telefone?.titulo === tipo,
 									),
 							) && (
-								<span className={styles.error}>
-									Pelo menos um telefone para empresa,
-									contabilidade e administrador é obrigatório.
-								</span>
-							)}
+									<span className={styles.error}>
+										Pelo menos um telefone para administrador,
+										contabilidade e empresa é obrigatório.
+									</span>
+								)}
 						</div>
 					</div>
 					{!isView && !showInput && (
@@ -581,6 +525,18 @@ function step1({ formik }: step1Type) {
 					)}
 				</Card>
 				<div className={`${styles.col12} ${styles.buttonsRigth}`}>
+					<Button
+						type="button"
+						variant="contained"
+						className={styles.secondaryButton}
+						style={{ marginRight: '1rem' }}
+						onClick={() => {
+							navigate('/beneficiario')
+							window.scrollTo({ top: 0, behavior: "smooth" });
+						}}
+					>
+						Voltar
+					</Button>
 					<Button
 						type="submit"
 						variant="contained"

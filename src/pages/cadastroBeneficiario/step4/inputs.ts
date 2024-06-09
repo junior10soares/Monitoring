@@ -5,7 +5,7 @@ export const inputs = {
 			produtoIncentivado: "",
 			quantidadeInterestadual: "",
 			quantidadeInterna: "",
-			unidadeMedida: null,
+			unidadeMedida: "",
 		},
 	],
 };
