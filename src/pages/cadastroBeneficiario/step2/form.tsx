@@ -46,6 +46,7 @@ function step2({ setStep, formik }: step2Type) {
 								Mês referência
 							</span>
 							<span
+								style={{ marginRight: '20px' }}
 								className={`${styles.col3} ${styles.monthTitle}`}
 							>
 								Investimento mensal
@@ -56,6 +57,7 @@ function step2({ setStep, formik }: step2Type) {
 								Empregos direto (homem)
 							</span>
 							<span
+								style={{ marginRight: '-40px' }}
 								className={`${styles.col3} ${styles.monthTitle}`}
 							>
 								Empregos direto (mulher)
@@ -65,6 +67,7 @@ function step2({ setStep, formik }: step2Type) {
 							return (
 								<div className={styles.TableInputs}>
 									<span
+										style={{ textAlign: 'center', marginLeft: '20px' }}
 										className={`${styles.col2} ${styles.monthTitle}`}
 									>
 										{label}

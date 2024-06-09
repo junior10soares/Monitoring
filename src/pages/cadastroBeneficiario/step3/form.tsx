@@ -262,6 +262,7 @@ function step3({ setStep, formik }: step3Type) {
 										return (
 											<div className={styles.TableInputs}>
 												<span
+													style={{ textAlign: 'center', marginLeft: '20px' }}
 													className={`${styles.col2} ${styles.monthTitle}`}
 												>
 													{label}

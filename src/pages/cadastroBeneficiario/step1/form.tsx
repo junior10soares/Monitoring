@@ -352,6 +352,7 @@ function step1({ formik }: step1Type) {
 							}
 							value={selectedCnaes}
 							disabled={isView}
+							noOptionsText="Não encontrado"
 							renderOption={(props, option) => (
 								<li {...props}>
 									<Checkbox
