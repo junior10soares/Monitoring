@@ -44,7 +44,9 @@ export default function ({ setStep }: stepType) {
 			errors.cnaes = Messages.form.arrayRequired;
 		}
 		if (!_values.cpfOuCnpj) {
-			errors.cpfOuCnpj = Messages.form.required;
+			errors.cpfOuCnpj = Messages.form.arrayRequired;
+		} else if (_values.cpfOuCnpj.length !== 11 && _values.cpfOuCnpj.length !== 14) {
+			errors.cpfOuCnpj = "Precisa ter exatamente 11 ou 14 caracteres";
 		}
 		if (!_values.descricaoStep1) {
 			errors.descricaoStep1 = Messages.form.required;
@@ -54,6 +56,8 @@ export default function ({ setStep }: stepType) {
 		}
 		if (!_values.inscricaoEstadual) {
 			errors.inscricaoEstadual = Messages.form.required;
+		} else if (_values.inscricaoEstadual.length < 9) {
+			errors.inscricaoEstadual = "Precisa ter no mínimo 9 caracteres";
 		}
 		if (!_values.municipio) {
 			errors.municipio = Messages.form.required;
@@ -77,6 +81,8 @@ export default function ({ setStep }: stepType) {
 		_values.telefones.forEach((telefone, index) => {
 			if (!telefone.telefone && telefone.titulo) {
 				telefoneErrors[index] = { telefone: Messages.form.required };
+			} else if (telefone.telefone && (telefone.telefone.length !== 10 && telefone.telefone.length !== 11)) {
+				telefoneErrors[index] = { telefone: "Precisa ter 10 ou 11 caracteres" };
 			}
 		});
 		if (telefoneErrors.length > 0) {

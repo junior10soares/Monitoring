@@ -93,20 +93,30 @@ function listagemBeneficiario() {
 					Novo Beneficiário
 				</Button>
 			</div>
-			<DataGrid
-				rows={rows}
-				columns={columns}
-				initialState={{
-					pagination: {
-						paginationModel: {
-							pageSize: 10,
+			{rows.length > 0 ? (
+				<DataGrid
+					rows={rows}
+					columns={columns}
+					initialState={{
+						pagination: {
+							paginationModel: {
+								pageSize: 10,
+							},
 						},
-					},
-				}}
-				pageSizeOptions={[10, 20]}
-				disableRowSelectionOnClick
-				localeText={ptPT.components.MuiDataGrid.defaultProps.localeText}
-			/>
+					}}
+					pageSizeOptions={[10, 20]}
+					disableRowSelectionOnClick
+					localeText={ptPT.components.MuiDataGrid.defaultProps.localeText}
+				/>
+			) : (
+				<div style={{
+					textAlign: 'center',
+					marginTop: '20px',
+					fontSize: '16px',
+					color: '#666'
+				}}>
+					Nenhum beneficiário encontrado
+				</div>)}
 		</div>
 	);
 }
