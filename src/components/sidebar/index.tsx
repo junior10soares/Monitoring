@@ -14,20 +14,34 @@ import "./styles.scss";
 export default function Sidebar() {
 	const navigate = useNavigate();
 	const location = useLocation();
+	const { pathname } = location;
+	const isView = pathname?.includes("/view");
 	const [open, setOpen] = useState(false);
-	const handleClickOpen = () => {
-		setOpen(true);
-	};
-
-	const handleClose = () => {
-		setOpen(false);
-	};
 
 	useEffect(() => {
 		for (let index = 0; index < 5; index++) {
 			localStorage.removeItem(`step${index + 1}`);
 		}
 	}, []);
+
+	const handleClickOpen = () => {
+		if (isView) {
+			handleLogout();
+		} else {
+			setOpen(true);
+		}
+	};
+
+	const handleClose = () => {
+		setOpen(false);
+	};
+
+	const handleLogout = () => {
+		for (let index = 0; index < 5; index++) {
+			localStorage.removeItem(`step${index + 1}`);
+		}
+		navigate("/beneficiario");
+	};
 
 	return (
 		<>
@@ -37,12 +51,12 @@ export default function Sidebar() {
 					src={SedecBanner}
 					alt="sedec banner"
 				/>
-				{!(location.pathname === "/beneficiario") && (
+				{!(pathname === "/beneficiario") && (
 					<Button
 						type="button"
 						variant="contained"
 						className="logout-button"
-						onClick={() => handleClickOpen()}
+						onClick={handleClickOpen}
 					>
 						Sair
 					</Button>
@@ -63,22 +77,15 @@ export default function Sidebar() {
 					</DialogContent>
 					<DialogActions>
 						<Button onClick={handleClose}>Não</Button>
-						{location.pathname.includes("/beneficiario/") && (
-							<Button
-								onClick={() => {
-									for (let index = 0; index < 5; index++) {
-										localStorage.removeItem(
-											`step${index + 1}`,
-										);
-									}
-									navigate("/beneficiario");
-									handleClose();
-								}}
-								autoFocus
-							>
-								Sim
-							</Button>
-						)}
+						<Button
+							onClick={() => {
+								handleLogout();
+								handleClose();
+							}}
+							autoFocus
+						>
+							Sim
+						</Button>
 					</DialogActions>
 				</Dialog>
 			</div>

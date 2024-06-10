@@ -292,6 +292,9 @@ function step1({ formik }: step1Type) {
 									},
 								)}
 							</Select>
+							<span className={styles.error}>
+								{formik.errors.municipio as string | undefined}
+							</span>
 						</FormControl>
 						<FormControl className="col3">
 							<InputLabel
@@ -343,12 +346,11 @@ function step1({ formik }: step1Type) {
 							multiple
 							id="cnaes"
 							options={cnaesList}
-							className={`col12 ${
-								formik.errors.cnaes ||
+							className={`col12 ${formik.errors.cnaes ||
 								formik.errors.cnaes?.length === 0
-									? styles.error
-									: ""
-							}`}
+								? styles.error
+								: ""
+								}`}
 							fullWidth
 							placeholder="Selecione um CNAE"
 							disableCloseOnSelect
@@ -513,17 +515,17 @@ function step1({ formik }: step1Type) {
 											/>
 											{formik.errors.telefones?.[index]
 												?.telefone && (
-												<span className={styles.error}>
-													{
-														formik.errors.telefones[
-															index
-														].telefone
-													}
-												</span>
-											)}
+													<span className={styles.error}>
+														{
+															formik.errors.telefones[
+																index
+															].telefone
+														}
+													</span>
+												)}
 										</div>
 										{index >= listTelefones.length &&
-										!isView ? (
+											!isView ? (
 											<div
 												style={{ marginTop: "20px" }}
 												className={`${styles.col1} ${styles.removeButtonDiv}`}
@@ -564,17 +566,14 @@ function step1({ formik }: step1Type) {
 								</div>
 							))}
 
-							{["ADMINISTRADOR", "CONTABILIDADE", "EMPRESA"].some(
+							{['ADMINISTRADOR', 'CONTABILIDADE', 'EMPRESA'].some(
 								(tipo) =>
-									!formik.values?.telefones.find(
-										(telefone) => telefone?.titulo === tipo,
-									),
+									!formik.values?.telefones.find((telefone) => telefone?.titulo === tipo)
 							) && (
-								<span className={styles.error}>
-									Pelo menos um telefone para administrador,
-									contabilidade e empresa é obrigatório.
-								</span>
-							)}
+									<span className={styles.error}>
+										Pelo menos um telefone para administrador, contabilidade e empresa é obrigatório.
+									</span>
+								)}
 						</div>
 					</div>
 					{!isView && !showInput && (
