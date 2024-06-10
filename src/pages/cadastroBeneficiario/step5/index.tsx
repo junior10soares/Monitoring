@@ -248,9 +248,9 @@ export default function ({ setStep }: stepType) {
 							descricao: values?.incentivoFiscal?.descricao,
 							fundos: values?.incentivoFiscal?.fundos,
 						},
-						submodulo: step3.submoduloId
+						submodulo: step3.id
 							? {
-									id: step3.submoduloId,
+									id: step3.id,
 									codigoRcr: "120",
 									recolhimentoFundos: step3.valoresFundo.map(
 										(i) => ({
@@ -276,7 +276,7 @@ export default function ({ setStep }: stepType) {
 										step3.vendaAnualInterestadual,
 									vendaAnualInterna: step3.vendaAnualInterna,
 							  },
-						vendaAnual: null,
+						vendaAnual: step4.infoVendas,
 					};
 					if (params.id) {
 						try {
