@@ -51,6 +51,9 @@ export default function ({ setStep }: stepType) {
 		if (!_values.descricaoStep1) {
 			errors.descricaoStep1 = Messages.form.required;
 		}
+		if (!_values.municipio) {
+			errors.municipio = Messages.form.required;
+		}
 		if (!_values.email) {
 			errors.email = Messages.form.required;
 		}

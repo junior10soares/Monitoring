@@ -35,7 +35,11 @@ export default function ({ setStep }: stepType) {
 	return (
 		<>
 			{show && (
-				<Alert variant="filled" className={styles.alert} severity="success">
+				<Alert
+					variant="filled"
+					className={styles.alert}
+					severity="success"
+				>
 					Registro salvo com sucesso.
 				</Alert>
 			)}
@@ -65,7 +69,7 @@ export default function ({ setStep }: stepType) {
 						descricao: values?.descricaoStep1,
 						status: [
 							{
-								anoReferencia: values?.anoReferencia,
+								anoReferencia: step2.anoReferencia.toString(),
 								statusMonitoramento: 1,
 							},
 						],
@@ -79,122 +83,162 @@ export default function ({ setStep }: stepType) {
 						dadosEconomicos: {
 							id: step2?.id,
 							anoReferencia: values?.anoReferencia,
-							investimentoAcumulado: values?.investimentoAcumulado,
+							investimentoAcumulado:
+								values?.investimentoAcumulado,
 							investimentoMensal: {
-								id: 27,
+								id: values.investimentoMensalId,
 								janeiroValor: values.investimentoMensal.find(
-									(i) => i.codigo === "janeiro" || "janeiroValor"
+									(i) =>
+										i.codigo === "janeiro" ||
+										"janeiroValor",
 								)?.valor,
 								fevereiroValor: values.investimentoMensal.find(
-									(i) => i.codigo === "fevereiro" || "fevereiroValor"
+									(i) =>
+										i.codigo === "fevereiro" ||
+										"fevereiroValor",
 								)?.valor,
 								marcoValor: values.investimentoMensal.find(
-									(i) => i.codigo === "marco" || "marcoValor"
+									(i) => i.codigo === "marco" || "marcoValor",
 								)?.valor,
 								abrilValor: values.investimentoMensal.find(
-									(i) => i.codigo === "abril" || "abrilValor"
+									(i) => i.codigo === "abril" || "abrilValor",
 								)?.valor,
 								maioValor: values.investimentoMensal.find(
-									(i) => i.codigo === "maio" || "maioValor"
+									(i) => i.codigo === "maio" || "maioValor",
 								)?.valor,
 								junhoValor: values.investimentoMensal.find(
-									(i) => i.codigo === "junho" || "junhoValor"
+									(i) => i.codigo === "junho" || "junhoValor",
 								)?.valor,
 								julhoValor: values.investimentoMensal.find(
-									(i) => i.codigo === "julho" || "julhoValor"
+									(i) => i.codigo === "julho" || "julhoValor",
 								)?.valor,
 								agostoValor: values.investimentoMensal.find(
-									(i) => i.codigo === "agosto" || "agostoValor"
+									(i) =>
+										i.codigo === "agosto" || "agostoValor",
 								)?.valor,
 								setembroValor: values.investimentoMensal.find(
-									(i) => i.codigo === "setembro" || "setembroValor"
+									(i) =>
+										i.codigo === "setembro" ||
+										"setembroValor",
 								)?.valor,
 								outubroValor: values.investimentoMensal.find(
-									(i) => i.codigo === "outubro" || "outubroValor"
+									(i) =>
+										i.codigo === "outubro" ||
+										"outubroValor",
 								)?.valor,
 								novembroValor: values.investimentoMensal.find(
-									(i) => i.codigo === "novembro" || "novembroValor"
+									(i) =>
+										i.codigo === "novembro" ||
+										"novembroValor",
 								)?.valor,
 								dezembroValor: values.investimentoMensal.find(
-									(i) => i.codigo === "dezembro" || "dezembroValor"
+									(i) =>
+										i.codigo === "dezembro" ||
+										"dezembroValor",
 								)?.valor,
 							},
 							empregoHomem: {
-								id: 27,
+								id: values.empregoHomemId,
 								janeiroValor: values.empregoHomem.find(
-									(i) => i.codigo === "janeiro" || "janeiroValor"
+									(i) =>
+										i.codigo === "janeiro" ||
+										"janeiroValor",
 								)?.valor,
 								fevereiroValor: values.empregoHomem.find(
-									(i) => i.codigo === "fevereiro" || "fevereiroValor"
+									(i) =>
+										i.codigo === "fevereiro" ||
+										"fevereiroValor",
 								)?.valor,
 								marcoValor: values.empregoHomem.find(
-									(i) => i.codigo === "marco" || "marcoValor"
+									(i) => i.codigo === "marco" || "marcoValor",
 								)?.valor,
 								abrilValor: values.empregoHomem.find(
-									(i) => i.codigo === "abril" || "abrilValor"
+									(i) => i.codigo === "abril" || "abrilValor",
 								)?.valor,
 								maioValor: values.empregoHomem.find(
-									(i) => i.codigo === "maio" || "maioValor"
+									(i) => i.codigo === "maio" || "maioValor",
 								)?.valor,
 								junhoValor: values.empregoHomem.find(
-									(i) => i.codigo === "junho" || "junhoValor"
+									(i) => i.codigo === "junho" || "junhoValor",
 								)?.valor,
 								julhoValor: values.empregoHomem.find(
-									(i) => i.codigo === "julho" || "julhoValor"
+									(i) => i.codigo === "julho" || "julhoValor",
 								)?.valor,
 								agostoValor: values.empregoHomem.find(
-									(i) => i.codigo === "agosto" || "agostoValor"
+									(i) =>
+										i.codigo === "agosto" || "agostoValor",
 								)?.valor,
 								setembroValor: values.empregoHomem.find(
-									(i) => i.codigo === "setembro" || "setembroValor"
+									(i) =>
+										i.codigo === "setembro" ||
+										"setembroValor",
 								)?.valor,
 								outubroValor: values.empregoHomem.find(
-									(i) => i.codigo === "outubro" || "outubroValor"
+									(i) =>
+										i.codigo === "outubro" ||
+										"outubroValor",
 								)?.valor,
 								novembroValor: values.empregoHomem.find(
-									(i) => i.codigo === "novembro" || "novembroValor"
+									(i) =>
+										i.codigo === "novembro" ||
+										"novembroValor",
 								)?.valor,
 								dezembroValor: values.empregoHomem.find(
-									(i) => i.codigo === "dezembro" || "dezembroValor"
+									(i) =>
+										i.codigo === "dezembro" ||
+										"dezembroValor",
 								)?.valor,
 							},
 							empregoMulher: {
-								id: 27,
+								id: values.empregoMulherId,
 								janeiroValor: values.empregoMulher.find(
-									(i) => i.codigo === "janeiro" || "janeiroValor"
+									(i) =>
+										i.codigo === "janeiro" ||
+										"janeiroValor",
 								)?.valor,
 								fevereiroValor: values.empregoMulher.find(
-									(i) => i.codigo === "fevereiro" || "fevereiroValor"
+									(i) =>
+										i.codigo === "fevereiro" ||
+										"fevereiroValor",
 								)?.valor,
 								marcoValor: values.empregoMulher.find(
-									(i) => i.codigo === "marco" || "marcoValor"
+									(i) => i.codigo === "marco" || "marcoValor",
 								)?.valor,
 								abrilValor: values.empregoMulher.find(
-									(i) => i.codigo === "abril" || "abrilValor"
+									(i) => i.codigo === "abril" || "abrilValor",
 								)?.valor,
 								maioValor: values.empregoMulher.find(
-									(i) => i.codigo === "maio" || "maioValor"
+									(i) => i.codigo === "maio" || "maioValor",
 								)?.valor,
 								junhoValor: values.empregoMulher.find(
-									(i) => i.codigo === "junho" || "junhoValor"
+									(i) => i.codigo === "junho" || "junhoValor",
 								)?.valor,
 								julhoValor: values.empregoMulher.find(
-									(i) => i.codigo === "julho" || "julhoValor"
+									(i) => i.codigo === "julho" || "julhoValor",
 								)?.valor,
 								agostoValor: values.empregoMulher.find(
-									(i) => i.codigo === "agosto" || "agostoValor"
+									(i) =>
+										i.codigo === "agosto" || "agostoValor",
 								)?.valor,
 								setembroValor: values.empregoMulher.find(
-									(i) => i.codigo === "setembro" || "setembroValor"
+									(i) =>
+										i.codigo === "setembro" ||
+										"setembroValor",
 								)?.valor,
 								outubroValor: values.empregoMulher.find(
-									(i) => i.codigo === "outubro" || "outubroValor"
+									(i) =>
+										i.codigo === "outubro" ||
+										"outubroValor",
 								)?.valor,
 								novembroValor: values.empregoMulher.find(
-									(i) => i.codigo === "novembro" || "novembroValor"
+									(i) =>
+										i.codigo === "novembro" ||
+										"novembroValor",
 								)?.valor,
 								dezembroValor: values.empregoMulher.find(
-									(i) => i.codigo === "dezembro" || "dezembroValor"
+									(i) =>
+										i.codigo === "dezembro" ||
+										"dezembroValor",
 								)?.valor,
 							},
 						},
@@ -204,13 +248,41 @@ export default function ({ setStep }: stepType) {
 							descricao: values?.incentivoFiscal?.descricao,
 							fundos: values?.incentivoFiscal?.fundos,
 						},
+						submodulo: step3.submoduloId
+							? {
+									id: step3.submoduloId,
+									codigoRcr: "120",
+									recolhimentoFundos: step3.valoresFundo.map(
+										(i) => ({
+											...i,
+											anoReferencia:
+												step2.anoReferencia.toString(),
+										}),
+									),
+									vendaAnualInterestadual:
+										step3.vendaAnualInterestadual,
+									vendaAnualInterna: step3.vendaAnualInterna,
+							  }
+							: {
+									recolhimentoFundos: step3.valoresFundo.map(
+										(i) => ({
+											...i,
+											anoReferencia:
+												step2.anoReferencia.toString(),
+										}),
+									),
+									codigoRcr: "120",
+									vendaAnualInterestadual:
+										step3.vendaAnualInterestadual,
+									vendaAnualInterna: step3.vendaAnualInterna,
+							  },
 						vendaAnual: null,
 					};
 					if (params.id) {
 						try {
 							const responsePut = await axiosInstance.put(
 								`/beneficiarios/${params.id}`,
-								extractedData
+								extractedData,
 							);
 							if (responsePut.status === 200) {
 								setShow(true);
@@ -221,7 +293,10 @@ export default function ({ setStep }: stepType) {
 								}, 1000);
 							}
 						} catch (error) {
-							console.error("Erro ao atualizar beneficiário:", error);
+							console.error(
+								"Erro ao atualizar beneficiário:",
+								error,
+							);
 						}
 					} else {
 						try {
@@ -243,7 +318,10 @@ export default function ({ setStep }: stepType) {
 								}, 1000);
 							}
 						} catch (error) {
-							console.error("Erro ao inserir beneficiário:", error);
+							console.error(
+								"Erro ao inserir beneficiário:",
+								error,
+							);
 						}
 					}
 				}}
