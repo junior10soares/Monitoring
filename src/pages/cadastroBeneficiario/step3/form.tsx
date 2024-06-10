@@ -118,11 +118,16 @@ function step3({ setStep, formik }: step3Type) {
 								fullWidth
 								disabled={isView}
 								onChange={(e) => {
-									formik.setFieldValue("valoresFundo", null);
-									const selectedIncentivo = incentivosFiscais.find(
-										(i) => i.id === parseInt(e.target.value)
+									const selectedIncentivo =
+										incentivosFiscais.find(
+											(i) =>
+												i.id ===
+												parseInt(e.target.value),
+										);
+									formik.setFieldValue(
+										"incentivoFiscal",
+										selectedIncentivo,
 									);
-									formik.setFieldValue("incentivoFiscal", selectedIncentivo);
 								}}
 							>
 								{incentivosFiscais.map(
@@ -197,7 +202,7 @@ function step3({ setStep, formik }: step3Type) {
 								formik.handleChange({
 									target: {
 										name: e.target.name,
-										value: isNaN(value) ? '' : value,
+										value: isNaN(value) ? "" : value,
 									},
 								});
 							}}
@@ -218,7 +223,7 @@ function step3({ setStep, formik }: step3Type) {
 								formik.handleChange({
 									target: {
 										name: e.target.name,
-										value: isNaN(value) ? '' : value,
+										value: isNaN(value) ? "" : value,
 									},
 								});
 							}}
@@ -229,119 +234,75 @@ function step3({ setStep, formik }: step3Type) {
 						/>
 						{formik?.values?.incentivoFiscal?.fundos?.length >
 							0 && (
-								<>
-									<div className={styles.monthsTitle}>
-										<span
-											className={`${styles.col2} ${styles.monthTitle}`}
-										>
-											Mês referência
-										</span>
-										{formik.values?.incentivoFiscal?.fundos?.map(
-											({ sigla }: IFundo) => {
-												return (
-													<span
-														className={`${styles?.[
+							<>
+								<div className={styles.monthsTitle}>
+									<span
+										className={`${styles.col2} ${styles.monthTitle}`}
+									>
+										Mês referência
+									</span>
+									{formik.values?.incentivoFiscal?.fundos?.map(
+										({ sigla }: IFundo) => {
+											return (
+												<span
+													className={`${
+														styles?.[
 															`col${Math.ceil(
 																10 /
-																formik
-																	.values
-																	?.incentivoFiscal
-																	?.fundos
-																	.length,
-															)}`
-														]
-															} ${styles.monthTitle}`}
-													>
-														{sigla}
-													</span>
-												);
-											},
-										)}
-									</div>
-									{monthsData.map(({ codigo, label }) => {
-										return (
-											<div className={styles.TableInputs}>
-												<span
-													style={{ textAlign: 'center', marginLeft: '20px' }}
-													className={`${styles.col2} ${styles.monthTitle}`}
-												>
-													{label}
-												</span>
-												{formik.values?.incentivoFiscal?.fundos?.map(
-													({ sigla, id }: IFundo) => {
-														return (
-															<NumericMask
-																id={`${sigla}-valor`}
-																name={`${sigla}-valor`}
-																formik={formik}
-																disabled={isView}
-																col={Math.ceil(
-																	10 /
 																	formik
 																		.values
 																		?.incentivoFiscal
 																		?.fundos
 																		.length,
-																)}
-																prefix="R$"
-																fixedDecimalScale
-																label=""
-																onChange={async (ev: {
-																	target: {
-																		value: string;
-																	};
-																}) => {
-																	var newValorFundo:
-																		| IValorFundo
-																		| undefined =
-																		formik.values?.valoresFundo?.find(
-																			(
-																				i: IValorFundo,
-																			) =>
-																				i
-																					.fundoIncentivo
-																					.id ===
-																				id,
-																		);
-																	if (
-																		!newValorFundo
-																	)
-																		newValorFundo =
-																			{};
-																	const newValoresFundos: IValorFundo[] =
-																		formik.values?.valoresFundo?.filter(
-																			(
-																				i: IValorFundo,
-																			) =>
-																				i
-																					.fundoIncentivo
-																					.id !==
-																				id,
-																		) ?? [];
-
-																	newValorFundo[
-																		`${codigo}Valor`
-																	] =
-																		ev.target.value;
-																	newValorFundo.fundoIncentivo =
-																	{
-																		id: id,
-																		dataCadastro:
-																			new Date().toDateString(),
-																		dataAtualizacao:
-																			new Date().toDateString(),
-																	};
-
-																	newValoresFundos.push(
-																		newValorFundo,
-																	);
-																	formik.setFieldValue(
-																		"valoresFundo",
-																		newValoresFundos,
-																	);
-																}}
-																required
-																value={
+															)}`
+														]
+													} ${styles.monthTitle}`}
+												>
+													{sigla}
+												</span>
+											);
+										},
+									)}
+								</div>
+								{monthsData.map(({ codigo, label }) => {
+									return (
+										<div className={styles.TableInputs}>
+											<span
+												style={{
+													textAlign: "center",
+													marginLeft: "20px",
+												}}
+												className={`${styles.col2} ${styles.monthTitle}`}
+											>
+												{label}
+											</span>
+											{formik.values?.incentivoFiscal?.fundos?.map(
+												({ sigla, id }: IFundo) => {
+													return (
+														<NumericMask
+															id={`${sigla}-valor`}
+															name={`${sigla}-valor`}
+															formik={formik}
+															disabled={isView}
+															col={Math.ceil(
+																10 /
+																	formik
+																		.values
+																		?.incentivoFiscal
+																		?.fundos
+																		.length,
+															)}
+															prefix="R$"
+															fixedDecimalScale
+															label=""
+															onChange={async (ev: {
+																target: {
+																	value: string;
+																};
+															}) => {
+																var newValorFundo:
+																	| IValorFundo
+																	| undefined =
 																	formik.values?.valoresFundo?.find(
 																		(
 																			i: IValorFundo,
@@ -350,57 +311,105 @@ function step3({ setStep, formik }: step3Type) {
 																				.fundoIncentivo
 																				.id ===
 																			id,
-																	)?.[
+																	);
+																if (
+																	!newValorFundo
+																)
+																	newValorFundo =
+																		{};
+																const newValoresFundos: IValorFundo[] =
+																	formik.values?.valoresFundo?.filter(
+																		(
+																			i: IValorFundo,
+																		) =>
+																			i
+																				.fundoIncentivo
+																				.id !==
+																			id,
+																	) ?? [];
+
+																newValorFundo[
 																	`${codigo}Valor`
-																	]
-																}
-																className={`${styles.tableInput}`}
-															/>
-														);
-													},
-												)}
-											</div>
-										);
-									})}
-									<div className={styles.totals}>
-										{formik.values.incentivoFiscal.fundos.map(
-											({ sigla, id }: IFundo) => {
-												return (
-													<span
-														className={
-															styles.monthTitle
-														}
-													>
-														Valor Total {sigla}:
-														{formatBRCurrency(
-															monthsData.reduce(
-																(total, item) =>
-																	total +
-																	parseFloat(
-																		formik.values.valoresFundo?.find(
-																			(i) =>
-																				i
-																					.fundoIncentivo
-																					.id ===
-																				id,
-																		)?.[
+																] =
+																	ev.target.value;
+																newValorFundo.fundoIncentivo =
+																	{
+																		id: id,
+																		dataCadastro:
+																			new Date().toDateString(),
+																		dataAtualizacao:
+																			new Date().toDateString(),
+																	};
+
+																newValoresFundos.push(
+																	newValorFundo,
+																);
+																formik.setFieldValue(
+																	"valoresFundo",
+																	newValoresFundos,
+																);
+															}}
+															required
+															value={
+																formik.values?.valoresFundo?.find(
+																	(
+																		i: IValorFundo,
+																	) =>
+																		i
+																			.fundoIncentivo
+																			.id ===
+																		id,
+																)?.[
+																	`${codigo}Valor`
+																]
+															}
+															className={`${styles.tableInput}`}
+														/>
+													);
+												},
+											)}
+										</div>
+									);
+								})}
+								<div className={styles.totals}>
+									{formik.values.incentivoFiscal.fundos.map(
+										({ sigla, id }: IFundo) => {
+											return (
+												<span
+													className={
+														styles.monthTitle
+													}
+												>
+													Valor Total {sigla}:
+													{formatBRCurrency(
+														monthsData.reduce(
+															(total, item) =>
+																total +
+																parseFloat(
+																	formik.values.valoresFundo?.find(
+																		(i) =>
+																			i
+																				.fundoIncentivo
+																				.id ===
+																			id,
+																	)?.[
 																		`${item.codigo}Valor`
-																		] ?? 0,
-																	),
-																0,
-															),
-														)}
-													</span>
-												);
-											},
-										)}
-										<span className={styles.monthTitle}>
-											Valor Total:{" "}
-											{formatBRCurrency(total ?? 0)}
-										</span>
-									</div>
-								</>
-							)}
+																	] ?? 0,
+																),
+															0,
+														),
+													)}
+												</span>
+											);
+										},
+									)}
+									<span className={styles.monthTitle}>
+										Valor Total:{" "}
+										{formatBRCurrency(total ?? 0)}
+									</span>
+								</div>
+							</>
+						)}
 					</div>
 				</Card>
 
