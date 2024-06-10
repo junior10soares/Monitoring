@@ -347,9 +347,9 @@ function step1({ formik }: step1Type) {
 							id="cnaes"
 							options={cnaesList}
 							className={`col12 ${formik.errors.cnaes ||
-									formik.errors.cnaes?.length === 0
-									? styles.error
-									: ""
+								formik.errors.cnaes?.length === 0
+								? styles.error
+								: ""
 								}`}
 							fullWidth
 							placeholder="Selecione um CNAE"
@@ -566,15 +566,12 @@ function step1({ formik }: step1Type) {
 								</div>
 							))}
 
-							{["ADMINISTRADOR", "CONTABILIDADE", "EMPRESA"].some(
+							{['ADMINISTRADOR', 'CONTABILIDADE', 'EMPRESA'].some(
 								(tipo) =>
-									!formik.values?.telefones.find(
-										(telefone) => telefone?.titulo === tipo,
-									),
+									!formik.values?.telefones.find((telefone) => telefone?.titulo === tipo)
 							) && (
 									<span className={styles.error}>
-										Pelo menos um telefone para administrador,
-										contabilidade e empresa é obrigatório.
+										Pelo menos um telefone para administrador, contabilidade e empresa é obrigatório.
 									</span>
 								)}
 						</div>

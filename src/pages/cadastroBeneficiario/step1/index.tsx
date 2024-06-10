@@ -91,6 +91,14 @@ export default function ({ setStep }: stepType) {
 		if (telefoneErrors.length > 0) {
 			errors.telefones = telefoneErrors;
 		}
+		const requiredPhoneTypes = ['ADMINISTRADOR', 'CONTABILIDADE', 'EMPRESA'];
+		const missingPhoneTypes = requiredPhoneTypes.filter(
+			(tipo) => !_values.telefones.some((telefone: any) => telefone.titulo === tipo)
+		);
+
+		if (missingPhoneTypes.length > 0) {
+			errors.missingPhoneTypes = 'Pelo menos um telefone para administrador, contabilidade e empresa é obrigatório.';
+		}
 		if (Object.keys(errors).length > 0) {
 			setErrors(errors);
 			return false;
