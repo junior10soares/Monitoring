@@ -122,7 +122,7 @@ function step1({ formik }: step1Type) {
 
 			const step3 = {
 				...beneficiario.submodulo,
-				valoresFundo: beneficiario.submodulo.recolhimentoFundos,
+				valoresFundo: beneficiario.submodulo?.recolhimentoFundos ?? [],
 				incentivoFiscal: beneficiario.incentivoFiscal,
 			};
 			const infoVendas = beneficiario.vendaAnual.map((venda) => ({
