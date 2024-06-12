@@ -60,7 +60,7 @@ function listagemBeneficiario() {
 	async function fetch() {
 		setIsLoading(true);
 		const res = await getAllBeneficiarios();
-		const formated = res.content.map((i) => ({
+		const formated = res.map((i) => ({
 			...i,
 			cpfOuCnpj: cpfMask(i.cpfOuCnpj),
 		}));

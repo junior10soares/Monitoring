@@ -1,7 +1,7 @@
 import { axiosInstance } from "./axios";
 
 async function getAllBeneficiarios() {
-	const res = await axiosInstance.get("/beneficiarios");
+	const res = await axiosInstance.get("/beneficiarios/logged-user");
 	return res.data;
 }
 
