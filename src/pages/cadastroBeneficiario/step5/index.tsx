@@ -16,10 +16,10 @@ const safeParseJSON = (item) => {
 			return JSON.parse(storedItem);
 		} catch (e) {
 			console.error(`Error parsing JSON from ${item}:`, e);
-			return {}; // Valor padrão em caso de erro
+			return {};
 		}
 	}
-	return {}; // Valor padrão se não existir no localStorage
+	return {};
 };
 
 export default function ({ setStep }: stepType) {
@@ -242,7 +242,7 @@ export default function ({ setStep }: stepType) {
 							},
 						},
 						incentivoFiscal: values.submodulos[0].incentivoFiscal,
-						submodulos: values.submodulos.map((i) => ({
+						submodulos: step3.submodulos.map((i) => ({
 							codigoRcr: "123",
 							vendaAnualInterestadual: i.vendaAnualInterestadual,
 							vendaAnualInterna: i.vendaAnualInterna,

@@ -127,8 +127,8 @@ function step3({ setStep, formik }: step3Type) {
 					style={{ marginLeft: "1rem" }}
 					onClick={() => {
 						var submodulos = formik.values.submodulos;
-						submodulos.push([]);
-						formik.setFieldValue("submodeulos", submodulos);
+						submodulos.push({});
+						formik.setFieldValue("submodulos", submodulos);
 					}}
 				>
 					<AddIcon />

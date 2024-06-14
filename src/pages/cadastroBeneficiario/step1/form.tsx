@@ -25,6 +25,7 @@ import CustomTextField from "../../../components/customTextField";
 import InputMask from "../../../components/inputMask";
 import { getBeneficiarioById } from "../../../services/beneficiario";
 import { getAllCnaes } from "../../../services/cnaeService";
+import { getAllIncentivosFiscais } from "../../../services/incentivoFiscal";
 import { getAllMunicipios } from "../../../services/municipioService";
 import { getAllPortes } from "../../../services/portesService";
 import { monthsData } from "../../../utils/DateTime";
@@ -72,6 +73,7 @@ function step1({ formik }: step1Type) {
 	}, []);
 
 	async function fetchApi() {
+		const incentivos = await getAllIncentivosFiscais();
 		if (params.id) {
 			var beneficiario = await getBeneficiarioById(parseInt(params.id));
 			var step1 = {
@@ -131,6 +133,19 @@ function step1({ formik }: step1Type) {
 					unidadeMedida: venda.unidadeMedida,
 				}),
 			);
+			const submodulos = beneficiario.submodulos
+				.filter((i) => i.recolhimentoFundos.length > 0)
+				.map((i) => ({
+					...i,
+					incentivoFiscal: incentivos.find((inc) =>
+						inc.fundos.some(
+							(fundo) =>
+								fundo.id ===
+								i.recolhimentoFundos[0].fundoIncentivo.id,
+						),
+					),
+					valoresFundo: i.recolhimentoFundos,
+				}));
 
 			formik.setValues(step1);
 			localStorage.setItem("step1", JSON.stringify(beneficiario));
@@ -138,14 +153,7 @@ function step1({ formik }: step1Type) {
 			localStorage.setItem(
 				"step3",
 				JSON.stringify({
-					submodulos: beneficiario.submodulos
-						.filter((i) => i.recolhimentoFundos.length > 0)
-						.map((i) => ({
-							...i,
-							incentivoFiscal:
-								i.recolhimentoFundos[0].fundoIncentivo,
-							valoresFundo: i.recolhimentoFundos,
-						})),
+					submodulos: submodulos,
 				}),
 			);
 			localStorage.setItem("step4", JSON.stringify({ infoVendas }));

@@ -67,7 +67,7 @@ function SubmoduloForm({
 				const element = formik.values.submodulos[forIndex];
 				if (
 					forIndex !== index &&
-					element.incentivoFiscal.id ===
+					element.incentivoFiscal?.id ===
 						formik.values.submodulos[index]?.incentivoFiscal?.id &&
 					element.submodulo ===
 						formik.values.submodulos[index]?.submodulo
