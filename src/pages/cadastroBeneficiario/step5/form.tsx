@@ -5,18 +5,16 @@ import {
 	Autocomplete,
 	Button,
 	Card,
-	FormControl,
-	InputLabel,
-	MenuItem,
-	Select,
 	TextField,
 	Typography,
 } from "@mui/material";
 
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { FormikProps } from "formik";
+import { IIncentivoFiscal } from "incentivoFiscal";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import { ISubmodulo } from "submodulo";
 import CustomTextField from "../../../components/customTextField";
 import NumericMask from "../../../components/numericMask";
 import TreeDropdown from "../../../components/treeDropdown";
@@ -27,6 +25,7 @@ import { getAllSubmodulosByInscricaoEstadual } from "../../../services/submodulo
 import { formatBRCurrency } from "../../../utils/Currency";
 import { monthsData } from "../../../utils/DateTime";
 import { isEmpty } from "../../../utils/Global";
+import SubmoduloForm from "../step3/components/submoduloForm";
 import { inputs } from "./inputs";
 import styles from "./styles.module.scss";
 
@@ -37,10 +36,23 @@ type step5Type = {
 
 function step5({ setStep, formik }: step5Type) {
 	const [ncms, setNcms] = useState([]);
+	const [submodulos, setSubmodulos] = useState<ISubmodulo[]>([
+		{
+			codgBeneficio: "1231",
+			nomeBeneficio: "Dale",
+		},
+		{
+			codgBeneficio: "1232",
+			nomeBeneficio: "Dele",
+		},
+		{
+			codgBeneficio: "1233",
+			nomeBeneficio: "Dole",
+		},
+	]);
 	const [incentivosFiscais, setIncentivosFiscais] = useState<
 		IIncentivoFiscal[]
 	>([]);
-	const [submodulos, setSubmodulos] = useState<ISubmodulo[]>([]);
 	const [isLoading, setIsLoading] = useOutletContext();
 	const [unidadeMedida, setUnidadeMedida] = useState([]);
 	const [showButton, setShowButton] = useState(false);
@@ -109,7 +121,7 @@ function step5({ setStep, formik }: step5Type) {
 								Mês referência
 							</span>
 							<span
-								style={{ marginRight: '20px' }}
+								style={{ marginRight: "20px" }}
 								className={`${styles.col3} ${styles.monthTitle}`}
 							>
 								Investimento mensal
@@ -120,7 +132,7 @@ function step5({ setStep, formik }: step5Type) {
 								Empregos direto (homem)
 							</span>
 							<span
-								style={{ marginRight: '-40px' }}
+								style={{ marginRight: "-40px" }}
 								className={`${styles.col3} ${styles.monthTitle}`}
 							>
 								Empregos direto (mulher)
@@ -130,7 +142,10 @@ function step5({ setStep, formik }: step5Type) {
 							return (
 								<div className={styles.TableInputs}>
 									<span
-										style={{ textAlign: 'center', marginLeft: '20px' }}
+										style={{
+											textAlign: "center",
+											marginLeft: "20px",
+										}}
 										className={`${styles.col2} ${styles.monthTitle}`}
 									>
 										{label}
@@ -235,15 +250,15 @@ function step5({ setStep, formik }: step5Type) {
 										formik.values?.investimentoMensal,
 									)
 										? formik.values?.investimentoMensal?.reduce(
-											(total, item) =>
-												total +
-												parseFloat(
-													!isEmpty(item?.valor)
-														? item?.valor
-														: "0",
-												),
-											0,
-										)
+												(total, item) =>
+													total +
+													parseFloat(
+														!isEmpty(item?.valor)
+															? item?.valor
+															: "0",
+													),
+												0,
+										  )
 										: 0,
 								)}
 							</span>
@@ -278,250 +293,37 @@ function step5({ setStep, formik }: step5Type) {
 						{new Date().getFullYear() - 1}
 					</h3>
 
-					<Accordion sx={{ margin: "1rem" }}>
-						<AccordionSummary
-							expandIcon={
-								<ArrowDownwardIcon sx={{ color: "white" }} />
-							}
-							aria-controls="panel1-content"
-							id="panel1-header"
-							className={styles.accordionTitle}
-						>
-							<Typography>
-								{formik.values.incentivoFiscal.sigla} -{" "}
-								{formik.values.submodulo}
-							</Typography>
-						</AccordionSummary>
-						<AccordionDetails>
-							<Card className={styles.innerCard}>
-								<h1 className={styles.title}>Sub Módulos</h1>
-								<h3 className={styles.subtitle}>
-									Preencha corretamente o formulário
-								</h3>
-								<h3 className={styles.yearTitle}>
-									Ano de referência
-								</h3>
-								<h3 className={styles.year}>
-									{new Date().getFullYear() - 1}
-								</h3>
-								<div className={styles.beneficiarioForm}>
-									<FormControl className="col6">
-										<InputLabel
-											required
-											id="incentivoFiscal"
-										>
-											Incentivo Fiscal
-										</InputLabel>
-										<Select
-											name="incentivoFiscal"
-											label="Incentivo Fiscal"
-											labelId="id"
-											placeholder="Selecione um incentivo"
-											value={
-												formik.values.incentivoFiscal
-													?.id
-											}
-											required
-											fullWidth
-											disabled={true}
-										>
-											{incentivosFiscais.map(
-												(
-													{
-														id,
-														sigla,
-													}: IIncentivoFiscal,
-													index,
-												) => {
-													return (
-														<MenuItem
-															key={index}
-															value={id}
-														>
-															{sigla}
-														</MenuItem>
-													);
-												},
-											)}
-										</Select>
-									</FormControl>
-									<FormControl className="col6">
-										<InputLabel required id="submodulo">
-											{formik.values.submodulo
-												? ""
-												: "Submódulo"}
-										</InputLabel>
-										<Select
-											name="submodulo"
-											label="Submódulo"
-											labelId="submodulo"
-											placeholder="Selecione um Submodulo"
-											value={formik.values?.submodulo}
-											fullWidth
-											required
-											disabled={true}
-										>
-											{submodulos.map(
-												(
-													{
-														codgBeneficio,
-														nomeBeneficio,
-													}: ISubmodulo,
-													index,
-												) => {
-													return (
-														codgBeneficio && (
-															<MenuItem
-																key={index}
-																value={
-																	codgBeneficio
-																}
-															>
-																{codgBeneficio}{" "}
-																-{" "}
-																{nomeBeneficio}
-															</MenuItem>
-														)
-													);
-												},
-											)}
-										</Select>
-									</FormControl>
-									<NumericMask
-										id="vendaAnualInterna"
-										name="vendaAnualInterna"
-										formik={formik}
-										prefix="R$"
-										fixedDecimalScale
-										label="Venda anual interna"
-										required
-										col={6}
-										onChange={formik.handleChange}
-										disabled={true}
-										value={
-											formik.values?.vendaAnualInterna ??
-											""
-										}
-										className={`${styles.tableInput}`}
+					{formik.values?.submodulos?.map((i, index) => (
+						<Accordion sx={{ margin: "1rem" }}>
+							<AccordionSummary
+								expandIcon={
+									<ArrowDownwardIcon
+										sx={{ color: "white" }}
 									/>
-									<NumericMask
-										id="vendaAnualInterestadual"
-										name="vendaAnualInterestadual"
-										formik={formik}
-										prefix="R$"
-										fixedDecimalScale
-										label="Venda anual interestadual"
-										col={6}
-										onChange={formik.handleChange}
-										required
-										disabled={true}
-										value={
-											formik.values
-												?.vendaAnualInterestadual ?? ""
-										}
-										className={`${styles.tableInput}`}
-									/>
-									{formik?.values?.incentivoFiscal?.fundos
-										?.length > 0 && (
-											<>
-												<div className={styles.monthsTitle}>
-													<span
-														className={`${styles.col2} ${styles.monthTitle}`}
-													>
-														Mês referência
-													</span>
-													{formik.values?.incentivoFiscal?.fundos?.map(
-														({ sigla }: IFundo) => {
-															return (
-																<span
-																	className={`${styles?.[
-																		`col${Math.ceil(
-																			10 /
-																			formik
-																				.values
-																				?.incentivoFiscal
-																				?.fundos
-																				.length,
-																		)}`
-																	]
-																		} ${styles.monthTitle
-																		}`}
-																>
-																	{sigla}
-																</span>
-															);
-														},
-													)}
-												</div>
-												{monthsData.map(
-													({ codigo, label }) => {
-														return (
-															<div
-																className={
-																	styles.TableInputs
-																}
-															>
-																<span
-																	style={{ textAlign: 'center', marginLeft: '20px' }}
-																	className={`${styles.col2} ${styles.monthTitle}`}
-																>
-																	{label}
-																</span>
-																{formik.values?.incentivoFiscal?.fundos?.map(
-																	({
-																		sigla,
-																		id,
-																	}: IFundo) => {
-																		return (
-																			<NumericMask
-																				id={`${sigla}-valor`}
-																				name={`${sigla}-valor`}
-																				formik={
-																					formik
-																				}
-																				disabled={
-																					true
-																				}
-																				col={Math.ceil(
-																					10 /
-																					formik
-																						.values
-																						?.incentivoFiscal
-																						?.fundos
-																						.length,
-																				)}
-																				prefix="R$"
-																				fixedDecimalScale
-																				label=""
-																				required
-																				value={
-																					formik.values?.valoresFundo?.find(
-																						(
-																							i: IValorFundo,
-																						) =>
-																							i
-																								.fundoIncentivo
-																								.id ===
-																							id,
-																					)?.[
-																					`${codigo}Valor`
-																					]
-																				}
-																				className={`${styles.tableInput}`}
-																			/>
-																		);
-																	},
-																)}
-															</div>
-														);
-													},
-												)}
-											</>
-										)}
-								</div>
-							</Card>
-						</AccordionDetails>
-					</Accordion>
+								}
+								aria-controls="panel1-content"
+								id="panel1-header"
+								className={styles.accordionTitle}
+							>
+								<Typography style={{ color: "white" }}>
+									{i.incentivoFiscal?.sigla
+										? `${
+												i.incentivoFiscal?.sigla ?? ""
+										  } - ${i.submodulo ?? ""}`
+										: ""}
+								</Typography>
+							</AccordionSummary>
+							<AccordionDetails>
+								<SubmoduloForm
+									submodulos={submodulos}
+									incentivosFiscais={incentivosFiscais}
+									formik={formik}
+									index={index}
+									forceIsView={true}
+								/>
+							</AccordionDetails>
+						</Accordion>
+					))}
 				</Card>
 			</div>
 			<div className={styles.container}>

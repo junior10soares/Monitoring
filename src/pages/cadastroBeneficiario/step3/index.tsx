@@ -2,14 +2,10 @@ import { Formik, FormikErrors, FormikValues } from "formik";
 import { stepType } from "stepsType";
 import Form from "./form";
 import { inputs } from "./inputs";
-import { Messages } from "../../../../src/utils/Messages";
 
 export default function ({ setStep }: stepType) {
 	const validate = (values: FormikValues) => {
 		const errors: FormikErrors<FormikValues> = {};
-		if (!values.incentivoFiscal) {
-			errors.incentivoFiscal = Messages.form.required;
-		}
 		return errors;
 	};
 	return (

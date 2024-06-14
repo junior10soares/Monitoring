@@ -16,6 +16,7 @@ import {
 
 import { ICnae } from "cnaeType";
 import { FormikProps } from "formik";
+import { IInfoVendas } from "infoVendas";
 import { Imunicipio } from "municipioType";
 import { IPorte } from "porte";
 import { useEffect, useMemo, useState } from "react";
@@ -120,26 +121,34 @@ function step1({ formik }: step1Type) {
 			dadosEconomicos.empregoMulherId =
 				beneficiario.dadosEconomicos.empregoMulher.id;
 
-			const step3 = {
-				...beneficiario.submodulo,
-				valoresFundo: beneficiario.submodulo?.recolhimentoFundos ?? [],
-				incentivoFiscal: beneficiario.incentivoFiscal,
-			};
-			const infoVendas = beneficiario.vendaAnual.map((venda) => ({
-				ncm: venda.ncm,
-				produtoIncentivado: venda.produtoIncentivado,
-				quantidadeInterestadual: venda.quantidadeInterestadual || "",
-				quantidadeInterna: venda.quantidadeInterna || "",
-				unidadeMedida: venda.unidadeMedida,
-			}));
-
-			const step4 = { infoVendas };
+			const infoVendas = beneficiario.vendaAnual.map(
+				(venda: IInfoVendas) => ({
+					ncm: venda.ncm,
+					produtoIncentivado: venda.produtoIncentivado,
+					quantidadeInterestadual:
+						venda.quantidadeInterestadual || "",
+					quantidadeInterna: venda.quantidadeInterna || "",
+					unidadeMedida: venda.unidadeMedida,
+				}),
+			);
 
 			formik.setValues(step1);
 			localStorage.setItem("step1", JSON.stringify(beneficiario));
 			localStorage.setItem("step2", JSON.stringify(dadosEconomicos));
-			localStorage.setItem("step3", JSON.stringify(step3));
-			localStorage.setItem("step4", JSON.stringify(step4));
+			localStorage.setItem(
+				"step3",
+				JSON.stringify({
+					submodulos: beneficiario.submodulos
+						.filter((i) => i.recolhimentoFundos.length > 0)
+						.map((i) => ({
+							...i,
+							incentivoFiscal:
+								i.recolhimentoFundos[0].fundoIncentivo,
+							valoresFundo: i.recolhimentoFundos,
+						})),
+				}),
+			);
+			localStorage.setItem("step4", JSON.stringify({ infoVendas }));
 		}
 	}
 	async function fillCombos() {
@@ -346,11 +355,12 @@ function step1({ formik }: step1Type) {
 							multiple
 							id="cnaes"
 							options={cnaesList}
-							className={`col12 ${formik.errors.cnaes ||
+							className={`col12 ${
+								formik.errors.cnaes ||
 								formik.errors.cnaes?.length === 0
-								? styles.error
-								: ""
-								}`}
+									? styles.error
+									: ""
+							}`}
 							fullWidth
 							placeholder="Selecione um CNAE"
 							disableCloseOnSelect
@@ -515,17 +525,17 @@ function step1({ formik }: step1Type) {
 											/>
 											{formik.errors.telefones?.[index]
 												?.telefone && (
-													<span className={styles.error}>
-														{
-															formik.errors.telefones[
-																index
-															].telefone
-														}
-													</span>
-												)}
+												<span className={styles.error}>
+													{
+														formik.errors.telefones[
+															index
+														].telefone
+													}
+												</span>
+											)}
 										</div>
 										{index >= listTelefones.length &&
-											!isView ? (
+										!isView ? (
 											<div
 												style={{ marginTop: "20px" }}
 												className={`${styles.col1} ${styles.removeButtonDiv}`}
@@ -566,14 +576,17 @@ function step1({ formik }: step1Type) {
 								</div>
 							))}
 
-							{['ADMINISTRADOR', 'CONTABILIDADE', 'EMPRESA'].some(
+							{["ADMINISTRADOR", "CONTABILIDADE", "EMPRESA"].some(
 								(tipo) =>
-									!formik.values?.telefones.find((telefone) => telefone?.titulo === tipo)
+									!formik.values?.telefones.find(
+										(telefone) => telefone?.titulo === tipo,
+									),
 							) && (
-									<span className={styles.error}>
-										Pelo menos um telefone para administrador, contabilidade e empresa é obrigatório.
-									</span>
-								)}
+								<span className={styles.error}>
+									Pelo menos um telefone para administrador,
+									contabilidade e empresa é obrigatório.
+								</span>
+							)}
 						</div>
 					</div>
 					{!isView && !showInput && (

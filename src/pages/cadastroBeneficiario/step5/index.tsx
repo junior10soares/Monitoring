@@ -52,7 +52,6 @@ export default function ({ setStep }: stepType) {
 				}}
 				onSubmit={async (values, { setSubmitting }) => {
 					const extractedData = {
-						id: step1.id,
 						municipio: {
 							id: values?.municipio,
 						},
@@ -82,7 +81,7 @@ export default function ({ setStep }: stepType) {
 						})),
 						dadosEconomicos: {
 							id: step2?.id,
-							anoReferencia: values?.anoReferencia,
+							anoReferencia: step2.anoReferencia.toString(),
 							investimentoAcumulado:
 								values?.investimentoAcumulado,
 							investimentoMensal: {
@@ -242,44 +241,26 @@ export default function ({ setStep }: stepType) {
 								)?.valor,
 							},
 						},
-						incentivoFiscal: {
-							id: values?.incentivoFiscal?.id,
-							sigla: values?.incentivoFiscal?.sigla,
-							descricao: values?.incentivoFiscal?.descricao,
-							fundos: values?.incentivoFiscal?.fundos,
-						},
-						submodulo: step3.id
-							? {
-									id: step3.id,
-									codigoRcr: "120",
-									recolhimentoFundos: step3.valoresFundo.map(
-										(i) => ({
-											...i,
-											anoReferencia:
-												step2.anoReferencia.toString(),
-										}),
-									),
-									vendaAnualInterestadual:
-										step3.vendaAnualInterestadual,
-									vendaAnualInterna: step3.vendaAnualInterna,
-							  }
-							: {
-									recolhimentoFundos: step3.valoresFundo.map(
-										(i) => ({
-											...i,
-											anoReferencia:
-												step2.anoReferencia.toString(),
-										}),
-									),
-									codigoRcr: "120",
-									vendaAnualInterestadual:
-										step3.vendaAnualInterestadual,
-									vendaAnualInterna: step3.vendaAnualInterna,
-							  },
+						incentivoFiscal: values.submodulos[0].incentivoFiscal,
+						submodulos: values.submodulos.map((i) => ({
+							codigoRcr: "123",
+							vendaAnualInterestadual: i.vendaAnualInterestadual,
+							vendaAnualInterna: i.vendaAnualInterna,
+							recolhimentoFundos: i.valoresFundo.map(
+								(valorFundo) => ({
+									...valorFundo,
+									anoReferencia:
+										step2.anoReferencia.toString(),
+								}),
+							),
+						})),
+
 						vendaAnual: step4.infoVendas,
 					};
+
 					if (params.id) {
 						try {
+							extractedData.id = step1.id;
 							const responsePut = await axiosInstance.put(
 								`/beneficiarios/${params.id}`,
 								extractedData,
@@ -300,12 +281,7 @@ export default function ({ setStep }: stepType) {
 						}
 					} else {
 						try {
-							const res = await insertBeneficiario({
-								...step1,
-								...step2,
-								...step3,
-								...step4,
-							});
+							const res = await insertBeneficiario(extractedData);
 							if (res.success) {
 								setShow(true);
 								for (let index = 0; index < 5; index++) {

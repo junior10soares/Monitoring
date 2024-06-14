@@ -22,8 +22,8 @@ function listagemBeneficiario() {
 				window.innerWidth <= 1400
 					? 300
 					: window.innerWidth <= 1770
-						? 380
-						: 800,
+					? 380
+					: 800,
 		},
 		{ field: "cpfOuCnpj", headerName: "CPF/CNPJ", width: 300 },
 		{
@@ -60,7 +60,7 @@ function listagemBeneficiario() {
 	async function fetch() {
 		setIsLoading(true);
 		const res = await getAllBeneficiarios();
-		const formated = res.map((i) => ({
+		const formated = res.content.map((i) => ({
 			...i,
 			cpfOuCnpj: cpfMask(i.cpfOuCnpj),
 		}));
@@ -106,17 +106,22 @@ function listagemBeneficiario() {
 					}}
 					pageSizeOptions={[10, 20]}
 					disableRowSelectionOnClick
-					localeText={ptPT.components.MuiDataGrid.defaultProps.localeText}
+					localeText={
+						ptPT.components.MuiDataGrid.defaultProps.localeText
+					}
 				/>
 			) : (
-				<div style={{
-					textAlign: 'center',
-					marginTop: '20px',
-					fontSize: '16px',
-					color: '#666'
-				}}>
+				<div
+					style={{
+						textAlign: "center",
+						marginTop: "20px",
+						fontSize: "16px",
+						color: "#666",
+					}}
+				>
 					Nenhum beneficiário encontrado
-				</div>)}
+				</div>
+			)}
 		</div>
 	);
 }
