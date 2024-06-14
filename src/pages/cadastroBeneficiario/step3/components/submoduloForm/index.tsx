@@ -47,7 +47,7 @@ function SubmoduloForm({
 				incentivosFiscais.find(
 					(i) =>
 						i.id ===
-						formik.values.submodulos[index]?.incentivoFiscal.id,
+						formik.values.submodulos[index]?.incentivoFiscal?.id,
 				),
 			);
 		}
