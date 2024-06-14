@@ -90,18 +90,27 @@ function SubmoduloForm({
 
 	const total = useMemo(() => {
 		return formik.values.submodulos[index]?.valoresFundo?.reduce(
-			(totalFundo: number, item: IValorFundo) =>
-				totalFundo +
-				parseFloat(
-					Object.values(item)?.reduce(
-						(totalItem, itemValue) =>
-							totalItem +
-							parseFloat(
-								typeof itemValue !== "object" ? itemValue : "0",
+			(totalFundo, item: IValorFundo) => {
+				const values = item;
+				delete values.anoReferencia;
+				return (
+					totalFundo +
+					parseFloat(
+						Object.values(item)
+							.filter((i) => i !== "anoReferencia")
+							?.reduce(
+								(totalItem, itemValue) =>
+									totalItem +
+									parseFloat(
+										typeof itemValue !== "object"
+											? itemValue
+											: "0",
+									),
+								0,
 							),
-						0,
-					),
-				),
+					)
+				);
+			},
 			0,
 		);
 	}, [formik.values.submodulos[index]?.valoresFundo]);

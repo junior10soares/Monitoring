@@ -21,7 +21,7 @@
         }
 
         .accordionTitle {
-            border-radius: 2rem;
+           
             background-color: global.$primary-color;
             color: white;
         }
@@ -192,4 +192,5 @@
     position: fixed;
     top: 2rem;
     right: 2rem;
+    z-index: 1000;
 }
