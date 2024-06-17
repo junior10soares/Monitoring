@@ -22,9 +22,10 @@ import styles from "./styles.module.scss";
 type step3Type = {
 	setStep: Function;
 	formik: FormikProps<typeof inputs>;
+	setSubsToExclude: Function;
 };
 
-function step3({ setStep, formik }: step3Type) {
+function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 	const [submodulos, setSubmodulos] = useState<ISubmodulo[]>([
 		{
 			codgBeneficio: "1231",
@@ -94,9 +95,14 @@ function step3({ setStep, formik }: step3Type) {
 								{!isView && index > 0 && (
 									<RemoveIcon
 										className={styles.removeIcon}
-										onClick={() => {
+										onClick={async () => {
 											var submodulos =
 												formik.values.submodulos;
+											if (submodulos[index].id) {
+												setSubsToExclude(
+													submodulos[index].id,
+												);
+											}
 											submodulos.splice(index, 1);
 											formik.setFieldValue(
 												"submodulos",

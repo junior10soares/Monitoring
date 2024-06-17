@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { stepType } from "stepsType";
 import { axiosInstance } from "../../../services/axios";
 import { insertBeneficiario } from "../../../services/beneficiario";
+import { excludeSubmoduloById } from "../../../services/submodulos";
 import Form from "./form";
 import { inputs } from "./inputs";
 import styles from "./styles.module.scss";
@@ -22,7 +23,7 @@ const safeParseJSON = (item) => {
 	return {};
 };
 
-export default function ({ setStep }: stepType) {
+export default function ({ setStep, subsToExclude }: stepType) {
 	const [show, setShow] = useState(false);
 	const params = useParams();
 
@@ -265,6 +266,11 @@ export default function ({ setStep }: stepType) {
 								`/beneficiarios/${params.id}`,
 								extractedData,
 							);
+
+							await subsToExclude.forEach((element) => {
+								excludeSubmoduloById(element);
+							});
+
 							if (responsePut.status === 200) {
 								setShow(true);
 								setTimeout(() => {

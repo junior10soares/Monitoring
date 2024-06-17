@@ -3,7 +3,7 @@ import { stepType } from "stepsType";
 import Form from "./form";
 import { inputs } from "./inputs";
 
-export default function ({ setStep }: stepType) {
+export default function ({ setStep, setSubsToExclude }: stepType) {
 	const validate = (values: FormikValues) => {
 		const errors: FormikErrors<FormikValues> = {};
 		return errors;
@@ -20,7 +20,13 @@ export default function ({ setStep }: stepType) {
 				}, 400);
 			}}
 		>
-			{(formik) => <Form setStep={setStep} formik={formik} />}
+			{(formik) => (
+				<Form
+					setSubsToExclude={setSubsToExclude}
+					setStep={setStep}
+					formik={formik}
+				/>
+			)}
 		</Formik>
 	);
 }

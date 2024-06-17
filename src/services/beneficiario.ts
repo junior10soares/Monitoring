@@ -5,7 +5,7 @@ async function getAllBeneficiarios() {
 	return res.data;
 }
 
-async function getBeneficiarioById(id) {
+async function getBeneficiarioById(id: number) {
 	const res = await axiosInstance.get(`/beneficiarios/${id}`);
 	return res.data;
 }
@@ -15,7 +15,7 @@ async function getUnidadeMedida() {
 	return res.data;
 }
 
-async function insertBeneficiario(values) {
+async function insertBeneficiario(values: any) {
 	const res = await axiosInstance.post("/beneficiarios", values);
 	return { data: res.data, success: res.status === 200 };
 }
