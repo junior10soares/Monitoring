@@ -39,6 +39,7 @@ export default function Sidebar() {
 	const handleLogout = () => {
 		for (let index = 0; index < 5; index++) {
 			localStorage.removeItem(`step${index + 1}`);
+			localStorage.removeItem("access_token");
 		}
 		navigate("/beneficiario");
 	};
@@ -51,16 +52,22 @@ export default function Sidebar() {
 					src={SedecBanner}
 					alt="sedec banner"
 				/>
-				{!(pathname === "/beneficiario") && (
+
+				{pathname.includes("beneficiario") && (
 					<Button
 						type="button"
 						variant="contained"
 						className="logout-button"
-						onClick={handleClickOpen}
+						onClick={
+							pathname === "/beneficiario"
+								? handleClickOpen
+								: () => navigate("/beneficiario")
+						}
 					>
-						Sair
+						{pathname === "/beneficiario" ? "Sair" : "Voltar"}
 					</Button>
 				)}
+
 				<Dialog
 					open={open}
 					onClose={handleClose}
@@ -81,6 +88,16 @@ export default function Sidebar() {
 							onClick={() => {
 								handleLogout();
 								handleClose();
+								window.location.replace(
+									`${
+										import.meta.env.VITE_MTI_LOGIN_URL
+									}/realms/mt-realm/protocol/openid-connect/logout?client_id=${
+										import.meta.env.VITE_MTI_LOGIN_CLIENT_ID
+									}&redirect_uri=${
+										import.meta.env
+											.VITE_MTI_LOGIN_REDIREC_URL
+									}&response_type=code`,
+								);
 							}}
 							autoFocus
 						>
