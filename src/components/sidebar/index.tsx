@@ -79,7 +79,7 @@ export default function Sidebar() {
 					</DialogTitle>
 					<DialogContent>
 						<DialogContentText id="alert-dialog-description">
-							Deseja mesmo sair sem salvar o formulário?
+							Deseja mesmo sair?
 						</DialogContentText>
 					</DialogContent>
 					<DialogActions>
