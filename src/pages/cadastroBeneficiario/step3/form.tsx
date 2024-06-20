@@ -10,9 +10,10 @@ import {
 } from "@mui/material";
 import { FormikProps } from "formik";
 import { IIncentivoFiscal } from "incentivoFiscal";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useOutletContext } from "react-router-dom";
 import { ISubmodulo } from "submodulo";
+import ConfirmDialog from "../../../components/confirmDialog";
 import { getAllIncentivosFiscais } from "../../../services/incentivoFiscal";
 import { getAllSubmodulosByInscricaoEstadual } from "../../../services/submodulo";
 import SubmoduloForm from "./components/submoduloForm";
@@ -43,7 +44,9 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 	const [incentivosFiscais, setIncentivosFiscais] = useState<
 		IIncentivoFiscal[]
 	>([]);
+	const [expanded, setExpanded] = useState<number | false>(false);
 	const [isLoading, setIsLoading] = useOutletContext();
+	const dialogRef = useRef(null);
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
 
@@ -69,10 +72,24 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 		}
 	}
 
+	const handleChange =
+		(panel: number) =>
+		(event: React.SyntheticEvent, isExpanded: boolean) => {
+			const isRemoveCLick =
+				event.target?.className?.baseVal?.includes("removeIcon");
+			if (!isRemoveCLick) {
+				setExpanded(isExpanded ? panel : false);
+			}
+		};
+
 	return (
 		<>
 			{formik.values.submodulos.map((i, index) => (
-				<Accordion sx={{ margin: "1rem" }}>
+				<Accordion
+					expanded={expanded === index}
+					onChange={handleChange(index)}
+					sx={{ margin: "1rem" }}
+				>
 					<AccordionSummary
 						expandIcon={
 							<ArrowDownwardIcon sx={{ color: "white" }} />
@@ -92,25 +109,28 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 										  } - ${i.submodulo ?? ""}`
 										: ""}
 								</Typography>
-								{!isView && index > 0 && (
-									<RemoveIcon
-										className={styles.removeIcon}
-										onClick={async () => {
-											var submodulos =
-												formik.values.submodulos;
-											if (submodulos[index].id) {
-												setSubsToExclude(
-													submodulos[index].id,
+
+								<RemoveIcon
+									className={styles.removeIcon}
+									onClick={async () => {
+										dialogRef.current?.handleClickOpen(
+											() => {
+												var submodulos =
+													formik.values.submodulos;
+												if (submodulos[index].id) {
+													setSubsToExclude(
+														submodulos[index].id,
+													);
+												}
+												submodulos.splice(index, 1);
+												formik.setFieldValue(
+													"submodulos",
+													submodulos,
 												);
-											}
-											submodulos.splice(index, 1);
-											formik.setFieldValue(
-												"submodulos",
-												submodulos,
-											);
-										}}
-									/>
-								)}
+											},
+										);
+									}}
+								/>
 							</>
 						</div>
 					</AccordionSummary>
@@ -164,6 +184,10 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 					Continuar
 				</Button>
 			</div>
+			<ConfirmDialog
+				message="Tem certeza que deseja fazer a exclusão?"
+				ref={dialogRef}
+			/>
 		</>
 	);
 }

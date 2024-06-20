@@ -324,6 +324,11 @@ function step5({ setStep, formik }: step5Type) {
 							</AccordionDetails>
 						</Accordion>
 					))}
+					{formik.values?.submodulos?.length === 0 && (
+						<h2 className={styles.message}>
+							Nenhum Item Encontrado
+						</h2>
+					)}
 				</Card>
 			</div>
 			<div className={styles.container}>
@@ -335,7 +340,7 @@ function step5({ setStep, formik }: step5Type) {
 					<div className={styles.beneficiarioForm}>
 						<div className={styles.tableHeader}>
 							<span
-								className={`${styles.col3} ${styles.monthTitle}`}
+								className={`${styles.col4} ${styles.monthTitle}`}
 							>
 								NCM
 							</span>
@@ -359,7 +364,6 @@ function step5({ setStep, formik }: step5Type) {
 							>
 								Quant. Interestadual
 							</span>
-							<span className={styles.col1}></span>
 						</div>
 
 						<FieldArray name="infoVendas">
@@ -376,7 +380,7 @@ function step5({ setStep, formik }: step5Type) {
 														display: "flex",
 														flexDirection: "column",
 													}}
-													className={`${styles.col3} card`}
+													className={`${styles.col4} card`}
 												>
 													<div
 														style={{

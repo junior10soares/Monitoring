@@ -15,6 +15,10 @@
         color: var(--Neutral-600, #6F6C90);
         background-color: var(--Neutral-300, #EFF0F6); 
         border-radius: 10rem;
+
+        &:hover{
+            cursor: pointer;
+        }
         
         &.active{
             color: white;

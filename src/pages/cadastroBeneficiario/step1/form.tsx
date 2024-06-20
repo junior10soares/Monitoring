@@ -20,7 +20,12 @@ import { IInfoVendas } from "infoVendas";
 import { Imunicipio } from "municipioType";
 import { IPorte } from "porte";
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+	useLocation,
+	useNavigate,
+	useOutletContext,
+	useParams,
+} from "react-router-dom";
 import CustomTextField from "../../../components/customTextField";
 import InputMask from "../../../components/inputMask";
 import { getBeneficiarioById } from "../../../services/beneficiario";
@@ -44,6 +49,7 @@ function step1({ formik }: step1Type) {
 	]);
 	const navigate = useNavigate();
 	const [municipios, setMunicipios] = useState([]);
+	const [isLoading, setIsLoading] = useOutletContext();
 	const [showOutrosTrash, setShowOutrosTrash] = useState(false);
 	const [portes, setPortes] = useState([]);
 	const [showInput, setShowInput] = useState(false);
@@ -60,6 +66,7 @@ function step1({ formik }: step1Type) {
 
 	useEffect(() => {
 		(async function fetchAll() {
+			setIsLoading(true);
 			await fillCombos();
 			if (params.id) {
 				await fetchApi();
@@ -69,6 +76,7 @@ function step1({ formik }: step1Type) {
 					formik.setValues(JSON.parse(localItem));
 				}
 			}
+			setIsLoading(false);
 		})();
 	}, []);
 
@@ -415,17 +423,6 @@ function step1({ formik }: step1Type) {
 								{formik.errors.cnaes as string | undefined}
 							</span>
 						)}
-						<CustomTextField
-							id="descricaoStep1"
-							label="Descrição"
-							required
-							rows={4}
-							multiline
-							col={12}
-							formik={formik}
-							value={formik.values.descricaoStep1}
-							disabled={isView}
-						/>
 					</div>
 				</Card>
 				<Card className={styles.card}>

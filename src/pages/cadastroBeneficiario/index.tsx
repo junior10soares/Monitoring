@@ -18,7 +18,7 @@ function cadastroBeneficiario() {
 
 	return (
 		<div>
-			<StepCount activeStep={step} />
+			<StepCount activeStep={step} setStep={setStep} />
 			{step === 1 && <Step1 setStep={setStep} />}
 			{step === 2 && <Step2 setStep={setStep} />}
 			{step === 3 && (
