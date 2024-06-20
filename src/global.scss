@@ -102,3 +102,10 @@ table {
     text-align: center;
     padding: 1rem;
 }
+.alert{
+    width: auto;
+    position: fixed;
+    z-index: 100000000;
+    right: 10px;
+    top: 100px;
+}

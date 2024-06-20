@@ -53,7 +53,7 @@ export default function Sidebar() {
 					alt="sedec banner"
 				/>
 
-				{pathname.includes("beneficiario") && (
+				{pathname === "/beneficiario" && (
 					<Button
 						type="button"
 						variant="contained"

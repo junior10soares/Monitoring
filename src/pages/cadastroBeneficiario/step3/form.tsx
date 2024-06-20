@@ -5,13 +5,14 @@ import {
 	Accordion,
 	AccordionDetails,
 	AccordionSummary,
+	Alert,
 	Button,
 	Typography,
 } from "@mui/material";
 import { FormikProps } from "formik";
 import { IIncentivoFiscal } from "incentivoFiscal";
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useOutletContext } from "react-router-dom";
+import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import { ISubmodulo } from "submodulo";
 import ConfirmDialog from "../../../components/confirmDialog";
 import { getAllIncentivosFiscais } from "../../../services/incentivoFiscal";
@@ -45,7 +46,9 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 		IIncentivoFiscal[]
 	>([]);
 	const [expanded, setExpanded] = useState<number | false>(false);
+	const [show, setShow] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useOutletContext();
+	const navigate = useNavigate();
 	const dialogRef = useRef(null);
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
@@ -62,6 +65,7 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 			);
 			// setSubmodulos(submds);
 			setIsLoading(false);
+			formik.setFieldValue("first", false);
 		})();
 	}, []);
 
@@ -82,8 +86,26 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 			}
 		};
 
+	useEffect(() => {
+		if (!!formik.errors.submodulo) {
+			setShow(true);
+			setTimeout(() => {
+				setShow(false);
+			}, 3000);
+		}
+	}, [formik.errors]);
+
 	return (
 		<>
+			{show && (
+				<Alert
+					variant="filled"
+					className={styles.alert}
+					severity="error"
+				>
+					{formik.errors.submodulo ?? ""}
+				</Alert>
+			)}
 			{formik.values.submodulos.map((i, index) => (
 				<Accordion
 					expanded={expanded === index}
@@ -145,7 +167,7 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 					</AccordionDetails>
 				</Accordion>
 			))}
-			{!isView && (
+			{!isView && !formik.errors.submodulos && (
 				<Button
 					type="button"
 					variant="contained"
