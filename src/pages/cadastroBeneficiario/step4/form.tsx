@@ -4,7 +4,7 @@ import { Autocomplete, Button, Card, TextField } from "@mui/material";
 import { FieldArray, FormikProps } from "formik";
 import { useEffect, useState } from "react";
 import "react-dropdown-tree-select/dist/styles.css";
-import { useLocation, useOutletContext } from "react-router-dom";
+import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import CustomTextField from "../../../components/customTextField";
 import NumericMask from "../../../components/numericMask";
 import TreeDropdown from "../../../components/treeDropdown";
@@ -22,6 +22,7 @@ function step4({ setStep, formik }: step4Type) {
 	const [ncms, setNcms] = useState([]);
 	const [unidadeMedida, setUnidadeMedida] = useState([]);
 	const { pathname } = useLocation();
+	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = useOutletContext();
 	const isView = pathname?.includes("/view");
 	const [isAddButtonVisible, setIsAddButtonVisible] = useState(false);
@@ -325,18 +326,29 @@ function step4({ setStep, formik }: step4Type) {
 						variant="contained"
 						className={styles.secondaryButton}
 						onClick={() => {
-							setStep(3);
+							navigate("/beneficiario");
 							window.scrollTo({ top: 0, behavior: "smooth" });
 						}}
 					>
 						Voltar
 					</Button>
 					<Button
+						type="button"
+						variant="contained"
+						className={styles.secondaryButton}
+						onClick={() => {
+							setStep(3);
+							window.scrollTo({ top: 0, behavior: "smooth" });
+						}}
+					>
+						Anterior
+					</Button>
+					<Button
 						type="submit"
 						variant="contained"
 						className={styles.primaryButton}
 					>
-						Continuar
+						Próximo
 					</Button>
 				</div>
 			</div>

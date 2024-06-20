@@ -13,7 +13,7 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { FieldArray, FormikProps } from "formik";
 import { IIncentivoFiscal } from "incentivoFiscal";
 import { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { ISubmodulo } from "submodulo";
 import CustomTextField from "../../../components/customTextField";
 import NumericMask from "../../../components/numericMask";
@@ -56,6 +56,7 @@ function step5({ setStep, formik }: step5Type) {
 	const [isLoading, setIsLoading] = useOutletContext();
 	const [unidadeMedida, setUnidadeMedida] = useState([]);
 	const [showButton, setShowButton] = useState(false);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		(async function fetch() {
@@ -568,6 +569,17 @@ function step5({ setStep, formik }: step5Type) {
 						variant="contained"
 						className={styles.secondaryButton}
 						onClick={() => {
+							navigate("/beneficiario");
+							window.scrollTo({ top: 0, behavior: "smooth" });
+						}}
+					>
+						Voltar
+					</Button>
+					<Button
+						type="button"
+						variant="contained"
+						className={styles.secondaryButton}
+						onClick={() => {
 							setStep(4);
 							window.scrollTo({
 								top: 0,
@@ -575,7 +587,7 @@ function step5({ setStep, formik }: step5Type) {
 							});
 						}}
 					>
-						Voltar
+						Anterior
 					</Button>
 					{!showButton && (
 						<Button

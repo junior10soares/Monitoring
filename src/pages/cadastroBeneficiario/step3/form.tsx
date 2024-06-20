@@ -167,11 +167,22 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 					variant="contained"
 					className={styles.secondaryButton}
 					onClick={() => {
-						setStep(2);
+						navigate("/beneficiario");
 						window.scrollTo({ top: 0, behavior: "smooth" });
 					}}
 				>
 					Voltar
+				</Button>
+				<Button
+					type="button"
+					variant="contained"
+					className={styles.secondaryButton}
+					onClick={() => {
+						setStep(2);
+						window.scrollTo({ top: 0, behavior: "smooth" });
+					}}
+				>
+					Anterior
 				</Button>
 				<Button
 					type="button"
@@ -181,7 +192,7 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 						formik.submitForm();
 					}}
 				>
-					Continuar
+					Próximo
 				</Button>
 			</div>
 			<ConfirmDialog

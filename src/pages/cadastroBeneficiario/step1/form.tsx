@@ -611,7 +611,6 @@ function step1({ formik }: step1Type) {
 						type="button"
 						variant="contained"
 						className={styles.secondaryButton}
-						style={{ marginRight: "1rem" }}
 						onClick={() => {
 							navigate("/beneficiario");
 							window.scrollTo({ top: 0, behavior: "smooth" });
@@ -624,7 +623,7 @@ function step1({ formik }: step1Type) {
 						variant="contained"
 						className={styles.primaryButton}
 					>
-						Continuar
+						Próximo
 					</Button>
 				</div>
 			</div>
