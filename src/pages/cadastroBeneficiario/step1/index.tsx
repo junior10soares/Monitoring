@@ -4,7 +4,7 @@ import { Messages } from "../../../../src/utils/Messages";
 import Form from "./form";
 import { inputs } from "./inputs";
 
-export default function ({ setStep }: stepType) {
+export default function ({ setStep, submitForm, handleVoltar }: stepType) {
 	function validate(
 		_values: {
 			nomeOuRazaoSocial: any;
@@ -142,7 +142,14 @@ export default function ({ setStep }: stepType) {
 				}
 			}}
 		>
-			{(formik) => <Form setStep={setStep} formik={formik} />}
+			{(formik) => (
+				<Form
+					setStep={setStep}
+					formik={formik}
+					submitForm={submitForm}
+					handleVoltar={handleVoltar}
+				/>
+			)}
 		</Formik>
 	);
 }

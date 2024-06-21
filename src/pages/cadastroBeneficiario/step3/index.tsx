@@ -1,11 +1,20 @@
 import { Formik, FormikErrors, FormikValues } from "formik";
+import { useLocation } from "react-router-dom";
 import { stepType } from "stepsType";
 import { monthsData } from "../../../utils/DateTime";
 import { isEmpty } from "../../../utils/Global";
 import Form from "./form";
 import { inputs } from "./inputs";
 
-export default function ({ setStep, setSubsToExclude }: stepType) {
+export default function ({
+	setStep,
+	setSubsToExclude,
+	submitForm,
+	handleVoltar,
+}: stepType) {
+	const { pathname } = useLocation();
+	const isView = pathname?.includes("/view");
+
 	const validate = (values: FormikValues, setErrors: Function): boolean => {
 		var dirty = false;
 		const errors: FormikErrors<FormikValues> = {};
@@ -17,32 +26,38 @@ export default function ({ setStep, setSubsToExclude }: stepType) {
 			"valoresFundo",
 		];
 
-		values.submodulos.forEach((submodulo: any, index: number) => {
-			fieldsToValid.forEach((field) => {
-				if (isEmpty(submodulo[field])) {
-					errors[
-						"submodulo"
-					] = `Existem campos obrigatórios não preenchidos no submódulo ${
-						index + 1
-					}`;
-					dirty = true;
+		if (!isView) {
+			values.submodulos.forEach((submodulo: any, index: number) => {
+				fieldsToValid.forEach((field) => {
+					if (isEmpty(submodulo[field])) {
+						errors[
+							"submodulo"
+						] = `Existem campos obrigatórios não preenchidos no submódulo ${
+							index + 1
+						}`;
+						dirty = true;
+					}
+				});
+				if (submodulo.valoresFundo) {
+					submodulo.valoresFundo.forEach((valoresFundo) => {
+						monthsData.forEach((monthData) => {
+							if (
+								isEmpty(
+									valoresFundo[`${monthData.codigo}Valor`],
+								)
+							) {
+								errors[
+									"submodulo"
+								] = `Existem campos obrigatórios não preenchidos no submódulo ${
+									index + 1
+								}`;
+								dirty = true;
+							}
+						});
+					});
 				}
 			});
-			if (submodulo.valoresFundo) {
-				submodulo.valoresFundo.forEach((valoresFundo) => {
-					monthsData.forEach((monthData) => {
-						if (isEmpty(valoresFundo[`${monthData.codigo}Valor`])) {
-							errors[
-								"submodulo"
-							] = `Existem campos obrigatórios não preenchidos no submódulo ${
-								index + 1
-							}`;
-							dirty = true;
-						}
-					});
-				});
-			}
-		});
+		}
 
 		setErrors(errors);
 		return !dirty;
@@ -65,6 +80,8 @@ export default function ({ setStep, setSubsToExclude }: stepType) {
 					setSubsToExclude={setSubsToExclude}
 					setStep={setStep}
 					formik={formik}
+					submitForm={submitForm}
+					handleVoltar={handleVoltar}
 				/>
 			)}
 		</Formik>

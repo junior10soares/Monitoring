@@ -25,23 +25,18 @@ type step3Type = {
 	setStep: Function;
 	formik: FormikProps<typeof inputs>;
 	setSubsToExclude: Function;
+	submitForm: Function;
+	handleVoltar: Function;
 };
 
-function step3({ setStep, formik, setSubsToExclude }: step3Type) {
-	const [submodulos, setSubmodulos] = useState<ISubmodulo[]>([
-		{
-			codgBeneficio: "1231",
-			nomeBeneficio: "Dale",
-		},
-		{
-			codgBeneficio: "1232",
-			nomeBeneficio: "Dele",
-		},
-		{
-			codgBeneficio: "1233",
-			nomeBeneficio: "Dole",
-		},
-	]);
+function step3({
+	setStep,
+	formik,
+	setSubsToExclude,
+	submitForm,
+	handleVoltar,
+}: step3Type) {
+	const [submodulos, setSubmodulos] = useState<ISubmodulo[]>();
 	const [incentivosFiscais, setIncentivosFiscais] = useState<
 		IIncentivoFiscal[]
 	>([]);
@@ -63,15 +58,14 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 			const submds = await getAllSubmodulosByInscricaoEstadual(
 				step1.inscricaoEstadual,
 			);
-			// setSubmodulos(submds);
+			setSubmodulos(submds);
 			setIsLoading(false);
 		})();
 	}, []);
 
 	function loadData() {
 		const localItem = JSON.parse(localStorage.getItem("step3"));
-
-		formik.setValues(localItem ?? { submodulos: [] });
+		formik.setValues(localItem ?? inputs);
 	}
 
 	const handleChange =
@@ -190,13 +184,26 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 					type="button"
 					variant="contained"
 					className={styles.secondaryButton}
-					onClick={() => {
-						navigate("/beneficiario");
-						window.scrollTo({ top: 0, behavior: "smooth" });
-					}}
+					onClick={() => handleVoltar()}
 				>
 					Voltar
 				</Button>
+				{!isView && (
+					<Button
+						type="button"
+						variant="contained"
+						className={styles.salvarButton}
+						onClick={() => {
+							localStorage.setItem(
+								"step3",
+								JSON.stringify(formik.values),
+							);
+							submitForm();
+						}}
+					>
+						Salvar
+					</Button>
+				)}
 				<Button
 					type="button"
 					variant="contained"

@@ -122,13 +122,54 @@
         border-radius: 2rem;
         padding: 1rem;
         margin-top: 2rem;
+
+        &:hover {
+            color: white;
+        }
+    }
+
+    .salvarButton{
+        border: 1px solid global.$green;
+        background-color: white;
+        color: global.$green;
+        border-radius: 2rem;
+        padding: 1rem;
+        margin-top: 2rem;
+
+        &:hover {
+            color: white;
+            background-color: global.$green;
+        }
+    }
+
+    .cancelButton{
+        background-color: global.$cancel-color;
+        border-radius: 2rem;
+        padding: 1rem;
+        margin-top: 2rem;
+        min-width: 6rem;
+    }
+
+    .removeButtonDiv {
+        display: flex;
+        align-items: center;
+
+        .removeIcon {
+            color: #fc3c3c;
+            font-size: 2.5rem;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
     }
 
     .buttonsRigth {
         display: flex;
         justify-content: flex-end;
+        gap: 1rem;
         width: 75%;
         margin-bottom: 2rem;
-        gap: 1rem;
     }
 }

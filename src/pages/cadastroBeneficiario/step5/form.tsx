@@ -32,24 +32,12 @@ import styles from "./styles.module.scss";
 type step5Type = {
 	setStep: Function;
 	formik: FormikProps<typeof inputs>;
+	handleVoltar: Function;
 };
 
-function step5({ setStep, formik }: step5Type) {
+function step5({ setStep, formik, handleVoltar }: step5Type) {
 	const [ncms, setNcms] = useState([]);
-	const [submodulos, setSubmodulos] = useState<ISubmodulo[]>([
-		{
-			codgBeneficio: "1231",
-			nomeBeneficio: "Dale",
-		},
-		{
-			codgBeneficio: "1232",
-			nomeBeneficio: "Dele",
-		},
-		{
-			codgBeneficio: "1233",
-			nomeBeneficio: "Dole",
-		},
-	]);
+	const [submodulos, setSubmodulos] = useState<ISubmodulo[]>();
 	const [incentivosFiscais, setIncentivosFiscais] = useState<
 		IIncentivoFiscal[]
 	>([]);
@@ -77,7 +65,7 @@ function step5({ setStep, formik }: step5Type) {
 			const submds = await getAllSubmodulosByInscricaoEstadual(
 				step1.inscricaoEstadual,
 			);
-			// setSubmodulos(submds);
+			setSubmodulos(submds);
 			setIsLoading(false);
 		})();
 	}, []);
@@ -568,10 +556,7 @@ function step5({ setStep, formik }: step5Type) {
 						type="button"
 						variant="contained"
 						className={styles.secondaryButton}
-						onClick={() => {
-							navigate("/beneficiario");
-							window.scrollTo({ top: 0, behavior: "smooth" });
-						}}
+						onClick={() => handleVoltar()}
 					>
 						Voltar
 					</Button>
@@ -593,7 +578,7 @@ function step5({ setStep, formik }: step5Type) {
 						<Button
 							type="submit"
 							variant="contained"
-							className={styles.primaryButton}
+							className={styles.salvarButton}
 						>
 							Salvar
 						</Button>

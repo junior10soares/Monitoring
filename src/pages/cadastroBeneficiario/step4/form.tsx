@@ -17,9 +17,11 @@ import styles from "./styles.module.scss";
 type step4Type = {
 	setStep: Function;
 	formik: FormikProps<typeof inputs>;
+	submitForm: Function;
+	handleVoltar: Function;
 };
 
-function step4({ setStep, formik }: step4Type) {
+function step4({ setStep, formik, submitForm, handleVoltar }: step4Type) {
 	const [ncms, setNcms] = useState([]);
 	const [unidadeMedida, setUnidadeMedida] = useState([]);
 	const { pathname } = useLocation();
@@ -371,13 +373,26 @@ function step4({ setStep, formik }: step4Type) {
 							type="button"
 							variant="contained"
 							className={styles.secondaryButton}
-							onClick={() => {
-								navigate("/beneficiario");
-								window.scrollTo({ top: 0, behavior: "smooth" });
-							}}
+							onClick={() => handleVoltar()}
 						>
 							Voltar
 						</Button>
+						{!isView && (
+							<Button
+								type="button"
+								variant="contained"
+								className={styles.salvarButton}
+								onClick={() => {
+									localStorage.setItem(
+										"step4",
+										JSON.stringify(formik.values),
+									);
+									submitForm();
+								}}
+							>
+								Salvar
+							</Button>
+						)}
 						<Button
 							type="button"
 							variant="contained"

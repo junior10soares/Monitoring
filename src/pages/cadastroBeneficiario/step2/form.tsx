@@ -12,9 +12,11 @@ import styles from "./styles.module.scss";
 type step2Type = {
 	setStep: Function;
 	formik: FormikProps<typeof inputs>;
+	submitForm: Function;
+	handleVoltar: Function;
 };
 
-function step2({ setStep, formik }: step2Type) {
+function step2({ setStep, formik, submitForm, handleVoltar }: step2Type) {
 	const { pathname } = useLocation();
 	const navigate = useNavigate();
 	const isView = pathname?.includes("/view");
@@ -216,13 +218,26 @@ function step2({ setStep, formik }: step2Type) {
 						type="button"
 						variant="contained"
 						className={styles.secondaryButton}
-						onClick={() => {
-							navigate("/beneficiario");
-							window.scrollTo({ top: 0, behavior: "smooth" });
-						}}
+						onClick={() => handleVoltar()}
 					>
 						Voltar
 					</Button>
+					{!isView && (
+						<Button
+							type="button"
+							variant="contained"
+							className={styles.salvarButton}
+							onClick={() => {
+								localStorage.setItem(
+									"step2",
+									JSON.stringify(formik.values),
+								);
+								submitForm();
+							}}
+						>
+							Salvar
+						</Button>
+					)}
 					<Button
 						type="button"
 						variant="contained"

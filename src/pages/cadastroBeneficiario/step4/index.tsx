@@ -4,7 +4,7 @@ import { isEmpty } from "../../../utils/Global";
 import Form from "./form";
 import { inputs } from "./inputs";
 
-export default function ({ setStep }: stepType) {
+export default function ({ setStep, submitForm, handleVoltar }: stepType) {
 	const validate = (values: FormikValues, setErrors: Function): boolean => {
 		var dirty = false;
 		const errors: FormikErrors<FormikValues> = {};
@@ -49,7 +49,14 @@ export default function ({ setStep }: stepType) {
 				}
 			}}
 		>
-			{(formik) => <Form setStep={setStep} formik={formik} />}
+			{(formik) => (
+				<Form
+					setStep={setStep}
+					formik={formik}
+					submitForm={submitForm}
+					handleVoltar={handleVoltar}
+				/>
+			)}
 		</Formik>
 	);
 }
