@@ -29,6 +29,7 @@ function step4({ setStep, formik, submitForm, handleVoltar }: step4Type) {
 	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = useOutletContext();
 	const isView = pathname?.includes("/view");
+	const isNew = pathname?.includes("/new");
 	const [isAddButtonVisible, setIsAddButtonVisible] = useState(false);
 
 	useEffect(() => {
@@ -377,7 +378,7 @@ function step4({ setStep, formik, submitForm, handleVoltar }: step4Type) {
 						>
 							Voltar
 						</Button>
-						{!isView && (
+						{!isView && !isNew && (
 							<Button
 								type="button"
 								variant="contained"

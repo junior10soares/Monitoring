@@ -221,27 +221,30 @@ function SubmoduloForm({
 										);
 									}}
 								>
-									{submodulos.map(
-										(
-											{
-												codgBeneficio,
-												nomeBeneficio,
-											}: ISubmodulo,
-											index,
-										) => {
-											return (
-												codgBeneficio && (
-													<MenuItem
-														key={index}
-														value={codgBeneficio}
-													>
-														{codgBeneficio} -{" "}
-														{nomeBeneficio}
-													</MenuItem>
-												)
-											);
-										},
-									)}
+									{submodulos &&
+										submodulos.map(
+											(
+												{
+													codgBeneficio,
+													nomeBeneficio,
+												}: ISubmodulo,
+												index,
+											) => {
+												return (
+													codgBeneficio && (
+														<MenuItem
+															key={index}
+															value={
+																codgBeneficio
+															}
+														>
+															{codgBeneficio} -{" "}
+															{nomeBeneficio}
+														</MenuItem>
+													)
+												);
+											},
+										)}
 								</Select>
 							</FormControl>
 							<NumericMask

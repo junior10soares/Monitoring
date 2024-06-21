@@ -47,6 +47,7 @@ function step3({
 	const dialogRef = useRef(null);
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
+	const isNew = pathname?.includes("/new");
 
 	useEffect(() => {
 		loadData();
@@ -188,7 +189,7 @@ function step3({
 				>
 					Voltar
 				</Button>
-				{!isView && (
+				{!isView && !isNew && (
 					<Button
 						type="button"
 						variant="contained"

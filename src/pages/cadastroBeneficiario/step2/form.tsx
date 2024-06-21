@@ -1,7 +1,7 @@
 import { Button, Card } from "@mui/material";
 import { FormikProps } from "formik";
 import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import NumericMask from "../../../components/numericMask";
 import { formatBRCurrency } from "../../../utils/Currency";
 import { monthsData } from "../../../utils/DateTime";
@@ -18,8 +18,8 @@ type step2Type = {
 
 function step2({ setStep, formik, submitForm, handleVoltar }: step2Type) {
 	const { pathname } = useLocation();
-	const navigate = useNavigate();
 	const isView = pathname?.includes("/view");
+	const isNew = pathname?.includes("/new");
 
 	useEffect(() => {
 		const localItem = localStorage.getItem("step2");
@@ -222,7 +222,7 @@ function step2({ setStep, formik, submitForm, handleVoltar }: step2Type) {
 					>
 						Voltar
 					</Button>
-					{!isView && (
+					{!isView && !isNew && (
 						<Button
 							type="button"
 							variant="contained"

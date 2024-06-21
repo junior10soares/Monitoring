@@ -57,6 +57,7 @@ function step1({ formik, submitForm, handleVoltar }: step1Type) {
 	const [showInput, setShowInput] = useState(false);
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
+	const isNew = pathname?.includes("/new");
 	const listTelefones = ["ADMINISTRADOR", "CONTABILIDADE", "EMPRESA"];
 	const excludedListTelefones = [
 		"ADMINISTRADOR",
@@ -617,7 +618,7 @@ function step1({ formik, submitForm, handleVoltar }: step1Type) {
 					>
 						Voltar
 					</Button>
-					{!isView && (
+					{!isView && !isNew && (
 						<Button
 							type="button"
 							variant="contained"
