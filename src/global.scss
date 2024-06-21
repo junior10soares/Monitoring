@@ -1,4 +1,5 @@
 $primary-color: rgba(48, 65, 134, 1);
+$cancel-color: rgb(174, 25, 35);
 $white: rgba(255, 255, 255, 1);
 $gray:rgba(130, 130, 130, 1);
 
@@ -95,4 +96,16 @@ table {
     &:hover{
         cursor: pointer;
     }
+}
+.message{
+    width: 100%;
+    text-align: center;
+    padding: 1rem;
+}
+.alert{
+    width: auto;
+    position: fixed;
+    z-index: 100000000;
+    right: 10px;
+    top: 100px;
 }

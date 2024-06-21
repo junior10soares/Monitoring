@@ -16,6 +16,7 @@ import { IValorFundo } from "valorFundo";
 import NumericMask from "../../../../../components/numericMask";
 import { formatBRCurrency } from "../../../../../utils/Currency";
 import { monthsData } from "../../../../../utils/DateTime";
+import { isEmpty } from "../../../../../utils/Global";
 import { inputs } from "../../inputs";
 import styles from "./styles.module.scss";
 
@@ -67,7 +68,7 @@ function SubmoduloForm({
 				const element = formik.values.submodulos[forIndex];
 				if (
 					forIndex !== index &&
-					element.incentivoFiscal.id ===
+					element.incentivoFiscal?.id ===
 						formik.values.submodulos[index]?.incentivoFiscal?.id &&
 					element.submodulo ===
 						formik.values.submodulos[index]?.submodulo
@@ -90,18 +91,28 @@ function SubmoduloForm({
 
 	const total = useMemo(() => {
 		return formik.values.submodulos[index]?.valoresFundo?.reduce(
-			(totalFundo: number, item: IValorFundo) =>
-				totalFundo +
-				parseFloat(
-					Object.values(item)?.reduce(
-						(totalItem, itemValue) =>
-							totalItem +
-							parseFloat(
-								typeof itemValue !== "object" ? itemValue : "0",
-							),
-						0,
-					),
-				),
+			(totalFundo, item: IValorFundo) => {
+				const values = item;
+				delete values.anoReferencia;
+				delete values.id;
+				return (
+					totalFundo +
+					parseFloat(
+						Object.values(item)?.reduce(
+							(totalItem, itemValue) =>
+								totalItem +
+								parseFloat(
+									!isEmpty(itemValue)
+										? typeof itemValue !== "object"
+											? itemValue
+											: "0"
+										: "0",
+								),
+							0,
+						),
+					)
+				);
+			},
 			0,
 		);
 	}, [formik.values.submodulos[index]?.valoresFundo]);
@@ -453,9 +464,11 @@ function SubmoduloForm({
 														Valor Total {sigla}:
 														{formatBRCurrency(
 															monthsData.reduce(
-																(total, item) =>
-																	total +
-																	parseFloat(
+																(
+																	total,
+																	item,
+																) => {
+																	const currentVal =
 																		formik.values.submodulos[
 																			index
 																		].valoresFundo?.find(
@@ -468,8 +481,18 @@ function SubmoduloForm({
 																				id,
 																		)?.[
 																			`${item.codigo}Valor`
-																		] ?? 0,
-																	),
+																		] ?? 0;
+																	return (
+																		total +
+																		(!isEmpty(
+																			currentVal,
+																		)
+																			? parseFloat(
+																					currentVal,
+																			  )
+																			: 0)
+																	);
+																},
 																0,
 															),
 														)}

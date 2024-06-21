@@ -1,7 +1,7 @@
 import { Button, Card } from "@mui/material";
 import { FormikProps } from "formik";
 import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import NumericMask from "../../../components/numericMask";
 import { formatBRCurrency } from "../../../utils/Currency";
 import { monthsData } from "../../../utils/DateTime";
@@ -16,6 +16,7 @@ type step2Type = {
 
 function step2({ setStep, formik }: step2Type) {
 	const { pathname } = useLocation();
+	const navigate = useNavigate();
 	const isView = pathname?.includes("/view");
 
 	useEffect(() => {
@@ -46,7 +47,7 @@ function step2({ setStep, formik }: step2Type) {
 								Mês referência
 							</span>
 							<span
-								style={{ marginRight: '20px' }}
+								style={{ marginRight: "20px" }}
 								className={`${styles.col3} ${styles.monthTitle}`}
 							>
 								Investimento mensal
@@ -57,7 +58,7 @@ function step2({ setStep, formik }: step2Type) {
 								Empregos direto (homem)
 							</span>
 							<span
-								style={{ marginRight: '-40px' }}
+								style={{ marginRight: "-40px" }}
 								className={`${styles.col3} ${styles.monthTitle}`}
 							>
 								Empregos direto (mulher)
@@ -67,7 +68,10 @@ function step2({ setStep, formik }: step2Type) {
 							return (
 								<div className={styles.TableInputs}>
 									<span
-										style={{ textAlign: 'center', marginLeft: '20px' }}
+										style={{
+											textAlign: "center",
+											marginLeft: "20px",
+										}}
 										className={`${styles.col2} ${styles.monthTitle}`}
 									>
 										{label}
@@ -172,15 +176,15 @@ function step2({ setStep, formik }: step2Type) {
 										formik.values?.investimentoMensal,
 									)
 										? formik.values?.investimentoMensal?.reduce(
-											(total, item) =>
-												total +
-												parseFloat(
-													!isEmpty(item?.valor)
-														? item?.valor
-														: "0",
-												),
-											0,
-										)
+												(total, item) =>
+													total +
+													parseFloat(
+														!isEmpty(item?.valor)
+															? item?.valor
+															: "0",
+													),
+												0,
+										  )
 										: 0,
 								)}
 							</span>
@@ -213,18 +217,29 @@ function step2({ setStep, formik }: step2Type) {
 						variant="contained"
 						className={styles.secondaryButton}
 						onClick={() => {
-							setStep(1);
+							navigate("/beneficiario");
 							window.scrollTo({ top: 0, behavior: "smooth" });
 						}}
 					>
 						Voltar
 					</Button>
 					<Button
+						type="button"
+						variant="contained"
+						className={styles.secondaryButton}
+						onClick={() => {
+							setStep(1);
+							window.scrollTo({ top: 0, behavior: "smooth" });
+						}}
+					>
+						Anterior
+					</Button>
+					<Button
 						type="submit"
 						variant="contained"
 						className={styles.primaryButton}
 					>
-						Continuar
+						Próximo
 					</Button>
 				</div>
 			</div>

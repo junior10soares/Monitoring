@@ -82,6 +82,14 @@
         }
     }
 
+    .cancelButton{
+        background-color: global.$cancel-color;
+        border-radius: 2rem;
+        padding: 1rem;
+        margin-top: 2rem;
+        min-width: 6rem;
+    }
+
     .removeButtonDiv {
         display: flex;
         align-items: center;
@@ -100,6 +108,7 @@
     .buttonsRigth {
         display: flex;
         justify-content: flex-end;
+        gap: 1rem;
         width: 75%;
         margin-bottom: 2rem;
     }

@@ -1,4 +1,5 @@
 export type IValorFundo = {
+	anoReferencia?: string | number;
 	abrilValor: number;
 	agostoValor: number;
 	dezembroValor: number;
@@ -11,7 +12,7 @@ export type IValorFundo = {
 	novembroValor: number;
 	outubroValor: number;
 	setembroValor: number;
-	fundoIncentivo: {
+	fundoIncentivo?: {
 		dataAtualizacao: string;
 		dataCadastro: string;
 		id: number;
