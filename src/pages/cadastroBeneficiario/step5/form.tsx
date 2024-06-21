@@ -77,7 +77,7 @@ function step5({ setStep, formik }: step5Type) {
 			const submds = await getAllSubmodulosByInscricaoEstadual(
 				step1.inscricaoEstadual,
 			);
-			setSubmodulos(submds);
+			// setSubmodulos(submds);
 			setIsLoading(false);
 		})();
 	}, []);

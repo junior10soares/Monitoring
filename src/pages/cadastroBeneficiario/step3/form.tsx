@@ -65,15 +65,13 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 			);
 			// setSubmodulos(submds);
 			setIsLoading(false);
-			formik.setFieldValue("first", false);
 		})();
 	}, []);
 
 	function loadData() {
 		const localItem = JSON.parse(localStorage.getItem("step3"));
-		if (localItem?.submodulos && localItem?.submodulos?.length > 0) {
-			formik.setValues(localItem);
-		}
+
+		formik.setValues(localItem ?? { submodulos: [] });
 	}
 
 	const handleChange =
@@ -106,67 +104,71 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 					{formik.errors.submodulo ?? ""}
 				</Alert>
 			)}
-			{formik.values.submodulos.map((i, index) => (
-				<Accordion
-					expanded={expanded === index}
-					onChange={handleChange(index)}
-					sx={{ margin: "1rem" }}
-				>
-					<AccordionSummary
-						expandIcon={
-							<ArrowDownwardIcon sx={{ color: "white" }} />
-						}
-						aria-controls="panel1-content"
-						id="panel1-header"
-						className={styles.accordionTitle}
+			{formik.values?.submodulos &&
+				formik.values.submodulos.map((i, index) => (
+					<Accordion
+						expanded={expanded === index}
+						onChange={handleChange(index)}
+						sx={{ margin: "1rem" }}
 					>
-						<div
-							className={`${styles.col1} ${styles.removeButtonDiv}`}
+						<AccordionSummary
+							expandIcon={
+								<ArrowDownwardIcon sx={{ color: "white" }} />
+							}
+							aria-controls="panel1-content"
+							id="panel1-header"
+							className={styles.accordionTitle}
 						>
-							<>
-								<Typography style={{ color: "white" }}>
-									{i.incentivoFiscal?.sigla
-										? `${
-												i.incentivoFiscal?.sigla ?? ""
-										  } - ${i.submodulo ?? ""}`
-										: ""}
-								</Typography>
+							<div
+								className={`${styles.col1} ${styles.removeButtonDiv}`}
+							>
+								<>
+									<Typography style={{ color: "white" }}>
+										{i.incentivoFiscal?.sigla
+											? `${
+													i.incentivoFiscal?.sigla ??
+													""
+											  } - ${i.submodulo ?? ""}`
+											: ""}
+									</Typography>
 
-								<RemoveIcon
-									className={styles.removeIcon}
-									onClick={async () => {
-										dialogRef.current?.handleClickOpen(
-											() => {
-												var submodulos =
-													formik.values.submodulos;
-												if (submodulos[index].id) {
-													setSubsToExclude(
-														submodulos[index].id,
+									<RemoveIcon
+										className={styles.removeIcon}
+										onClick={async () => {
+											dialogRef.current?.handleClickOpen(
+												() => {
+													var submodulos =
+														formik.values
+															.submodulos;
+													if (submodulos[index].id) {
+														setSubsToExclude(
+															submodulos[index]
+																.id,
+														);
+													}
+													submodulos.splice(index, 1);
+													formik.setFieldValue(
+														"submodulos",
+														submodulos,
 													);
-												}
-												submodulos.splice(index, 1);
-												formik.setFieldValue(
-													"submodulos",
-													submodulos,
-												);
-											},
-										);
-									}}
-								/>
-							</>
-						</div>
-					</AccordionSummary>
-					<AccordionDetails>
-						<SubmoduloForm
-							submodulos={submodulos}
-							incentivosFiscais={incentivosFiscais}
-							formik={formik}
-							setStep={setStep}
-							index={index}
-						/>
-					</AccordionDetails>
-				</Accordion>
-			))}
+												},
+											);
+										}}
+									/>
+								</>
+							</div>
+						</AccordionSummary>
+						<AccordionDetails>
+							<SubmoduloForm
+								submodulos={submodulos}
+								incentivosFiscais={incentivosFiscais}
+								formik={formik}
+								setStep={setStep}
+								index={index}
+							/>
+						</AccordionDetails>
+					</Accordion>
+				))}
 			{!isView && !formik.errors.submodulos && (
 				<Button
 					type="button"

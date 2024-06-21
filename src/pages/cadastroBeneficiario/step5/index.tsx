@@ -53,18 +53,14 @@ export default function ({ setStep, subsToExclude }: stepType) {
 				}}
 				onSubmit={async (values, { setSubmitting }) => {
 					const extractedData = {
-						municipio: {
-							id: values?.municipio,
-						},
+						municipio: values?.municipio,
 						nomeOuRazaoSocial: values?.nomeOuRazaoSocial,
 						cpfOuCnpj: values?.cpfOuCnpj,
 						email: values?.email,
 						inscricaoEstadual: values?.inscricaoEstadual,
 						nomeFantasia: values?.nomeFantasia,
 						nomeAdministrador: values?.nomeAdministrador,
-						porte: {
-							id: values?.porte,
-						},
+						porte: values?.porte,
 						ramoAtividade: values?.ramoAtividade,
 						descricao: values?.descricaoStep1,
 						status: [
@@ -243,7 +239,8 @@ export default function ({ setStep, subsToExclude }: stepType) {
 							},
 						},
 						incentivoFiscal: values.submodulos[0].incentivoFiscal,
-						submodulos: step3.submodulos.map((i) => ({
+						submodulos: values.submodulos.map((i) => ({
+							...i,
 							codigoRcr: "123",
 							vendaAnualInterestadual: i.vendaAnualInterestadual,
 							vendaAnualInterna: i.vendaAnualInterna,
