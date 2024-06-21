@@ -95,7 +95,7 @@ function step2({ setStep, formik, submitForm, handleVoltar }: step2Type) {
 													.investimentoMensal,
 											];
 											newInvestimentoMensal[index] = {
-												codigo,
+												codigo: `${codigo}Valor`,
 												valor: ev.target.value,
 											};
 											formik.setFieldValue(
@@ -124,7 +124,7 @@ function step2({ setStep, formik, submitForm, handleVoltar }: step2Type) {
 												...formik.values.empregoHomem,
 											];
 											newEmpregosHomem[index] = {
-												codigo,
+												codigo: `${codigo}Valor`,
 												valor: ev.target.value,
 											};
 											formik.setFieldValue(
@@ -152,7 +152,7 @@ function step2({ setStep, formik, submitForm, handleVoltar }: step2Type) {
 												...formik.values.empregoMulher,
 											];
 											newEmpregosMulher[index] = {
-												codigo,
+												codigo: `${codigo}Valor`,
 												valor: ev.target.value,
 											};
 											formik.setFieldValue(

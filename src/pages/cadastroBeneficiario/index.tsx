@@ -75,14 +75,20 @@ function cadastroBeneficiario() {
 		};
 
 		const extractedData = {
-			municipio: { id: steps?.municipio },
+			municipio:
+				typeof steps?.municipio === "object"
+					? steps?.municipio
+					: { id: steps?.municipio },
 			nomeOuRazaoSocial: steps?.nomeOuRazaoSocial,
 			cpfOuCnpj: steps?.cpfOuCnpj,
 			email: steps?.email,
 			inscricaoEstadual: steps?.inscricaoEstadual,
 			nomeFantasia: steps?.nomeFantasia,
 			nomeAdministrador: steps?.nomeAdministrador,
-			porte: { id: steps?.porte },
+			porte:
+				typeof steps?.porte === "object"
+					? steps?.porte
+					: { id: steps?.porte },
 			ramoAtividade: steps?.ramoAtividade,
 			descricao: steps?.descricaoStep1,
 			status: [
@@ -107,122 +113,122 @@ function cadastroBeneficiario() {
 				investimentoMensal: {
 					id: steps.dadosEconomicos.investimentoMensalId,
 					janeiroValor: steps.dadosEconomicos.investimentoMensal.find(
-						(i) => i.codigo === "janeiro" || "janeiroValor",
+						(i) => i.codigo === "janeiroValor",
 					)?.valor,
 					fevereiroValor:
 						steps.dadosEconomicos.investimentoMensal.find(
-							(i) => i.codigo === "fevereiro" || "fevereiroValor",
+							(i) => i.codigo === "fevereiroValor",
 						)?.valor,
 					marcoValor: steps.dadosEconomicos.investimentoMensal.find(
-						(i) => i.codigo === "marco" || "marcoValor",
+						(i) => i.codigo === "marcoValor",
 					)?.valor,
 					abrilValor: steps.dadosEconomicos.investimentoMensal.find(
-						(i) => i.codigo === "abril" || "abrilValor",
+						(i) => i.codigo === "abrilValor",
 					)?.valor,
 					maioValor: steps.dadosEconomicos.investimentoMensal.find(
-						(i) => i.codigo === "maio" || "maioValor",
+						(i) => i.codigo === "maioValor",
 					)?.valor,
 					junhoValor: steps.dadosEconomicos.investimentoMensal.find(
-						(i) => i.codigo === "junho" || "junhoValor",
+						(i) => i.codigo === "junhoValor",
 					)?.valor,
 					julhoValor: steps.dadosEconomicos.investimentoMensal.find(
-						(i) => i.codigo === "julho" || "julhoValor",
+						(i) => i.codigo === "julhoValor",
 					)?.valor,
 					agostoValor: steps.dadosEconomicos.investimentoMensal.find(
-						(i) => i.codigo === "agosto" || "agostoValor",
+						(i) => i.codigo === "agostoValor",
 					)?.valor,
 					setembroValor:
 						steps.dadosEconomicos.investimentoMensal.find(
-							(i) => i.codigo === "setembro" || "setembroValor",
+							(i) => i.codigo === "setembroValor",
 						)?.valor,
 					outubroValor: steps.dadosEconomicos.investimentoMensal.find(
-						(i) => i.codigo === "outubro" || "outubroValor",
+						(i) => i.codigo === "outubroValor",
 					)?.valor,
 					novembroValor:
 						steps.dadosEconomicos.investimentoMensal.find(
-							(i) => i.codigo === "novembro" || "novembroValor",
+							(i) => i.codigo === "novembroValor",
 						)?.valor,
 					dezembroValor:
 						steps.dadosEconomicos.investimentoMensal.find(
-							(i) => i.codigo === "dezembro" || "dezembroValor",
+							(i) => i.codigo === "dezembroValor",
 						)?.valor,
 				},
 				empregoHomem: {
 					id: steps.dadosEconomicos.empregoHomemId,
 					janeiroValor: steps.dadosEconomicos.empregoHomem.find(
-						(i) => i.codigo === "janeiro" || "janeiroValor",
+						(i) => i.codigo === "janeiroValor",
 					)?.valor,
 					fevereiroValor: steps.dadosEconomicos.empregoHomem.find(
-						(i) => i.codigo === "fevereiro" || "fevereiroValor",
+						(i) => i.codigo === "fevereiroValor",
 					)?.valor,
 					marcoValor: steps.dadosEconomicos.empregoHomem.find(
-						(i) => i.codigo === "marco" || "marcoValor",
+						(i) => i.codigo === "marcoValor",
 					)?.valor,
 					abrilValor: steps.dadosEconomicos.empregoHomem.find(
-						(i) => i.codigo === "abril" || "abrilValor",
+						(i) => i.codigo === "abrilValor",
 					)?.valor,
 					maioValor: steps.dadosEconomicos.empregoHomem.find(
-						(i) => i.codigo === "maio" || "maioValor",
+						(i) => i.codigo === "maioValor",
 					)?.valor,
 					junhoValor: steps.dadosEconomicos.empregoHomem.find(
-						(i) => i.codigo === "junho" || "junhoValor",
+						(i) => i.codigo === "junhoValor",
 					)?.valor,
 					julhoValor: steps.dadosEconomicos.empregoHomem.find(
-						(i) => i.codigo === "julho" || "julhoValor",
+						(i) => i.codigo === "julhoValor",
 					)?.valor,
 					agostoValor: steps.dadosEconomicos.empregoHomem.find(
-						(i) => i.codigo === "agosto" || "agostoValor",
+						(i) => i.codigo === "agostoValor",
 					)?.valor,
 					setembroValor: steps.dadosEconomicos.empregoHomem.find(
-						(i) => i.codigo === "setembro" || "setembroValor",
+						(i) => i.codigo === "setembroValor",
 					)?.valor,
 					outubroValor: steps.dadosEconomicos.empregoHomem.find(
-						(i) => i.codigo === "outubro" || "outubroValor",
+						(i) => i.codigo === "outubroValor",
 					)?.valor,
 					novembroValor: steps.dadosEconomicos.empregoHomem.find(
-						(i) => i.codigo === "novembro" || "novembroValor",
+						(i) => i.codigo === "novembroValor",
 					)?.valor,
 					dezembroValor: steps.dadosEconomicos.empregoHomem.find(
-						(i) => i.codigo === "dezembro" || "dezembroValor",
+						(i) => i.codigo === "dezembroValor",
 					)?.valor,
 				},
 				empregoMulher: {
 					id: steps.dadosEconomicos.empregoMulherId,
 					janeiroValor: steps.dadosEconomicos.empregoMulher.find(
-						(i) => i.codigo === "janeiro" || "janeiroValor",
+						(i) => i.codigo === "janeiroValor",
 					)?.valor,
 					fevereiroValor: steps.dadosEconomicos.empregoMulher.find(
-						(i) => i.codigo === "fevereiro" || "fevereiroValor",
+						(i) => i.codigo === "fevereiroValor",
 					)?.valor,
 					marcoValor: steps.dadosEconomicos.empregoMulher.find(
-						(i) => i.codigo === "marco" || "marcoValor",
+						(i) => i.codigo === "marcoValor",
 					)?.valor,
 					abrilValor: steps.dadosEconomicos.empregoMulher.find(
-						(i) => i.codigo === "abril" || "abrilValor",
+						(i) => i.codigo === "abrilValor",
 					)?.valor,
 					maioValor: steps.dadosEconomicos.empregoMulher.find(
-						(i) => i.codigo === "maio" || "maioValor",
+						(i) => i.codigo === "maioValor",
 					)?.valor,
 					junhoValor: steps.dadosEconomicos.empregoMulher.find(
-						(i) => i.codigo === "junho" || "junhoValor",
+						(i) => i.codigo === "junhoValor",
 					)?.valor,
 					julhoValor: steps.dadosEconomicos.empregoMulher.find(
-						(i) => i.codigo === "julho" || "julhoValor",
+						(i) => i.codigo === "julhoValor",
 					)?.valor,
 					agostoValor: steps.dadosEconomicos.empregoMulher.find(
-						(i) => i.codigo === "agosto" || "agostoValor",
+						(i) => i.codigo === "agostoValor",
 					)?.valor,
 					setembroValor: steps.dadosEconomicos.empregoMulher.find(
-						(i) => i.codigo === "setembro" || "setembroValor",
+						(i) => i.codigo === "setembroValor",
 					)?.valor,
 					outubroValor: steps.dadosEconomicos.empregoMulher.find(
-						(i) => i.codigo === "outubro" || "outubroValor",
+						(i) => i.codigo === "outubroValor",
 					)?.valor,
 					novembroValor: steps.dadosEconomicos.empregoMulher.find(
-						(i) => i.codigo === "novembro" || "novembroValor",
+						(i) => i.codigo === "novembroValor",
 					)?.valor,
 					dezembroValor: steps.dadosEconomicos.empregoMulher.find(
-						(i) => i.codigo === "dezembro" || "dezembroValor",
+						(i) => i.codigo === "dezembroValor",
 					)?.valor,
 				},
 			},
@@ -273,7 +279,6 @@ function cadastroBeneficiario() {
 						localStorage.removeItem(`step${index + 1}`);
 					}
 					setTimeout(() => {
-						setSubmitting(false);
 						setShow(false);
 						navigate("/beneficiario");
 					}, 1000);

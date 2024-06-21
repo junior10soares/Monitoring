@@ -6,7 +6,7 @@ import Form from "./form";
 import { inputs } from "./inputs";
 import styles from "./styles.module.scss";
 
-export default function ({ setStep, submitForm }: stepType) {
+export default function ({ setStep, submitForm, handleVoltar }: stepType) {
 	const [show, setShow] = useState(false);
 
 	return (
@@ -27,11 +27,17 @@ export default function ({ setStep, submitForm }: stepType) {
 					const errors = {};
 					return errors;
 				}}
-				onSubmit={async (values, { setSubmitting }) => {
-					submitForm(values, setShow, setSubmitting);
+				onSubmit={async (values) => {
+					submitForm(values);
 				}}
 			>
-				{(formik) => <Form setStep={setStep} formik={formik} />}
+				{(formik) => (
+					<Form
+						setStep={setStep}
+						formik={formik}
+						handleVoltar={handleVoltar}
+					/>
+				)}
 			</Formik>
 		</>
 	);
