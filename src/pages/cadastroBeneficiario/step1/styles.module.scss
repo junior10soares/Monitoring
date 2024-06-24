@@ -61,7 +61,6 @@
         }
 
     }
-
     .primaryButton {
         background-color: global.$primary-color;
         border-radius: 2rem;
@@ -79,6 +78,20 @@
 
         &:hover {
             color: white;
+        }
+    }
+
+    .salvarButton{
+        border: 1px solid global.$green;
+        background-color: white;
+        color: global.$green;
+        border-radius: 2rem;
+        padding: 1rem;
+        margin-top: 2rem;
+
+        &:hover {
+            color: white;
+            background-color: global.$green;
         }
     }
 

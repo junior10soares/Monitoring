@@ -40,9 +40,11 @@ import styles from "./styles.module.scss";
 type step1Type = {
 	setStep: Function;
 	formik: FormikProps<typeof inputs>;
+	submitForm: Function;
+	handleVoltar: Function;
 };
 
-function step1({ formik }: step1Type) {
+function step1({ formik, submitForm, handleVoltar }: step1Type) {
 	const params = useParams();
 	const [cnaesList, setCnaesList] = useState([
 		{ id: 0, codigo: "", descricao: "" },
@@ -55,6 +57,7 @@ function step1({ formik }: step1Type) {
 	const [showInput, setShowInput] = useState(false);
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
+	const isNew = pathname?.includes("/new");
 	const listTelefones = ["ADMINISTRADOR", "CONTABILIDADE", "EMPRESA"];
 	const excludedListTelefones = [
 		"ADMINISTRADOR",
@@ -611,13 +614,26 @@ function step1({ formik }: step1Type) {
 						type="button"
 						variant="contained"
 						className={styles.secondaryButton}
-						onClick={() => {
-							navigate("/beneficiario");
-							window.scrollTo({ top: 0, behavior: "smooth" });
-						}}
+						onClick={() => handleVoltar()}
 					>
 						Voltar
 					</Button>
+					{!isView && !isNew && (
+						<Button
+							type="button"
+							variant="contained"
+							className={styles.salvarButton}
+							onClick={() => {
+								localStorage.setItem(
+									"step1",
+									JSON.stringify(formik.values),
+								);
+								submitForm();
+							}}
+						>
+							Salvar
+						</Button>
+					)}
 					<Button
 						type="submit"
 						variant="contained"

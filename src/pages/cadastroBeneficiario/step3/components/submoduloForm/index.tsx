@@ -59,7 +59,6 @@ function SubmoduloForm({
 			!!formik.values.submodulos[index]?.submodulo &&
 			!!formik.values.submodulos[index]?.incentivoFiscal
 		) {
-			const dirty = false;
 			for (
 				let forIndex = 0;
 				forIndex < formik.values.submodulos.length;
@@ -92,7 +91,7 @@ function SubmoduloForm({
 	const total = useMemo(() => {
 		return formik.values.submodulos[index]?.valoresFundo?.reduce(
 			(totalFundo, item: IValorFundo) => {
-				const values = item;
+				const values = { ...item };
 				delete values.anoReferencia;
 				delete values.id;
 				return (
@@ -222,27 +221,30 @@ function SubmoduloForm({
 										);
 									}}
 								>
-									{submodulos.map(
-										(
-											{
-												codgBeneficio,
-												nomeBeneficio,
-											}: ISubmodulo,
-											index,
-										) => {
-											return (
-												codgBeneficio && (
-													<MenuItem
-														key={index}
-														value={codgBeneficio}
-													>
-														{codgBeneficio} -{" "}
-														{nomeBeneficio}
-													</MenuItem>
-												)
-											);
-										},
-									)}
+									{submodulos &&
+										submodulos.map(
+											(
+												{
+													codgBeneficio,
+													nomeBeneficio,
+												}: ISubmodulo,
+												index,
+											) => {
+												return (
+													codgBeneficio && (
+														<MenuItem
+															key={index}
+															value={
+																codgBeneficio
+															}
+														>
+															{codgBeneficio} -{" "}
+															{nomeBeneficio}
+														</MenuItem>
+													)
+												);
+											},
+										)}
 								</Select>
 							</FormControl>
 							<NumericMask

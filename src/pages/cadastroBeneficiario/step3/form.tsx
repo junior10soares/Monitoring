@@ -25,23 +25,18 @@ type step3Type = {
 	setStep: Function;
 	formik: FormikProps<typeof inputs>;
 	setSubsToExclude: Function;
+	submitForm: Function;
+	handleVoltar: Function;
 };
 
-function step3({ setStep, formik, setSubsToExclude }: step3Type) {
-	const [submodulos, setSubmodulos] = useState<ISubmodulo[]>([
-		{
-			codgBeneficio: "1231",
-			nomeBeneficio: "Dale",
-		},
-		{
-			codgBeneficio: "1232",
-			nomeBeneficio: "Dele",
-		},
-		{
-			codgBeneficio: "1233",
-			nomeBeneficio: "Dole",
-		},
-	]);
+function step3({
+	setStep,
+	formik,
+	setSubsToExclude,
+	submitForm,
+	handleVoltar,
+}: step3Type) {
+	const [submodulos, setSubmodulos] = useState<ISubmodulo[]>();
 	const [incentivosFiscais, setIncentivosFiscais] = useState<
 		IIncentivoFiscal[]
 	>([]);
@@ -52,6 +47,7 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 	const dialogRef = useRef(null);
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
+	const isNew = pathname?.includes("/new");
 
 	useEffect(() => {
 		loadData();
@@ -63,17 +59,14 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 			const submds = await getAllSubmodulosByInscricaoEstadual(
 				step1.inscricaoEstadual,
 			);
-			// setSubmodulos(submds);
+			setSubmodulos(submds);
 			setIsLoading(false);
-			formik.setFieldValue("first", false);
 		})();
 	}, []);
 
 	function loadData() {
 		const localItem = JSON.parse(localStorage.getItem("step3"));
-		if (localItem?.submodulos && localItem?.submodulos?.length > 0) {
-			formik.setValues(localItem);
-		}
+		formik.setValues(localItem ?? inputs);
 	}
 
 	const handleChange =
@@ -106,67 +99,71 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 					{formik.errors.submodulo ?? ""}
 				</Alert>
 			)}
-			{formik.values.submodulos.map((i, index) => (
-				<Accordion
-					expanded={expanded === index}
-					onChange={handleChange(index)}
-					sx={{ margin: "1rem" }}
-				>
-					<AccordionSummary
-						expandIcon={
-							<ArrowDownwardIcon sx={{ color: "white" }} />
-						}
-						aria-controls="panel1-content"
-						id="panel1-header"
-						className={styles.accordionTitle}
+			{formik.values?.submodulos &&
+				formik.values.submodulos.map((i, index) => (
+					<Accordion
+						expanded={expanded === index}
+						onChange={handleChange(index)}
+						sx={{ margin: "1rem" }}
 					>
-						<div
-							className={`${styles.col1} ${styles.removeButtonDiv}`}
+						<AccordionSummary
+							expandIcon={
+								<ArrowDownwardIcon sx={{ color: "white" }} />
+							}
+							aria-controls="panel1-content"
+							id="panel1-header"
+							className={styles.accordionTitle}
 						>
-							<>
-								<Typography style={{ color: "white" }}>
-									{i.incentivoFiscal?.sigla
-										? `${
-												i.incentivoFiscal?.sigla ?? ""
-										  } - ${i.submodulo ?? ""}`
-										: ""}
-								</Typography>
+							<div
+								className={`${styles.col1} ${styles.removeButtonDiv}`}
+							>
+								<>
+									<Typography style={{ color: "white" }}>
+										{i.incentivoFiscal?.sigla
+											? `${
+													i.incentivoFiscal?.sigla ??
+													""
+											  } - ${i.submodulo ?? ""}`
+											: ""}
+									</Typography>
 
-								<RemoveIcon
-									className={styles.removeIcon}
-									onClick={async () => {
-										dialogRef.current?.handleClickOpen(
-											() => {
-												var submodulos =
-													formik.values.submodulos;
-												if (submodulos[index].id) {
-													setSubsToExclude(
-														submodulos[index].id,
+									<RemoveIcon
+										className={styles.removeIcon}
+										onClick={async () => {
+											dialogRef.current?.handleClickOpen(
+												() => {
+													var submodulos =
+														formik.values
+															.submodulos;
+													if (submodulos[index].id) {
+														setSubsToExclude(
+															submodulos[index]
+																.id,
+														);
+													}
+													submodulos.splice(index, 1);
+													formik.setFieldValue(
+														"submodulos",
+														submodulos,
 													);
-												}
-												submodulos.splice(index, 1);
-												formik.setFieldValue(
-													"submodulos",
-													submodulos,
-												);
-											},
-										);
-									}}
-								/>
-							</>
-						</div>
-					</AccordionSummary>
-					<AccordionDetails>
-						<SubmoduloForm
-							submodulos={submodulos}
-							incentivosFiscais={incentivosFiscais}
-							formik={formik}
-							setStep={setStep}
-							index={index}
-						/>
-					</AccordionDetails>
-				</Accordion>
-			))}
+												},
+											);
+										}}
+									/>
+								</>
+							</div>
+						</AccordionSummary>
+						<AccordionDetails>
+							<SubmoduloForm
+								submodulos={submodulos}
+								incentivosFiscais={incentivosFiscais}
+								formik={formik}
+								setStep={setStep}
+								index={index}
+							/>
+						</AccordionDetails>
+					</Accordion>
+				))}
 			{!isView && !formik.errors.submodulos && (
 				<Button
 					type="button"
@@ -188,13 +185,26 @@ function step3({ setStep, formik, setSubsToExclude }: step3Type) {
 					type="button"
 					variant="contained"
 					className={styles.secondaryButton}
-					onClick={() => {
-						navigate("/beneficiario");
-						window.scrollTo({ top: 0, behavior: "smooth" });
-					}}
+					onClick={() => handleVoltar()}
 				>
 					Voltar
 				</Button>
+				{!isView && !isNew && (
+					<Button
+						type="button"
+						variant="contained"
+						className={styles.salvarButton}
+						onClick={() => {
+							localStorage.setItem(
+								"step3",
+								JSON.stringify(formik.values),
+							);
+							submitForm();
+						}}
+					>
+						Salvar
+					</Button>
+				)}
 				<Button
 					type="button"
 					variant="contained"

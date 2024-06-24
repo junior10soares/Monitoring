@@ -1,7 +1,7 @@
 import { Button, Card } from "@mui/material";
 import { FormikProps } from "formik";
 import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import NumericMask from "../../../components/numericMask";
 import { formatBRCurrency } from "../../../utils/Currency";
 import { monthsData } from "../../../utils/DateTime";
@@ -12,12 +12,14 @@ import styles from "./styles.module.scss";
 type step2Type = {
 	setStep: Function;
 	formik: FormikProps<typeof inputs>;
+	submitForm: Function;
+	handleVoltar: Function;
 };
 
-function step2({ setStep, formik }: step2Type) {
+function step2({ setStep, formik, submitForm, handleVoltar }: step2Type) {
 	const { pathname } = useLocation();
-	const navigate = useNavigate();
 	const isView = pathname?.includes("/view");
+	const isNew = pathname?.includes("/new");
 
 	useEffect(() => {
 		const localItem = localStorage.getItem("step2");
@@ -93,7 +95,7 @@ function step2({ setStep, formik }: step2Type) {
 													.investimentoMensal,
 											];
 											newInvestimentoMensal[index] = {
-												codigo,
+												codigo: `${codigo}Valor`,
 												valor: ev.target.value,
 											};
 											formik.setFieldValue(
@@ -122,7 +124,7 @@ function step2({ setStep, formik }: step2Type) {
 												...formik.values.empregoHomem,
 											];
 											newEmpregosHomem[index] = {
-												codigo,
+												codigo: `${codigo}Valor`,
 												valor: ev.target.value,
 											};
 											formik.setFieldValue(
@@ -150,7 +152,7 @@ function step2({ setStep, formik }: step2Type) {
 												...formik.values.empregoMulher,
 											];
 											newEmpregosMulher[index] = {
-												codigo,
+												codigo: `${codigo}Valor`,
 												valor: ev.target.value,
 											};
 											formik.setFieldValue(
@@ -216,13 +218,26 @@ function step2({ setStep, formik }: step2Type) {
 						type="button"
 						variant="contained"
 						className={styles.secondaryButton}
-						onClick={() => {
-							navigate("/beneficiario");
-							window.scrollTo({ top: 0, behavior: "smooth" });
-						}}
+						onClick={() => handleVoltar()}
 					>
 						Voltar
 					</Button>
+					{!isView && !isNew && (
+						<Button
+							type="button"
+							variant="contained"
+							className={styles.salvarButton}
+							onClick={() => {
+								localStorage.setItem(
+									"step2",
+									JSON.stringify(formik.values),
+								);
+								submitForm();
+							}}
+						>
+							Salvar
+						</Button>
+					)}
 					<Button
 						type="button"
 						variant="contained"
