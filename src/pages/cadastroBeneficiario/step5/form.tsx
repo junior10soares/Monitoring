@@ -5,18 +5,16 @@ import {
 	Autocomplete,
 	Button,
 	Card,
-	FormControl,
-	InputLabel,
-	MenuItem,
-	Select,
 	TextField,
 	Typography,
 } from "@mui/material";
 
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
-import { FormikProps } from "formik";
+import { FieldArray, FormikProps } from "formik";
+import { IIncentivoFiscal } from "incentivoFiscal";
 import { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { ISubmodulo } from "submodulo";
 import CustomTextField from "../../../components/customTextField";
 import NumericMask from "../../../components/numericMask";
 import TreeDropdown from "../../../components/treeDropdown";
@@ -27,23 +25,26 @@ import { getAllSubmodulosByInscricaoEstadual } from "../../../services/submodulo
 import { formatBRCurrency } from "../../../utils/Currency";
 import { monthsData } from "../../../utils/DateTime";
 import { isEmpty } from "../../../utils/Global";
+import SubmoduloForm from "../step3/components/submoduloForm";
 import { inputs } from "./inputs";
 import styles from "./styles.module.scss";
 
 type step5Type = {
 	setStep: Function;
 	formik: FormikProps<typeof inputs>;
+	handleVoltar: Function;
 };
 
-function step5({ setStep, formik }: step5Type) {
+function step5({ setStep, formik, handleVoltar }: step5Type) {
 	const [ncms, setNcms] = useState([]);
+	const [submodulos, setSubmodulos] = useState<ISubmodulo[]>();
 	const [incentivosFiscais, setIncentivosFiscais] = useState<
 		IIncentivoFiscal[]
 	>([]);
-	const [submodulos, setSubmodulos] = useState<ISubmodulo[]>([]);
 	const [isLoading, setIsLoading] = useOutletContext();
 	const [unidadeMedida, setUnidadeMedida] = useState([]);
 	const [showButton, setShowButton] = useState(false);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		(async function fetch() {
@@ -109,7 +110,7 @@ function step5({ setStep, formik }: step5Type) {
 								Mês referência
 							</span>
 							<span
-								style={{ marginRight: '20px' }}
+								style={{ marginRight: "20px" }}
 								className={`${styles.col3} ${styles.monthTitle}`}
 							>
 								Investimento mensal
@@ -120,7 +121,7 @@ function step5({ setStep, formik }: step5Type) {
 								Empregos direto (homem)
 							</span>
 							<span
-								style={{ marginRight: '-40px' }}
+								style={{ marginRight: "-40px" }}
 								className={`${styles.col3} ${styles.monthTitle}`}
 							>
 								Empregos direto (mulher)
@@ -130,7 +131,10 @@ function step5({ setStep, formik }: step5Type) {
 							return (
 								<div className={styles.TableInputs}>
 									<span
-										style={{ textAlign: 'center', marginLeft: '20px' }}
+										style={{
+											textAlign: "center",
+											marginLeft: "20px",
+										}}
 										className={`${styles.col2} ${styles.monthTitle}`}
 									>
 										{label}
@@ -235,15 +239,15 @@ function step5({ setStep, formik }: step5Type) {
 										formik.values?.investimentoMensal,
 									)
 										? formik.values?.investimentoMensal?.reduce(
-											(total, item) =>
-												total +
-												parseFloat(
-													!isEmpty(item?.valor)
-														? item?.valor
-														: "0",
-												),
-											0,
-										)
+												(total, item) =>
+													total +
+													parseFloat(
+														!isEmpty(item?.valor)
+															? item?.valor
+															: "0",
+													),
+												0,
+										  )
 										: 0,
 								)}
 							</span>
@@ -278,420 +282,284 @@ function step5({ setStep, formik }: step5Type) {
 						{new Date().getFullYear() - 1}
 					</h3>
 
-					<Accordion sx={{ margin: "1rem" }}>
-						<AccordionSummary
-							expandIcon={
-								<ArrowDownwardIcon sx={{ color: "white" }} />
-							}
-							aria-controls="panel1-content"
-							id="panel1-header"
-							className={styles.accordionTitle}
-						>
-							<Typography>
-								{formik.values.incentivoFiscal.sigla} -{" "}
-								{formik.values.submodulo}
-							</Typography>
-						</AccordionSummary>
-						<AccordionDetails>
-							<Card className={styles.innerCard}>
-								<h1 className={styles.title}>Sub Módulos</h1>
-								<h3 className={styles.subtitle}>
-									Preencha corretamente o formulário
-								</h3>
-								<h3 className={styles.yearTitle}>
-									Ano de referência
-								</h3>
-								<h3 className={styles.year}>
-									{new Date().getFullYear() - 1}
-								</h3>
-								<div className={styles.beneficiarioForm}>
-									<FormControl className="col6">
-										<InputLabel
-											required
-											id="incentivoFiscal"
-										>
-											Incentivo Fiscal
-										</InputLabel>
-										<Select
-											name="incentivoFiscal"
-											label="Incentivo Fiscal"
-											labelId="id"
-											placeholder="Selecione um incentivo"
-											value={
-												formik.values.incentivoFiscal
-													?.id
-											}
-											required
-											fullWidth
-											disabled={true}
-										>
-											{incentivosFiscais.map(
-												(
-													{
-														id,
-														sigla,
-													}: IIncentivoFiscal,
-													index,
-												) => {
-													return (
-														<MenuItem
-															key={index}
-															value={id}
-														>
-															{sigla}
-														</MenuItem>
-													);
-												},
-											)}
-										</Select>
-									</FormControl>
-									<FormControl className="col6">
-										<InputLabel required id="submodulo">
-											{formik.values.submodulo
-												? ""
-												: "Submódulo"}
-										</InputLabel>
-										<Select
-											name="submodulo"
-											label="Submódulo"
-											labelId="submodulo"
-											placeholder="Selecione um Submodulo"
-											value={formik.values?.submodulo}
-											fullWidth
-											required
-											disabled={true}
-										>
-											{submodulos.map(
-												(
-													{
-														codgBeneficio,
-														nomeBeneficio,
-													}: ISubmodulo,
-													index,
-												) => {
-													return (
-														codgBeneficio && (
-															<MenuItem
-																key={index}
-																value={
-																	codgBeneficio
-																}
-															>
-																{codgBeneficio}{" "}
-																-{" "}
-																{nomeBeneficio}
-															</MenuItem>
-														)
-													);
-												},
-											)}
-										</Select>
-									</FormControl>
-									<NumericMask
-										id="vendaAnualInterna"
-										name="vendaAnualInterna"
-										formik={formik}
-										prefix="R$"
-										fixedDecimalScale
-										label="Venda anual interna"
-										required
-										col={6}
-										onChange={formik.handleChange}
-										disabled={true}
-										value={
-											formik.values?.vendaAnualInterna ??
-											""
-										}
-										className={`${styles.tableInput}`}
+					{formik.values?.submodulos?.map((i, index) => (
+						<Accordion sx={{ margin: "1rem" }}>
+							<AccordionSummary
+								expandIcon={
+									<ArrowDownwardIcon
+										sx={{ color: "white" }}
 									/>
-									<NumericMask
-										id="vendaAnualInterestadual"
-										name="vendaAnualInterestadual"
-										formik={formik}
-										prefix="R$"
-										fixedDecimalScale
-										label="Venda anual interestadual"
-										col={6}
-										onChange={formik.handleChange}
-										required
-										disabled={true}
-										value={
-											formik.values
-												?.vendaAnualInterestadual ?? ""
-										}
-										className={`${styles.tableInput}`}
-									/>
-									{formik?.values?.incentivoFiscal?.fundos
-										?.length > 0 && (
-											<>
-												<div className={styles.monthsTitle}>
-													<span
-														className={`${styles.col2} ${styles.monthTitle}`}
-													>
-														Mês referência
-													</span>
-													{formik.values?.incentivoFiscal?.fundos?.map(
-														({ sigla }: IFundo) => {
-															return (
-																<span
-																	className={`${styles?.[
-																		`col${Math.ceil(
-																			10 /
-																			formik
-																				.values
-																				?.incentivoFiscal
-																				?.fundos
-																				.length,
-																		)}`
-																	]
-																		} ${styles.monthTitle
-																		}`}
-																>
-																	{sigla}
-																</span>
-															);
-														},
-													)}
-												</div>
-												{monthsData.map(
-													({ codigo, label }) => {
-														return (
-															<div
-																className={
-																	styles.TableInputs
-																}
-															>
-																<span
-																	style={{ textAlign: 'center', marginLeft: '20px' }}
-																	className={`${styles.col2} ${styles.monthTitle}`}
-																>
-																	{label}
-																</span>
-																{formik.values?.incentivoFiscal?.fundos?.map(
-																	({
-																		sigla,
-																		id,
-																	}: IFundo) => {
-																		return (
-																			<NumericMask
-																				id={`${sigla}-valor`}
-																				name={`${sigla}-valor`}
-																				formik={
-																					formik
-																				}
-																				disabled={
-																					true
-																				}
-																				col={Math.ceil(
-																					10 /
-																					formik
-																						.values
-																						?.incentivoFiscal
-																						?.fundos
-																						.length,
-																				)}
-																				prefix="R$"
-																				fixedDecimalScale
-																				label=""
-																				required
-																				value={
-																					formik.values?.valoresFundo?.find(
-																						(
-																							i: IValorFundo,
-																						) =>
-																							i
-																								.fundoIncentivo
-																								.id ===
-																							id,
-																					)?.[
-																					`${codigo}Valor`
-																					]
-																				}
-																				className={`${styles.tableInput}`}
-																			/>
-																		);
-																	},
-																)}
-															</div>
-														);
-													},
-												)}
-											</>
-										)}
-								</div>
-							</Card>
-						</AccordionDetails>
-					</Accordion>
+								}
+								aria-controls="panel1-content"
+								id="panel1-header"
+								className={styles.accordionTitle}
+							>
+								<Typography style={{ color: "white" }}>
+									{i.incentivoFiscal?.sigla
+										? `${
+												i.incentivoFiscal?.sigla ?? ""
+										  } - ${i.submodulo ?? ""}`
+										: ""}
+								</Typography>
+							</AccordionSummary>
+							<AccordionDetails>
+								<SubmoduloForm
+									submodulos={submodulos}
+									incentivosFiscais={incentivosFiscais}
+									formik={formik}
+									index={index}
+									forceIsView={true}
+								/>
+							</AccordionDetails>
+						</Accordion>
+					))}
+					{formik.values?.submodulos?.length === 0 && (
+						<h2 className={styles.message}>
+							Nenhum Item Encontrado
+						</h2>
+					)}
 				</Card>
 			</div>
 			<div className={styles.container}>
 				<Card className={styles.card}>
 					<h1 className={styles.title}>Informações de venda anual</h1>
+					<h3 className={styles.subtitle}>
+						Preencha corretamente o formulário
+					</h3>
 					<div className={styles.beneficiarioForm}>
 						<div className={styles.tableHeader}>
 							<span
-								className={`${styles.col3} ${styles.monthTitles}`}
+								className={`${styles.col4} ${styles.monthTitle}`}
 							>
 								NCM
 							</span>
 							<span
-								className={`${styles.col2} ${styles.monthTitles}`}
+								className={`${styles.col2} ${styles.monthTitle}`}
 							>
 								Produto incentivado
 							</span>
 							<span
-								className={`${styles.col2} ${styles.monthTitles}`}
+								className={`${styles.col2} ${styles.monthTitle}`}
 							>
 								Unidade de medida
 							</span>
 							<span
-								className={`${styles.col2} ${styles.monthTitles}`}
+								className={`${styles.col2} ${styles.monthTitle}`}
 							>
 								Quantidade interna
 							</span>
 							<span
-								className={`${styles.col2} ${styles.monthTitles}`}
+								className={`${styles.col2} ${styles.monthTitle}`}
 							>
 								Quant. Interestadual
 							</span>
-							<span className={styles.col1}></span>
 						</div>
-						{Array.isArray(formik.values.infoVendas) &&
-							formik.values.infoVendas.map((linha, index) => (
-								<div key={index} style={{ display: "flex" }}>
-									<div
-										style={{
-											display: "flex",
-											flexWrap: "wrap",
-										}}
-									>
-										<div className={`${styles.col3} card`}>
-											<TreeDropdown
-												data={ncms}
-												onChange={(ev) => {
-													const selectedNcm =
-														ev.target.value;
-													formik.setFieldValue(
-														`infoVendas.${index}.ncm`,
-														selectedNcm,
-													);
-												}}
-												value={linha.ncm?.id}
-												placeholder="Selecione um NCM"
-												disabled={true}
-											/>
-										</div>
-										<CustomTextField
-											id={`produto-incentivado-${index}`}
-											name={`infoVendas.${index}.produtoIncentivado`}
-											label=""
-											col={2}
-											formik={formik}
-											disabled
-											error={
-												!!formik.errors.infoVendas?.[
-													index
-												]?.produtoIncentivado
-											}
-											value={linha.produtoIncentivado}
-											onChange={(ev) =>
-												formik.setFieldValue(
-													`infoVendas.${index}.produtoIncentivado`,
-													ev.target.value,
-												)
-											}
-										/>
-										<Autocomplete
-											id={`unidadeMedida-${index}`}
-											options={unidadeMedida}
-											disableListWrap
-											className={styles.col2}
-											placeholder="Selecione uma unidade de medida"
-											disabled
-											disableCloseOnSelect
-											getOptionLabel={(option) =>
-												option.descricao
-											}
-											value={
-												unidadeMedida.find(
-													(option) =>
-														option.id ===
-														linha.unidadeMedida?.id,
-												) || null
-											}
-											onChange={(_, newValue) => {
-												formik.setFieldValue(
-													`infoVendas.${index}.unidadeMedida`,
-													newValue,
-												);
-											}}
-											renderInput={(params) => (
-												<TextField
-													{...params}
-													label="Unidade de Medida"
-													placeholder="Selecione uma unidade de medida"
+
+						<FieldArray name="infoVendas">
+							{() => (
+								<>
+									{formik.values.infoVendas.map(
+										(linha, index) => (
+											<div
+												key={index}
+												className={styles.TableInputs}
+											>
+												<div
+													style={{
+														display: "flex",
+														flexDirection: "column",
+													}}
+													className={`${styles.col4} card`}
+												>
+													<div
+														style={{
+															minHeight: "20px",
+														}}
+													>
+														<TreeDropdown
+															data={ncms}
+															onChange={(ev) => {
+																const selectedNcm =
+																	ev.target
+																		.value;
+																formik.setFieldValue(
+																	`infoVendas[${index}].ncm.id`,
+																	selectedNcm,
+																);
+															}}
+															value={
+																linha?.ncm?.id
+															}
+															placeholder="Selecione um NCM"
+															disabled={true}
+														/>
+														{formik.errors
+															.infoVendas?.[index]
+															?.ncm && (
+															<span
+																className={
+																	styles.error
+																}
+															>
+																{
+																	formik
+																		.errors
+																		.infoVendas[
+																		index
+																	].ncm
+																}
+															</span>
+														)}
+													</div>
+												</div>
+												<CustomTextField
+													id={`infoVendas[${index}].produtoIncentivado`}
+													name={`infoVendas[${index}].produtoIncentivado`}
+													label=""
+													col={2}
+													formik={formik}
+													disabled={true}
+													required
 													error={
 														!!formik.errors
-															.infoVendas?.[index]
-															?.unidadeMedida
+															?.infoVendas?.[
+															index
+														]?.produtoIncentivado
+													}
+													value={
+														linha.produtoIncentivado
+													}
+													onChange={(ev) =>
+														formik.setFieldValue(
+															`infoVendas[${index}].produtoIncentivado`,
+															ev.target.value,
+														)
 													}
 												/>
-											)}
-										/>
-										<NumericMask
-											id={`quantidade-interna-${index}`}
-											name={`infoVendas.${index}.quantidadeInterna`}
-											formik={formik}
-											label=""
-											error={
-												!!formik.errors.infoVendas?.[
-													index
-												]?.quantidadeInterna
-											}
-											col={2}
-											disabled
-											required={false}
-											value={linha.quantidadeInterna}
-											onChange={(ev) =>
-												formik.setFieldValue(
-													`infoVendas.${index}.quantidadeInterna`,
-													parseFloat(
-														ev.target.value,
-													) || 0,
-												)
-											}
-										/>
-										<NumericMask
-											id={`quantidade-interestadual-${index}`}
-											name={`infoVendas.${index}.quantidadeInterestadual`}
-											formik={formik}
-											label=""
-											col={2}
-											disabled
-											error={
-												!!formik.errors.infoVendas?.[
-													index
-												]?.quantidadeInterestadual
-											}
-											required={false}
-											value={
-												linha.quantidadeInterestadual
-											}
-											onChange={(ev) =>
-												formik.setFieldValue(
-													`infoVendas.${index}.quantidadeInterestadual`,
-													parseFloat(
-														ev.target.value,
-													) || 0,
-												)
-											}
-										/>
-									</div>
-								</div>
-							))}
+												<Autocomplete
+													id={`infoVendas[${index}].unidadeMedida`}
+													options={unidadeMedida}
+													disableListWrap
+													className={styles.col2}
+													placeholder="Selecione uma unidade de medida"
+													disabled={true}
+													disableCloseOnSelect
+													getOptionLabel={(option) =>
+														option.descricao
+													}
+													value={
+														unidadeMedida.find(
+															(option) =>
+																option.id ===
+																linha
+																	.unidadeMedida
+																	?.id,
+														) || null
+													}
+													onChange={(_, newValue) => {
+														formik.setFieldValue(
+															`infoVendas[${index}].unidadeMedida`,
+															newValue,
+														);
+													}}
+													renderInput={(params) => (
+														<TextField
+															{...params}
+															label="Unidade de Medida"
+															placeholder="Selecione uma unidade de medida"
+															error={
+																!!formik.errors
+																	?.infoVendas?.[
+																	index
+																]?.unidadeMedida
+															}
+															helperText={
+																formik.errors
+																	?.infoVendas?.[
+																	index
+																]?.unidadeMedida
+																	? "Campo Obrigatório!"
+																	: ""
+															}
+														/>
+													)}
+												/>
+												<NumericMask
+													id={`infoVendas[${index}].quantidadeInterna`}
+													name={`infoVendas[${index}].quantidadeInterna`}
+													formik={formik}
+													label=""
+													error={
+														!!formik.errors
+															?.infoVendas?.[
+															index
+														]?.quantidadeInterna
+													}
+													col={2}
+													disabled={true}
+													required
+													value={
+														linha.quantidadeInterna ===
+														0
+															? ""
+															: linha.quantidadeInterna
+													}
+													onChange={(ev) =>
+														formik.setFieldValue(
+															`infoVendas[${index}].quantidadeInterna`,
+															parseFloat(
+																ev.target.value,
+															) || 0,
+														)
+													}
+												/>
+												<NumericMask
+													id={`infoVendas[${index}].quantidadeInterestadual`}
+													name={`infoVendas[${index}].quantidadeInterestadual`}
+													formik={formik}
+													label=""
+													col={2}
+													disabled={true}
+													error={
+														!!formik.errors
+															?.infoVendas?.[
+															index
+														]
+															?.quantidadeInterestadual
+													}
+													required
+													value={
+														linha.quantidadeInterestadual ===
+														0
+															? ""
+															: linha.quantidadeInterestadual
+													}
+													onChange={(ev) =>
+														formik.setFieldValue(
+															`infoVendas[${index}].quantidadeInterestadual`,
+															parseFloat(
+																ev.target.value,
+															) || 0,
+														)
+													}
+												/>
+											</div>
+										),
+									)}
+								</>
+							)}
+						</FieldArray>
 					</div>
 				</Card>
 				<div className={`${styles.col12} ${styles.buttonsRigth}`}>
+					<Button
+						type="button"
+						variant="contained"
+						className={styles.secondaryButton}
+						onClick={() => handleVoltar()}
+					>
+						Voltar
+					</Button>
 					<Button
 						type="button"
 						variant="contained"
@@ -704,13 +572,13 @@ function step5({ setStep, formik }: step5Type) {
 							});
 						}}
 					>
-						Voltar
+						Anterior
 					</Button>
 					{!showButton && (
 						<Button
 							type="submit"
 							variant="contained"
-							className={styles.primaryButton}
+							className={styles.salvarButton}
 						>
 							Salvar
 						</Button>

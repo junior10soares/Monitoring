@@ -8,7 +8,6 @@ export const inputs = {
 	municipio: "",
 	porte: "",
 	ramoAtividade: "",
-	descricaoStep1: "",
 	cnaes: [],
 	telefones: [],
 };

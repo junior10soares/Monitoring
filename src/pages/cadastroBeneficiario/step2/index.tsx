@@ -4,7 +4,7 @@ import { Messages } from "../../../utils/Messages";
 import Form from "./form";
 import { inputs } from "./inputs";
 
-export default function ({ setStep }: stepType) {
+export default function ({ setStep, submitForm, handleVoltar }: stepType) {
 	return (
 		<Formik
 			initialValues={inputs}
@@ -16,14 +16,19 @@ export default function ({ setStep }: stepType) {
 				if (!_values.investimentoAcumulado) {
 					errors.investimentoAcumulado = Messages.form.required;
 				}
-				const investimentoAcumulado = parseFloat(_values.investimentoAcumulado);
-				const totalInvestimentoMensal = Object.values(_values.investimentoMensal).reduce((acc, curr) => {
+				const investimentoAcumulado = parseFloat(
+					_values.investimentoAcumulado,
+				);
+				const totalInvestimentoMensal = Object.values(
+					_values.investimentoMensal,
+				).reduce((acc, curr) => {
 					const valorNumerico = parseFloat(curr.valor);
 					return acc + valorNumerico;
 				}, 0);
 
 				if (investimentoAcumulado < totalInvestimentoMensal) {
-					errors.investimentoAcumulado = "O valor acumulado não pode ser menor que o investimento anual.";
+					errors.investimentoAcumulado =
+						"O valor acumulado não pode ser menor que o investimento anual.";
 				}
 
 				return errors;
@@ -36,7 +41,14 @@ export default function ({ setStep }: stepType) {
 				}, 400);
 			}}
 		>
-			{(formik) => <Form setStep={setStep} formik={formik} />}
+			{(formik) => (
+				<Form
+					setStep={setStep}
+					formik={formik}
+					submitForm={submitForm}
+					handleVoltar={handleVoltar}
+				/>
+			)}
 		</Formik>
 	);
 }

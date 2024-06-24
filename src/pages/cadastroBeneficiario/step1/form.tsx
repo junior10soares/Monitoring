@@ -16,14 +16,21 @@ import {
 
 import { ICnae } from "cnaeType";
 import { FormikProps } from "formik";
+import { IInfoVendas } from "infoVendas";
 import { Imunicipio } from "municipioType";
 import { IPorte } from "porte";
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+	useLocation,
+	useNavigate,
+	useOutletContext,
+	useParams,
+} from "react-router-dom";
 import CustomTextField from "../../../components/customTextField";
 import InputMask from "../../../components/inputMask";
 import { getBeneficiarioById } from "../../../services/beneficiario";
 import { getAllCnaes } from "../../../services/cnaeService";
+import { getAllIncentivosFiscais } from "../../../services/incentivoFiscal";
 import { getAllMunicipios } from "../../../services/municipioService";
 import { getAllPortes } from "../../../services/portesService";
 import { monthsData } from "../../../utils/DateTime";
@@ -33,20 +40,24 @@ import styles from "./styles.module.scss";
 type step1Type = {
 	setStep: Function;
 	formik: FormikProps<typeof inputs>;
+	submitForm: Function;
+	handleVoltar: Function;
 };
 
-function step1({ formik }: step1Type) {
+function step1({ formik, submitForm, handleVoltar }: step1Type) {
 	const params = useParams();
 	const [cnaesList, setCnaesList] = useState([
 		{ id: 0, codigo: "", descricao: "" },
 	]);
 	const navigate = useNavigate();
 	const [municipios, setMunicipios] = useState([]);
+	const [isLoading, setIsLoading] = useOutletContext();
 	const [showOutrosTrash, setShowOutrosTrash] = useState(false);
 	const [portes, setPortes] = useState([]);
 	const [showInput, setShowInput] = useState(false);
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
+	const isNew = pathname?.includes("/new");
 	const listTelefones = ["ADMINISTRADOR", "CONTABILIDADE", "EMPRESA"];
 	const excludedListTelefones = [
 		"ADMINISTRADOR",
@@ -58,6 +69,7 @@ function step1({ formik }: step1Type) {
 
 	useEffect(() => {
 		(async function fetchAll() {
+			setIsLoading(true);
 			await fillCombos();
 			if (params.id) {
 				await fetchApi();
@@ -67,10 +79,12 @@ function step1({ formik }: step1Type) {
 					formik.setValues(JSON.parse(localItem));
 				}
 			}
+			setIsLoading(false);
 		})();
 	}, []);
 
 	async function fetchApi() {
+		const incentivos = await getAllIncentivosFiscais();
 		if (params.id) {
 			var beneficiario = await getBeneficiarioById(parseInt(params.id));
 			var step1 = {
@@ -120,26 +134,40 @@ function step1({ formik }: step1Type) {
 			dadosEconomicos.empregoMulherId =
 				beneficiario.dadosEconomicos.empregoMulher.id;
 
-			const step3 = {
-				...beneficiario.submodulo,
-				valoresFundo: beneficiario.submodulo?.recolhimentoFundos ?? [],
-				incentivoFiscal: beneficiario.incentivoFiscal,
-			};
-			const infoVendas = beneficiario.vendaAnual.map((venda) => ({
-				ncm: venda.ncm,
-				produtoIncentivado: venda.produtoIncentivado,
-				quantidadeInterestadual: venda.quantidadeInterestadual || "",
-				quantidadeInterna: venda.quantidadeInterna || "",
-				unidadeMedida: venda.unidadeMedida,
-			}));
-
-			const step4 = { infoVendas };
+			const infoVendas = beneficiario.vendaAnual.map(
+				(venda: IInfoVendas) => ({
+					ncm: venda.ncm,
+					produtoIncentivado: venda.produtoIncentivado,
+					quantidadeInterestadual:
+						venda.quantidadeInterestadual || "",
+					quantidadeInterna: venda.quantidadeInterna || "",
+					unidadeMedida: venda.unidadeMedida,
+				}),
+			);
+			const submodulos = beneficiario.submodulos
+				.filter((i) => i.recolhimentoFundos.length > 0)
+				.map((i) => ({
+					...i,
+					incentivoFiscal: incentivos.find((inc) =>
+						inc.fundos.some(
+							(fundo) =>
+								fundo.id ===
+								i.recolhimentoFundos[0].fundoIncentivo.id,
+						),
+					),
+					valoresFundo: i.recolhimentoFundos,
+				}));
 
 			formik.setValues(step1);
 			localStorage.setItem("step1", JSON.stringify(beneficiario));
 			localStorage.setItem("step2", JSON.stringify(dadosEconomicos));
-			localStorage.setItem("step3", JSON.stringify(step3));
-			localStorage.setItem("step4", JSON.stringify(step4));
+			localStorage.setItem(
+				"step3",
+				JSON.stringify({
+					submodulos: submodulos,
+				}),
+			);
+			localStorage.setItem("step4", JSON.stringify({ infoVendas }));
 		}
 	}
 	async function fillCombos() {
@@ -346,11 +374,12 @@ function step1({ formik }: step1Type) {
 							multiple
 							id="cnaes"
 							options={cnaesList}
-							className={`col12 ${formik.errors.cnaes ||
+							className={`col12 ${
+								formik.errors.cnaes ||
 								formik.errors.cnaes?.length === 0
-								? styles.error
-								: ""
-								}`}
+									? styles.error
+									: ""
+							}`}
 							fullWidth
 							placeholder="Selecione um CNAE"
 							disableCloseOnSelect
@@ -397,17 +426,6 @@ function step1({ formik }: step1Type) {
 								{formik.errors.cnaes as string | undefined}
 							</span>
 						)}
-						<CustomTextField
-							id="descricaoStep1"
-							label="Descrição"
-							required
-							rows={4}
-							multiline
-							col={12}
-							formik={formik}
-							value={formik.values.descricaoStep1}
-							disabled={isView}
-						/>
 					</div>
 				</Card>
 				<Card className={styles.card}>
@@ -515,17 +533,17 @@ function step1({ formik }: step1Type) {
 											/>
 											{formik.errors.telefones?.[index]
 												?.telefone && (
-													<span className={styles.error}>
-														{
-															formik.errors.telefones[
-																index
-															].telefone
-														}
-													</span>
-												)}
+												<span className={styles.error}>
+													{
+														formik.errors.telefones[
+															index
+														].telefone
+													}
+												</span>
+											)}
 										</div>
 										{index >= listTelefones.length &&
-											!isView ? (
+										!isView ? (
 											<div
 												style={{ marginTop: "20px" }}
 												className={`${styles.col1} ${styles.removeButtonDiv}`}
@@ -566,14 +584,17 @@ function step1({ formik }: step1Type) {
 								</div>
 							))}
 
-							{['ADMINISTRADOR', 'CONTABILIDADE', 'EMPRESA'].some(
+							{["ADMINISTRADOR", "CONTABILIDADE", "EMPRESA"].some(
 								(tipo) =>
-									!formik.values?.telefones.find((telefone) => telefone?.titulo === tipo)
+									!formik.values?.telefones.find(
+										(telefone) => telefone?.titulo === tipo,
+									),
 							) && (
-									<span className={styles.error}>
-										Pelo menos um telefone para administrador, contabilidade e empresa é obrigatório.
-									</span>
-								)}
+								<span className={styles.error}>
+									Pelo menos um telefone para administrador,
+									contabilidade e empresa é obrigatório.
+								</span>
+							)}
 						</div>
 					</div>
 					{!isView && !showInput && (
@@ -593,20 +614,32 @@ function step1({ formik }: step1Type) {
 						type="button"
 						variant="contained"
 						className={styles.secondaryButton}
-						style={{ marginRight: "1rem" }}
-						onClick={() => {
-							navigate("/beneficiario");
-							window.scrollTo({ top: 0, behavior: "smooth" });
-						}}
+						onClick={() => handleVoltar()}
 					>
 						Voltar
 					</Button>
+					{!isView && !isNew && (
+						<Button
+							type="button"
+							variant="contained"
+							className={styles.salvarButton}
+							onClick={() => {
+								localStorage.setItem(
+									"step1",
+									JSON.stringify(formik.values),
+								);
+								submitForm();
+							}}
+						>
+							Salvar
+						</Button>
+					)}
 					<Button
 						type="submit"
 						variant="contained"
 						className={styles.primaryButton}
 					>
-						Continuar
+						Próximo
 					</Button>
 				</div>
 			</div>

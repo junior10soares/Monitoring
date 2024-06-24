@@ -6,10 +6,18 @@ type Props = {
 	onChange?: (event: any) => void;
 	placeholder: string;
 	value: any;
-	disabled?: boolean
-}
+	disabled?: boolean;
+	required?: boolean;
+};
 
-const TreeDropdown = ({ data, placeholder, value, onChange, disabled = false }: Props) => {
+const TreeDropdown = ({
+	data,
+	placeholder,
+	value,
+	onChange,
+	disabled = false,
+	required = false,
+}: Props) => {
 	return (
 		<div className="treeSelectDiv flex justify-content-center">
 			<TreeSelect
@@ -19,6 +27,7 @@ const TreeDropdown = ({ data, placeholder, value, onChange, disabled = false }: 
 				filter
 				options={data}
 				placeholder={placeholder}
+				required
 			/>
 		</div>
 	);

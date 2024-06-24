@@ -12,11 +12,14 @@ import styles from "./styles.module.scss";
 type step2Type = {
 	setStep: Function;
 	formik: FormikProps<typeof inputs>;
+	submitForm: Function;
+	handleVoltar: Function;
 };
 
-function step2({ setStep, formik }: step2Type) {
+function step2({ setStep, formik, submitForm, handleVoltar }: step2Type) {
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
+	const isNew = pathname?.includes("/new");
 
 	useEffect(() => {
 		const localItem = localStorage.getItem("step2");
@@ -46,7 +49,7 @@ function step2({ setStep, formik }: step2Type) {
 								Mês referência
 							</span>
 							<span
-								style={{ marginRight: '20px' }}
+								style={{ marginRight: "20px" }}
 								className={`${styles.col3} ${styles.monthTitle}`}
 							>
 								Investimento mensal
@@ -57,7 +60,7 @@ function step2({ setStep, formik }: step2Type) {
 								Empregos direto (homem)
 							</span>
 							<span
-								style={{ marginRight: '-40px' }}
+								style={{ marginRight: "-40px" }}
 								className={`${styles.col3} ${styles.monthTitle}`}
 							>
 								Empregos direto (mulher)
@@ -67,7 +70,10 @@ function step2({ setStep, formik }: step2Type) {
 							return (
 								<div className={styles.TableInputs}>
 									<span
-										style={{ textAlign: 'center', marginLeft: '20px' }}
+										style={{
+											textAlign: "center",
+											marginLeft: "20px",
+										}}
 										className={`${styles.col2} ${styles.monthTitle}`}
 									>
 										{label}
@@ -89,7 +95,7 @@ function step2({ setStep, formik }: step2Type) {
 													.investimentoMensal,
 											];
 											newInvestimentoMensal[index] = {
-												codigo,
+												codigo: `${codigo}Valor`,
 												valor: ev.target.value,
 											};
 											formik.setFieldValue(
@@ -118,7 +124,7 @@ function step2({ setStep, formik }: step2Type) {
 												...formik.values.empregoHomem,
 											];
 											newEmpregosHomem[index] = {
-												codigo,
+												codigo: `${codigo}Valor`,
 												valor: ev.target.value,
 											};
 											formik.setFieldValue(
@@ -146,7 +152,7 @@ function step2({ setStep, formik }: step2Type) {
 												...formik.values.empregoMulher,
 											];
 											newEmpregosMulher[index] = {
-												codigo,
+												codigo: `${codigo}Valor`,
 												valor: ev.target.value,
 											};
 											formik.setFieldValue(
@@ -172,15 +178,15 @@ function step2({ setStep, formik }: step2Type) {
 										formik.values?.investimentoMensal,
 									)
 										? formik.values?.investimentoMensal?.reduce(
-											(total, item) =>
-												total +
-												parseFloat(
-													!isEmpty(item?.valor)
-														? item?.valor
-														: "0",
-												),
-											0,
-										)
+												(total, item) =>
+													total +
+													parseFloat(
+														!isEmpty(item?.valor)
+															? item?.valor
+															: "0",
+													),
+												0,
+										  )
 										: 0,
 								)}
 							</span>
@@ -212,19 +218,43 @@ function step2({ setStep, formik }: step2Type) {
 						type="button"
 						variant="contained"
 						className={styles.secondaryButton}
+						onClick={() => handleVoltar()}
+					>
+						Voltar
+					</Button>
+					{!isView && !isNew && (
+						<Button
+							type="button"
+							variant="contained"
+							className={styles.salvarButton}
+							onClick={() => {
+								localStorage.setItem(
+									"step2",
+									JSON.stringify(formik.values),
+								);
+								submitForm();
+							}}
+						>
+							Salvar
+						</Button>
+					)}
+					<Button
+						type="button"
+						variant="contained"
+						className={styles.secondaryButton}
 						onClick={() => {
 							setStep(1);
 							window.scrollTo({ top: 0, behavior: "smooth" });
 						}}
 					>
-						Voltar
+						Anterior
 					</Button>
 					<Button
 						type="submit"
 						variant="contained"
 						className={styles.primaryButton}
 					>
-						Continuar
+						Próximo
 					</Button>
 				</div>
 			</div>

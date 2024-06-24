@@ -1,4 +1,4 @@
-@use "../../../global";
+@use "../../../../../global";
 
 .container {
     display: flex;
@@ -28,17 +28,9 @@
             margin-bottom: 2rem;
         }
 
-        .yearTitle {
-            font-size: 1rem;
-            font-style: normal;
-            font-weight: 500;
-            line-height: 1.25rem;
-            margin-bottom: 1rem;
-        }
-
         .year {
             font-weight: 700;
-
+            margin-top: 1rem;
         }
 
         .monthsTitle {
@@ -54,10 +46,10 @@
 
         }
 
-        @media (max-width: 700px) {
+        @media (max-width: 650px) {
             .monthsTitle {
                 display: flex;
-                justify-content: center;
+                justify-content: space-between;
                 gap: 30px;
                 font-size: 14px;
             }
@@ -75,8 +67,11 @@
             align-items: center;
         }
 
-        @media (max-width: 620px) {
+        @media (max-width: 700px) {
             .TableInputs {
+                display: flex;
+                justify-content: space-between;
+                gap: 10px;
                 font-size: 14px;
             }
         }
@@ -122,54 +117,13 @@
         border-radius: 2rem;
         padding: 1rem;
         margin-top: 2rem;
-
-        &:hover {
-            color: white;
-        }
-    }
-
-    .salvarButton{
-        border: 1px solid global.$green;
-        background-color: white;
-        color: global.$green;
-        border-radius: 2rem;
-        padding: 1rem;
-        margin-top: 2rem;
-
-        &:hover {
-            color: white;
-            background-color: global.$green;
-        }
-    }
-
-    .cancelButton{
-        background-color: global.$cancel-color;
-        border-radius: 2rem;
-        padding: 1rem;
-        margin-top: 2rem;
-        min-width: 6rem;
-    }
-
-    .removeButtonDiv {
-        display: flex;
-        align-items: center;
-
-        .removeIcon {
-            color: #fc3c3c;
-            font-size: 2.5rem;
-
-            &:hover {
-                cursor: pointer;
-            }
-        }
-
     }
 
     .buttonsRigth {
         display: flex;
         justify-content: flex-end;
-        gap: 1rem;
         width: 75%;
         margin-bottom: 2rem;
+        gap: 1rem;
     }
 }

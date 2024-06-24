@@ -21,7 +21,7 @@
         }
 
         .accordionTitle {
-            border-radius: 2rem;
+           
             background-color: global.$primary-color;
             color: white;
         }
@@ -116,6 +116,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 1rem 4rem 1rem 2rem;
         }
 
         @media (max-width: 620px) {
@@ -131,6 +132,7 @@
         .tableHeader {
             width: 100%;
             display: flex;
+            gap: 1rem;
             text-align: center;
             grid-template-rows: 100px;
             padding: 1rem 4rem 1rem 2rem;
@@ -177,19 +179,55 @@
         border-radius: 2rem;
         padding: 1rem;
         margin-top: 2rem;
+
+        &:hover {
+            color: white;
+        }
+    }
+
+    .salvarButton{
+        border: 1px solid global.$green;
+        background-color: white;
+        color: global.$green;
+        border-radius: 2rem;
+        padding: 1rem;
+        margin-top: 2rem;
+
+        &:hover {
+            color: white;
+            background-color: global.$green;
+        }
+    }
+
+    .cancelButton{
+        background-color: global.$cancel-color;
+        border-radius: 2rem;
+        padding: 1rem;
+        margin-top: 2rem;
+        min-width: 6rem;
+    }
+
+    .removeButtonDiv {
+        display: flex;
+        align-items: center;
+
+        .removeIcon {
+            color: #fc3c3c;
+            font-size: 2.5rem;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+
     }
 
     .buttonsRigth {
         display: flex;
         justify-content: flex-end;
+        gap: 1rem;
         width: 75%;
         margin-bottom: 2rem;
-        gap: 1rem;
     }
 }
 
-.alert {
-    position: fixed;
-    top: 2rem;
-    right: 2rem;
-}

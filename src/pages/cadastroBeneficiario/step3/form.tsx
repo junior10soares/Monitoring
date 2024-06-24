@@ -1,39 +1,53 @@
+import AddIcon from "@mui/icons-material/Add";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import RemoveIcon from "@mui/icons-material/DeleteOutline";
 import {
+	Accordion,
+	AccordionDetails,
+	AccordionSummary,
+	Alert,
 	Button,
-	Card,
-	FormControl,
-	InputLabel,
-	MenuItem,
-	Select,
+	Typography,
 } from "@mui/material";
 import { FormikProps } from "formik";
-import { IFundo } from "fundo";
 import { IIncentivoFiscal } from "incentivoFiscal";
-import { useEffect, useMemo, useState } from "react";
-import { useLocation, useOutletContext } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import { ISubmodulo } from "submodulo";
-import { IValorFundo } from "valorFundo";
-import NumericMask from "../../../components/numericMask";
+import ConfirmDialog from "../../../components/confirmDialog";
 import { getAllIncentivosFiscais } from "../../../services/incentivoFiscal";
 import { getAllSubmodulosByInscricaoEstadual } from "../../../services/submodulo";
-import { formatBRCurrency } from "../../../utils/Currency";
-import { monthsData } from "../../../utils/DateTime";
+import SubmoduloForm from "./components/submoduloForm";
 import { inputs } from "./inputs";
 import styles from "./styles.module.scss";
 
 type step3Type = {
 	setStep: Function;
 	formik: FormikProps<typeof inputs>;
+	setSubsToExclude: Function;
+	submitForm: Function;
+	handleVoltar: Function;
 };
 
-function step3({ setStep, formik }: step3Type) {
+function step3({
+	setStep,
+	formik,
+	setSubsToExclude,
+	submitForm,
+	handleVoltar,
+}: step3Type) {
+	const [submodulos, setSubmodulos] = useState<ISubmodulo[]>();
 	const [incentivosFiscais, setIncentivosFiscais] = useState<
 		IIncentivoFiscal[]
 	>([]);
-	const [submodulos, setSubmodulos] = useState<ISubmodulo[]>([]);
+	const [expanded, setExpanded] = useState<number | false>(false);
+	const [show, setShow] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useOutletContext();
+	const navigate = useNavigate();
+	const dialogRef = useRef(null);
 	const { pathname } = useLocation();
 	const isView = pathname?.includes("/view");
+	const isNew = pathname?.includes("/new");
 
 	useEffect(() => {
 		loadData();
@@ -51,381 +65,173 @@ function step3({ setStep, formik }: step3Type) {
 	}, []);
 
 	function loadData() {
-		const localItem = localStorage.getItem("step3");
-		if (localItem) {
-			formik.setValues(JSON.parse(localItem));
-		}
+		const localItem = JSON.parse(localStorage.getItem("step3"));
+		formik.setValues(localItem ?? inputs);
 	}
 
-	function addNewFundo(incentivo: number, submodulo: string = "") {
-		if (incentivo && submodulo) {
-			const fundos = formik.values.fundos;
-			const data = { ...formik.values, fundos: null };
-			formik.setFieldValue("valoresFundo", null);
-			formik.setFieldValue("fundos", [
-				fundos.filter(
-					(i) =>
-						i?.incentivoFiscal?.id !== incentivo &&
-						i.submodulo !== submodulo,
-				),
-				data,
-			]);
-		}
-	}
+	const handleChange =
+		(panel: number) =>
+		(event: React.SyntheticEvent, isExpanded: boolean) => {
+			const isRemoveCLick =
+				event.target?.className?.baseVal?.includes("removeIcon");
+			if (!isRemoveCLick) {
+				setExpanded(isExpanded ? panel : false);
+			}
+		};
 
-	const total = useMemo(() => {
-		return formik.values.valoresFundo?.reduce(
-			(totalFundo, item: IValorFundo) =>
-				totalFundo +
-				parseFloat(
-					Object.values(item)?.reduce(
-						(totalItem, itemValue) =>
-							totalItem +
-							parseFloat(
-								typeof itemValue !== "object" ? itemValue : "0",
-							),
-						0,
-					),
-				),
-			0,
-		);
-	}, [formik.values.valoresFundo]);
+	useEffect(() => {
+		if (!!formik.errors.submodulo) {
+			setShow(true);
+			setTimeout(() => {
+				setShow(false);
+			}, 3000);
+		}
+	}, [formik.errors]);
 
 	return (
-		<form onSubmit={formik.handleSubmit}>
-			<div className={styles.container}>
-				<Card className={styles.card}>
-					<h1 className={styles.title}>Sub Módulos</h1>
-					<h3 className={styles.subtitle}>
-						Preencha corretamente o formulário
-					</h3>
-					<h3 className={styles.yearTitle}>Ano de referência</h3>
-					<h3 className={styles.year}>
-						{new Date().getFullYear() - 1}
-					</h3>
-					<div className={styles.beneficiarioForm}>
-						<FormControl className="col6">
-							<InputLabel required id="incentivoFiscal">
-								Incentivo Fiscal
-							</InputLabel>
-							<Select
-								name="incentivoFiscal"
-								label="Incentivo Fiscal"
-								labelId="id"
-								placeholder="Selecione um incentivo"
-								value={formik.values.incentivoFiscal?.id || ''}
-								required
-								fullWidth
-								disabled={isView}
-								onChange={(e) => {
-									const selectedIncentivo = incentivosFiscais.find(
-										(i) => i.id === parseInt(e.target.value)
-									);
-									formik.setFieldValue('incentivoFiscal', selectedIncentivo);
-								}}
-								error={Boolean(formik.errors.incentivoFiscal)} // Indicar erro
+		<>
+			{show && (
+				<Alert
+					variant="filled"
+					className={styles.alert}
+					severity="error"
+				>
+					{formik.errors.submodulo ?? ""}
+				</Alert>
+			)}
+			{formik.values?.submodulos &&
+				formik.values.submodulos.map((i, index) => (
+					<Accordion
+						expanded={expanded === index}
+						onChange={handleChange(index)}
+						sx={{ margin: "1rem" }}
+					>
+						<AccordionSummary
+							expandIcon={
+								<ArrowDownwardIcon sx={{ color: "white" }} />
+							}
+							aria-controls="panel1-content"
+							id="panel1-header"
+							className={styles.accordionTitle}
+						>
+							<div
+								className={`${styles.col1} ${styles.removeButtonDiv}`}
 							>
-								{incentivosFiscais.map(({ id, sigla }: IIncentivoFiscal, index) => (
-									<MenuItem key={index} value={id}>
-										{sigla}
-									</MenuItem>
-								))}
-							</Select>
-							{formik.errors.incentivoFiscal && (
-								<span className={styles.error}>
-									{formik.errors.incentivoFiscal as string}
-								</span>
-							)}
-						</FormControl>
-						<FormControl className="col6">
-							<InputLabel required id="submodulo">
-								Submódulo
-							</InputLabel>
-							<Select
-								name="submodulo"
-								label="Submódulo"
-								labelId="submodulo"
-								placeholder="Selecione um Submodulo"
-								value={formik.values?.submodulo}
-								fullWidth
-								disabled={isView}
-								onChange={(ev) => {
-									addNewFundo(
-										formik.values.incentivoFiscal.id,
-										formik.values.submodulo,
-									);
-									formik.handleChange(ev);
-								}}
-							>
-								{submodulos.map(
-									(
-										{
-											codgBeneficio,
-											nomeBeneficio,
-										}: ISubmodulo,
-										index,
-									) => {
-										return (
-											codgBeneficio && (
-												<MenuItem
-													key={index}
-													value={codgBeneficio}
-												>
-													{codgBeneficio} -{" "}
-													{nomeBeneficio}
-												</MenuItem>
-											)
-										);
-									},
-								)}
-							</Select>
-						</FormControl>
-						<NumericMask
-							id="vendaAnualInterna"
-							name="vendaAnualInterna"
-							formik={formik}
-							prefix="R$"
-							fixedDecimalScale
-							label="Venda anual interna"
-							required
-							col={6}
-							onChange={(e) => {
-								const value = parseFloat(e.target.value);
-								formik.handleChange({
-									target: {
-										name: e.target.name,
-										value: isNaN(value) ? "" : value,
-									},
-								});
-							}}
-							disabled={isView}
-							value={formik.values?.vendaAnualInterna ?? ""}
-							className={`${styles.tableInput}`}
-						/>
-						<NumericMask
-							id="vendaAnualInterestadual"
-							name="vendaAnualInterestadual"
-							formik={formik}
-							prefix="R$"
-							fixedDecimalScale
-							label="Venda anual interestadual"
-							col={6}
-							onChange={(e) => {
-								const value = parseFloat(e.target.value);
-								formik.handleChange({
-									target: {
-										name: e.target.name,
-										value: isNaN(value) ? "" : value,
-									},
-								});
-							}}
-							required
-							disabled={isView}
-							value={formik.values?.vendaAnualInterestadual ?? ""}
-							className={`${styles.tableInput}`}
-						/>
-						{formik?.values?.incentivoFiscal?.fundos?.length >
-							0 && (
 								<>
-									<div className={styles.monthsTitle}>
-										<span
-											className={`${styles.col2} ${styles.monthTitle}`}
-										>
-											Mês referência
-										</span>
-										{formik.values?.incentivoFiscal?.fundos?.map(
-											({ sigla }: IFundo) => {
-												return (
-													<span
-														className={`${styles?.[
-															`col${Math.ceil(
-																10 /
-																formik
-																	.values
-																	?.incentivoFiscal
-																	?.fundos
-																	.length,
-															)}`
-														]
-															} ${styles.monthTitle}`}
-													>
-														{sigla}
-													</span>
-												);
-											},
-										)}
-									</div>
-									{monthsData.map(({ codigo, label }) => {
-										return (
-											<div className={styles.TableInputs}>
-												<span
-													style={{
-														textAlign: "center",
-														marginLeft: "20px",
-													}}
-													className={`${styles.col2} ${styles.monthTitle}`}
-												>
-													{label}
-												</span>
-												{formik.values?.incentivoFiscal?.fundos?.map(
-													({ sigla, id }: IFundo) => {
-														return (
-															<NumericMask
-																id={`${sigla}-valor`}
-																name={`${sigla}-valor`}
-																formik={formik}
-																disabled={isView}
-																col={Math.ceil(
-																	10 /
-																	formik
-																		.values
-																		?.incentivoFiscal
-																		?.fundos
-																		.length,
-																)}
-																prefix="R$"
-																fixedDecimalScale
-																label=""
-																onChange={async (ev: {
-																	target: {
-																		value: string;
-																	};
-																}) => {
-																	var newValorFundo:
-																		| IValorFundo
-																		| undefined =
-																		formik.values?.valoresFundo?.find(
-																			(
-																				i: IValorFundo,
-																			) =>
-																				i
-																					.fundoIncentivo
-																					.id ===
-																				id,
-																		);
-																	if (
-																		!newValorFundo
-																	)
-																		newValorFundo =
-																			{};
-																	const newValoresFundos: IValorFundo[] =
-																		formik.values?.valoresFundo?.filter(
-																			(
-																				i: IValorFundo,
-																			) =>
-																				i
-																					.fundoIncentivo
-																					.id !==
-																				id,
-																		) ?? [];
+									<Typography style={{ color: "white" }}>
+										{i.incentivoFiscal?.sigla
+											? `${
+													i.incentivoFiscal?.sigla ??
+													""
+											  } - ${i.submodulo ?? ""}`
+											: ""}
+									</Typography>
 
-																	newValorFundo[
-																		`${codigo}Valor`
-																	] =
-																		ev.target.value;
-																	newValorFundo.fundoIncentivo =
-																	{
-																		id: id,
-																		dataCadastro:
-																			new Date().toDateString(),
-																		dataAtualizacao:
-																			new Date().toDateString(),
-																	};
-
-																	newValoresFundos.push(
-																		newValorFundo,
-																	);
-																	formik.setFieldValue(
-																		"valoresFundo",
-																		newValoresFundos,
-																	);
-																}}
-																required
-																value={
-																	formik.values?.valoresFundo?.find(
-																		(
-																			i: IValorFundo,
-																		) =>
-																			i
-																				.fundoIncentivo
-																				.id ===
-																			id,
-																	)?.[
-																	`${codigo}Valor`
-																	]
-																}
-																className={`${styles.tableInput}`}
-															/>
+									<RemoveIcon
+										className={styles.removeIcon}
+										onClick={async () => {
+											dialogRef.current?.handleClickOpen(
+												() => {
+													var submodulos =
+														formik.values
+															.submodulos;
+													if (submodulos[index].id) {
+														setSubsToExclude(
+															submodulos[index]
+																.id,
 														);
-													},
-												)}
-											</div>
-										);
-									})}
-									<div className={styles.totals}>
-										{formik.values.incentivoFiscal.fundos.map(
-											({ sigla, id }: IFundo) => {
-												return (
-													<span
-														className={
-															styles.monthTitle
-														}
-													>
-														Valor Total {sigla}:
-														{formatBRCurrency(
-															monthsData.reduce(
-																(total, item) =>
-																	total +
-																	parseFloat(
-																		formik.values.valoresFundo?.find(
-																			(i) =>
-																				i
-																					.fundoIncentivo
-																					.id ===
-																				id,
-																		)?.[
-																		`${item.codigo}Valor`
-																		] ?? 0,
-																	),
-																0,
-															),
-														)}
-													</span>
-												);
-											},
-										)}
-										<span className={styles.monthTitle}>
-											Valor Total:{" "}
-											{formatBRCurrency(total ?? 0)}
-										</span>
-									</div>
+													}
+													submodulos.splice(index, 1);
+													formik.setFieldValue(
+														"submodulos",
+														submodulos,
+													);
+												},
+											);
+										}}
+									/>
 								</>
-							)}
-					</div>
-				</Card>
-
-				<div className={`${styles.col12} ${styles.buttonsRigth}`}>
+							</div>
+						</AccordionSummary>
+						<AccordionDetails>
+							<SubmoduloForm
+								submodulos={submodulos}
+								incentivosFiscais={incentivosFiscais}
+								formik={formik}
+								setStep={setStep}
+								index={index}
+							/>
+						</AccordionDetails>
+					</Accordion>
+				))}
+			{!isView && !formik.errors.submodulos && (
+				<Button
+					type="button"
+					variant="contained"
+					className={styles.primaryButton}
+					style={{ marginLeft: "1rem" }}
+					onClick={() => {
+						var submodulos = formik.values.submodulos;
+						submodulos.push({});
+						formik.setFieldValue("submodulos", submodulos);
+					}}
+				>
+					<AddIcon />
+					Adicionar linhas e colunas
+				</Button>
+			)}
+			<div className={`${styles.col12} ${styles.buttonsRigth}`}>
+				<Button
+					type="button"
+					variant="contained"
+					className={styles.secondaryButton}
+					onClick={() => handleVoltar()}
+				>
+					Voltar
+				</Button>
+				{!isView && !isNew && (
 					<Button
 						type="button"
 						variant="contained"
-						className={styles.secondaryButton}
+						className={styles.salvarButton}
 						onClick={() => {
-							setStep(2);
-							window.scrollTo({ top: 0, behavior: "smooth" });
+							localStorage.setItem(
+								"step3",
+								JSON.stringify(formik.values),
+							);
+							submitForm();
 						}}
 					>
-						Voltar
+						Salvar
 					</Button>
-					<Button
-						type="submit"
-						variant="contained"
-						className={styles.primaryButton}
-					>
-						Continuar
-					</Button>
-				</div>
+				)}
+				<Button
+					type="button"
+					variant="contained"
+					className={styles.secondaryButton}
+					onClick={() => {
+						setStep(2);
+						window.scrollTo({ top: 0, behavior: "smooth" });
+					}}
+				>
+					Anterior
+				</Button>
+				<Button
+					type="button"
+					variant="contained"
+					className={styles.primaryButton}
+					onClick={() => {
+						formik.submitForm();
+					}}
+				>
+					Próximo
+				</Button>
 			</div>
-		</form>
+			<ConfirmDialog
+				message="Tem certeza que deseja fazer a exclusão?"
+				ref={dialogRef}
+			/>
+		</>
 	);
 }
 
